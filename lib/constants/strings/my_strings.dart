@@ -1,0 +1,1 @@
+const String SCREEN_TODAY = 'todayFoodScreen';
