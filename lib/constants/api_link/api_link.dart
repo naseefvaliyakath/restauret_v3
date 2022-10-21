@@ -10,6 +10,8 @@ const String SEARCH_ALL_FOOD = 'food/searchAllFood/';
 const String DELETE_FOOD = 'food/deleteFood/';
 
 const String GET_CATEGORY = 'category/getCategory';
+final String INSERT_CATEGORY = 'category/addCategory';
+final String DELETE_CATEGORY = 'category/deleteCategory';
 
 const String ADD_SETTLED_ORDER = 'orders/addSettleOrder/';
 const String ADD_KOT_ORDER = 'orders/addKitchenOrder/';

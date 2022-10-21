@@ -1,0 +1,74 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'common_text/big_text.dart';
+
+
+class CategoryCard
+    extends StatelessWidget {
+  final Color color;
+  final String text;
+  final Function onTap;
+  final Function onLongTap;
+
+  const CategoryCard({Key? key, required this.color, required this.text, required this.onTap, required this.onLongTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        borderRadius: BorderRadius.circular(20.r),
+      onTap: ()=>onTap(),
+      onLongPress: ()async{
+          await onLongTap();
+      },
+      child: Card(
+        color: color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        child: SizedBox(
+          height: 60.h,
+          width: MediaQuery.of(context).size.width * 0.33,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(8.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(20.r),
+                      child: Container(
+                        color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                        width: 30.h,
+                        height: 30.h,
+                        child: Center(
+                          child: BigText(
+                            text: text[0],
+                            size: 20.h,
+                            color:Colors.white,
+                          ),
+                        ),
+                      )),
+                  6.horizontalSpace,
+                  Flexible(
+                    child: FittedBox(
+                      child: Text(
+                        text.toUpperCase(),
+                        softWrap: false,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: const Color(0xFF333333),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

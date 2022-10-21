@@ -7,7 +7,10 @@ import 'package:rest_verision_3/screens/home_screen/binding/home_screen_binding.
 import 'package:rest_verision_3/screens/home_screen/home_screen.dart';
 
 import 'constants/app_colors/app_colors.dart';
-void main() {
+import 'hive_database/hive_init.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MyHiveInit.initMyHive();
   runApp(const MyApp());
 }
 

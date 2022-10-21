@@ -16,18 +16,13 @@ class RoomRepo extends GetxService {
     try {
       final response = await _httpService.getRequestWithBody(GET_ALL_ROOMS, {'fdShopId': SHOPE_ID});
       RoomResponse? parsedResponse = RoomResponse.fromJson(response.data);
-      return MyResponse(
-          statusCode: 1,
-          status: 'Success',
-          data: parsedResponse,
-          message: response.statusMessage.toString());
+      return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
-    }
-    catch (e) {
+    } catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
-    } finally {
-
-    }
+    } finally {}
   }
+
+
 }

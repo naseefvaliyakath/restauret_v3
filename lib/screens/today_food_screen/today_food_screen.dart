@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import '../../constants/strings/my_strings.dart';
+import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/round_border_icon_button.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/food_card.dart';
@@ -46,8 +47,7 @@ class TodayFoodScreen extends StatelessWidget {
                             name: 'Add food',
                             icon: FontAwesomeIcons.utensils,
                             onTap: () {
-                              ctrl.getInitialFood();
-                              // Get.toNamed(RouteHelper.getAddFoodScreen());
+                              Get.toNamed(RouteHelper.getAddFoodScreen());
                             },
                           ),
                           10.horizontalSpace,
@@ -56,7 +56,7 @@ class TodayFoodScreen extends StatelessWidget {
                             name: 'All food',
                             icon: FontAwesomeIcons.borderAll,
                             onTap: () {
-                              // Get.toNamed(RouteHelper.getAllFoodScreen());
+                               Get.toNamed(RouteHelper.getAllFoodScreen());
                             },
                           ),
                         ],

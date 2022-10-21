@@ -1,0 +1,341 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' hide Category;
+import 'package:get/get.dart' hide Response;
+import '../../../api_data_loader/category_data.dart';
+import '../../../api_data_loader/food_data.dart';
+import '../../../constants/strings/my_strings.dart';
+import '../../../models/category_response/category.dart';
+import '../../../models/my_response.dart';
+import '../../../repository/category_repository.dart';
+import '../../../repository/food_repository.dart';
+import '../../../widget/common_widget/snack_bar.dart';
+
+class UpdateFoodController extends GetxController {
+  //?controllers
+  final CategoryData _categoryData = Get.find<CategoryData>();
+  final CategoryRepo _categoryRepo = Get.find<CategoryRepo>();
+  final FoodRepo _foodRepo = Get.find<FoodRepo>();
+  final FoodData _foodData = Get.find<FoodData>();
+
+  //? to store image file
+  File? file;
+
+  //? text-editing controllers
+  late TextEditingController fdNameTD;
+  late TextEditingController fdPriceTD;
+  late TextEditingController fdFullPriceTD;
+  late TextEditingController fdThreeBiTwoPrsTD;
+  late TextEditingController fdHalfPriceTD;
+  late TextEditingController fdQtrPriceTD;
+
+  //? this will store all Category from the server
+  //? not showing in UI or change
+  final List<Category> _storedCategory = [];
+
+  //? Category to show in UI
+  final List<Category> _myCategory = [];
+
+  List<Category> get myCategory => _myCategory;
+
+  //? to show full screen loading
+  bool isLoading = false;
+
+  //? for category update need other loader , so after catch isLoading become false so in ctr.list.length may make error
+  bool isLoadingCategory = false;
+
+  //? to change tapped color of category card
+  //? it wil updated in setCategoryTappedIndex() method
+  int tappedIndex = 0;
+
+  //? to show and hide multiple price
+  bool priceToggle = false;
+
+  //? to toggle update image card and showing current image
+  bool imageToggle = false;
+  //? on init this variable fill the current category
+  //? then after loading category check the variable data and set category index
+  String initialFdCategory = COMMON_CATEGORY;
+
+  @override
+  Future<void> onInit() async {
+    initTxtCtrl();
+    getInitialCategory();
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    disposeTxtCtrl();
+  }
+
+  //////! category section !//////
+
+  //? to load o first screen loading
+  getInitialCategory() {
+    try {
+      //? to show shimming loading
+      isLoadingCategory = true;
+      update();
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedCategory from CategoryData controller
+      if (_categoryData.category.isEmpty) {
+        if (kDebugMode) {
+          print(_categoryData.category.length);
+          print('data loaded from db');
+        }
+        _categoryData.getCategory(fromUpdateFood:true);
+      } else {
+        if (kDebugMode) {
+          print('data loaded from category data');
+        }
+        //? load data from variable in todayFood
+        _storedCategory.clear();
+        _storedCategory.addAll(_categoryData.category);
+        //? to show full food in UI
+        _myCategory.clear();
+        _myCategory.addAll(_storedCategory);
+      }
+
+      //? this method is calling here and updateInitialValue() method also
+      //? because some time updateInitialValue() will call first time eg: if data loaded from dB
+      updateCategoryFirstTime(initialFdCategory);
+
+      update();
+    } catch (e) {
+      return;
+    }
+    finally{
+      isLoadingCategory = false;
+      update();
+    }
+  }
+
+  //? to change tapped category
+  setCategoryTappedIndex(int val) {
+    tappedIndex = val;
+    update();
+  }
+
+  //? setting up setCategoryTappedIndex initially as per current category
+  updateCategoryFirstTime(catName){
+    try {
+      _myCategory.asMap().forEach((index, value) {
+            if(value.catName == catName){
+              setCategoryTappedIndex(index);
+            }
+          });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+  //? this function will call getCategory() in CategoryData
+  //? ad refresh fresh data from server
+  refreshCategory() async {
+    try {
+      //? to show shimming loading
+      isLoadingCategory = true;
+      update();
+      await _categoryData.getCategory(fromUpdateFood: true);
+      AppSnackBar.successSnackBar('Success', 'Updated successfully');
+    } catch (e) {
+      rethrow;
+    } finally {
+      isLoadingCategory = false;
+      update();
+    }
+  }
+
+  //? when call getCategory() in CategoryData this method will call in success
+  //? to update fresh data in CategoryData and _myCategory also
+  //? this method only for call getCategory method from CategoryData like callback
+  refreshMyCategory(List<Category> categoryFromCategoryData) {
+    try {
+      _storedCategory.clear();
+      _storedCategory.addAll(categoryFromCategoryData);
+      //? to show full food in UI
+      _myCategory.clear();
+      _myCategory.addAll(_storedCategory);
+      update();
+    } catch (e) {
+      return;
+    }
+  }
+
+  //////! category section !//////
+
+  //? for the initial initial from routing
+  updateInitialValue(fdNameIn, fdPriceIn, fdThreeBiTwoPrsPriceIn, fdHalfPriceIn, fdQtrPriceIn, fdIsLoos,fdCategory) {
+    try {
+      //? this method is calling here and getInitialCategory() method also
+      //? because some time getInitialCategory() will call first time eg: if data loaded from localData
+      updateCategoryFirstTime(initialFdCategory);
+
+      //? setting up value in txt controllers
+      fdNameTD.text = fdNameIn;
+      fdThreeBiTwoPrsTD.text = fdThreeBiTwoPrsPriceIn.toString();
+      fdHalfPriceTD.text = fdHalfPriceIn.toString();
+      fdQtrPriceTD.text = fdQtrPriceIn.toString();
+      //? to set initial price toggle status from data
+      fdIsLoos == 'yes' ? priceToggle = true : priceToggle = false;
+      fdIsLoos == 'yes' ? fdFullPriceTD.text = fdPriceIn.toString() : fdPriceTD.text = fdPriceIn.toString();
+      if (kDebugMode) {
+        print('price toggle $priceToggle');
+      }
+    } catch (e) {
+      rethrow;
+    }
+    update();
+  }
+
+  //? show and hide multiple price txt box
+  setPriceToggle(bool val) {
+    priceToggle = val;
+    update();
+  }
+
+  //? to toggle update image card and showing current image
+  setImageToggle(bool val) {
+    imageToggle = val;
+    update();
+  }
+
+  //validate before insert
+  validateFoodDetails({
+    required fdName,
+    required fdCategory,
+    required fdImg,
+    required fdIsToday,
+    required cookTime,
+    required id,
+  }) async {
+    try {
+      print('object $fdCategory');
+      if ((fdPriceTD.text.trim() != '' || fdFullPriceTD.text.trim() != '')) {
+        var fdIsLoos = 'no';
+        double fdPriceNew = 0;
+        var fdNameNew = fdName == null ? fdName = '' : fdName = fdName;
+        var fdCategoryNew = fdCategory == null ? fdCategory = COMMON_CATEGORY : fdCategory = fdCategory;
+        int idNew = id == null ? id = 0 : id = id;
+        var fdImgNew = fdImg == null ? fdImg = 'https://mobizate.com/uploads/sample.jpg' : fdImg = fdImg;
+        var fdIsTodayNew = fdIsToday == null ? fdIsToday = 'no' : fdIsToday = fdIsToday;
+        int cookTimeNew = cookTime == null ? cookTime = 0 : cookTime = cookTime;
+        double fdThreeBiTwoPrsPriceNew = 0;
+        double fdHalfPriceNew = 0;
+        double fdQtrPriceNew = 0;
+
+        //?full price only
+        if (!priceToggle) {
+          fdIsLoos = 'no';
+          fdPriceNew = fdPriceTD.text == '' ? 0 : double.parse(fdPriceTD.text);
+          //? multiple price
+        } else {
+          fdIsLoos = 'yes';
+          fdPriceNew = fdFullPriceTD.text == '' ? 0 : double.parse(fdFullPriceTD.text);
+        }
+        fdNameNew = fdNameTD.text;
+        fdThreeBiTwoPrsPriceNew = fdThreeBiTwoPrsTD.text == '' ? 0 : double.parse(fdThreeBiTwoPrsTD.text);
+        fdHalfPriceNew = fdHalfPriceTD.text == '' ? 0 : double.parse(fdHalfPriceTD.text);
+        fdQtrPriceNew = fdQtrPriceTD.text == '' ? 0 : double.parse(fdQtrPriceTD.text);
+
+        //? after validation updating food to dB
+        await updateFood(
+          file: file,
+          fdNameNew: fdNameNew,
+          fdCategoryNew: fdCategoryNew,
+          fdPriceNew: fdPriceNew,
+          fdThreeBiTwoPrsPriceNew: fdThreeBiTwoPrsPriceNew,
+          fdHalfPriceNew: fdHalfPriceNew,
+          fdQtrPriceNew: fdQtrPriceNew,
+          fdIsLoos: fdIsLoos,
+          cookTimeNew: cookTimeNew,
+          fdImgNew: fdImgNew,
+          fdIsTodayNew: fdIsTodayNew,
+          idNew: idNew,
+        );
+
+      } else {
+        AppSnackBar.errorSnackBar('Fill the fields!', 'Enter the values in fields!!');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? to insert the food
+  updateFood({
+    required file,
+    required fdNameNew,
+    required fdCategoryNew,
+    required fdPriceNew,
+    required fdThreeBiTwoPrsPriceNew,
+    required fdHalfPriceNew,
+    required fdQtrPriceNew,
+    required fdIsLoos,
+    required cookTimeNew,
+    required fdImgNew,
+    required fdIsTodayNew,
+    required idNew,
+  }) async {
+    try {
+      showLoading();
+      MyResponse response = await _foodRepo.updateFood(
+          file: file,
+          fdName: fdNameNew,
+          fdCategory: fdCategoryNew,
+          fdPrice: fdPriceNew,
+          fdThreeBiTwoPrsPrice: fdThreeBiTwoPrsPriceNew,
+          fdHalfPrice: fdHalfPriceNew,
+          fdQtrPrice: fdQtrPriceNew,
+          fdIsLoos: fdIsLoos,
+          cookTime: cookTimeNew,
+          fdImg: fdImgNew,
+          fdIsToday: fdIsTodayNew,
+          id: idNew);
+      if (response.statusCode == 1) {
+        //? to update all food and todayFood  after update in new food
+        _foodData.getAllFoods();
+        _foodData.getTodayFoods();
+        AppSnackBar.successSnackBar('Success', response.message);
+      } else {
+        AppSnackBar.errorSnackBar('Error', response.message);
+        return;
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+    } finally {
+      hideLoading();
+      update();
+    }
+  }
+
+  initTxtCtrl() {
+    fdNameTD = TextEditingController();
+    fdPriceTD = TextEditingController();
+    fdFullPriceTD = TextEditingController();
+    fdThreeBiTwoPrsTD = TextEditingController();
+    fdHalfPriceTD = TextEditingController();
+    fdQtrPriceTD = TextEditingController();
+  }
+
+  disposeTxtCtrl() {
+    fdNameTD.dispose();
+    fdFullPriceTD.dispose();
+    fdThreeBiTwoPrsTD.dispose();
+    fdHalfPriceTD.dispose();
+    fdQtrPriceTD.dispose();
+  }
+
+  showLoading() {
+    isLoading = true;
+    update();
+  }
+
+  hideLoading() {
+    isLoading = false;
+    update();
+  }
+}

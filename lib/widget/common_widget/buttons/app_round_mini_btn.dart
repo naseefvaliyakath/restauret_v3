@@ -11,8 +11,7 @@ class AppRoundMiniBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return  ElevatedButton(
       style: ElevatedButton.styleFrom(
-          onPrimary: Colors.white,
-          primary: color,
+          foregroundColor: Colors.white, backgroundColor: color,
           minimumSize: Size(70.w, 40.h),
           padding: EdgeInsets.symmetric(horizontal: 16.sp),
           shape:  RoundedRectangleBorder(

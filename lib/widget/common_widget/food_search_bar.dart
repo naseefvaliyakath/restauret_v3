@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
+import '../../screens/all_food_screen/controller/all_food_controller.dart';
 import '../../screens/today_food_screen/controller/today_food_controller.dart';
 
 
@@ -35,10 +36,12 @@ class FoodSearchBar extends StatelessWidget {
                   hintText: 'Search here ...',
                   hintStyle: TextStyle(color: AppColors.textGrey,fontSize: 16.sp),
                   isDense: true,                      // Added this
-                  contentPadding: const EdgeInsets.all(3),  // Added this
+                  contentPadding:  EdgeInsets.all(3.sp),  // Added this
 
                 ),
-                controller: screen == SCREEN_TODAY ? Get.find<TodayFoodController>().searchTD : Get.find<TodayFoodController>().searchTD,
+                //? this widget is used in todayFood and allFood
+                //? if screen SCREEN_TODAY then take controller TodayFoodController else take it AllFoodController
+                controller: screen == SCREEN_TODAY ? Get.find<TodayFoodController>().searchTD : Get.find<AllFoodController>().searchTD,
               ),
             ),
           ),

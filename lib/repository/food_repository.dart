@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/app_secret_constants/app_secret_constants.dart';
@@ -11,12 +12,17 @@ import '../services/service.dart';
 class FoodRepo extends GetxService {
   final HttpService _httpService = Get.find<HttpService>();
 
+  //? get todayFood
   Future<MyResponse> getTodayFoods() async {
     // TODO: implement getNewsHeadline
     try {
       final response = await _httpService.getRequestWithBody(TODAY_FOOD_URL, {'fdShopId': SHOPE_ID});
       FoodResponse? parsedResponse = FoodResponse.fromJson(response.data);
-      return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', data: null, message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+      }
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
     } catch (e) {
@@ -25,13 +31,18 @@ class FoodRepo extends GetxService {
     } finally {}
   }
 
+  //? getALl food
   Future<MyResponse> getAllFoods() async {
     // TODO: implement getNewsHeadline
 
     try {
       final response = await _httpService.getRequestWithBody(ALL_FOOD_URL, {'fdShopId': SHOPE_ID});
       FoodResponse? parsedResponse = FoodResponse.fromJson(response.data);
-      return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', data: null, message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+      }
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
     } catch (e) {
@@ -40,6 +51,7 @@ class FoodRepo extends GetxService {
     } finally {}
   }
 
+  //? search today food
   //! need add shopId for retrieving foods
   //! currently it not used now using search from local data
   Future<MyResponse> searchTodayFoods({required int fdShopId, required String query, required String fdIsToday}) async {
@@ -58,6 +70,7 @@ class FoodRepo extends GetxService {
     } finally {}
   }
 
+  //? search all food
   //! need add shopId for retrieving foods
   //! currently it not used now using search from local data
   Future<MyResponse> searchAllFoods({required int fdShopId, required String query, required String fdIsToday}) async {
@@ -76,7 +89,7 @@ class FoodRepo extends GetxService {
     } finally {}
   }
 
-  //! update today food
+  //? update today food
   Future<MyResponse> updateTodayFood(int fdId, String isToday) async {
     try {
       Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsToday': isToday, 'fdShopId': SHOPE_ID};
@@ -93,4 +106,114 @@ class FoodRepo extends GetxService {
       return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
     }
   }
+
+
+  //? delete food
+  deleteFood(int id) async {
+    try {
+      Map<String, dynamic> foodData = {
+        'fdShopId': SHOPE_ID,
+        'fdId': id,
+      };
+      final response = await _httpService.delete(DELETE_FOOD, foodData);
+      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+    }
+  }
+
+
+  //? insert food
+  Future<MyResponse> insertFood({
+    File? file,
+    required fdName,
+    required fdCategory,
+    required fdPrice,
+    required fdThreeBiTwoPrsPrice,
+    required fdHalfPrice,
+    required fdQtrPrice,
+    required fdIsLoos,
+    required cookTime,
+  }) async {
+    // TODO: implement getNewsHeadline
+
+    try {
+      final response = await _httpService.insertFood(
+        fdShopId: SHOPE_ID,
+        file: file,
+        fdName: fdName,
+        fdCategory: fdCategory,
+        fdPrice: fdPrice,
+        fdThreeBiTwoPrsPrice: fdThreeBiTwoPrsPrice,
+        fdHalfPrice: fdHalfPrice,
+        fdQtrPrice: fdQtrPrice,
+        fdIsLoos: fdIsLoos,
+        cookTime: cookTime,
+      );
+      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode);
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
+    }
+  }
+
+  //? it update food
+  Future<MyResponse> updateFood(
+      {File? file,
+        required fdName,
+        required fdCategory,
+        required fdPrice,
+        required fdThreeBiTwoPrsPrice,
+        required fdHalfPrice,
+        required fdQtrPrice,
+        required fdIsLoos,
+        required cookTime,
+        required fdImg,
+        required fdIsToday,
+        required id}) async {
+    // TODO: implement getNewsHeadline
+
+    try {
+      final response = await _httpService.updateFood(
+        file: file,
+        fdName: fdName,
+        fdCategory: fdCategory,
+        fdPrice: fdPrice,
+        fdThreeBiTwoPrsPrice: fdThreeBiTwoPrsPrice,
+        fdHalfPrice: fdHalfPrice,
+        fdQtrPrice: fdQtrPrice,
+        fdIsLoos: fdIsLoos,
+        cookTime: cookTime,
+        fdShopId: SHOPE_ID,
+        fdImg: fdImg,
+        fdIsToday: fdIsToday,
+        fdId: id,
+      );
+      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode);
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+    }catch (e){
+      return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
+    }
+
+  }
+
 }

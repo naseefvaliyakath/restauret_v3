@@ -18,12 +18,60 @@ class CategoryRepo extends GetxService {
     try {
       final response = await _httpService.getRequestWithBody(GET_CATEGORY, {'fdShopId': SHOPE_ID});
       CategoryResponse parsedResponse = CategoryResponse.fromJson(response.data);
-      return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+      }
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
     } catch (e) {
       rethrow;
-      return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
-    } finally {}
+      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+    }
+  }
+
+  //? insert room
+  Future<MyResponse> insertCategory(roomNameString) async {
+    try {
+      Map<String, dynamic> categoryDetails = {
+        'fdShopId': SHOPE_ID,
+        'catName': roomNameString,
+      };
+
+      final response = await _httpService.insertWithBody(INSERT_CATEGORY, categoryDetails);
+      CategoryResponse parsedResponse = CategoryResponse.fromJson(response.data);
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+    }
+  }
+
+
+  //? delete category
+  deleteCategory(int id) async {
+    try {
+      Map<String, dynamic> categoryData = {
+        'fdShopId': SHOPE_ID,
+        'CatId': id,
+      };
+      final response = await _httpService.delete(DELETE_CATEGORY, categoryData);
+      CategoryResponse parsedResponse = CategoryResponse.fromJson(response.data);
+      if (parsedResponse.error) {
+        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+    }
   }
 }
