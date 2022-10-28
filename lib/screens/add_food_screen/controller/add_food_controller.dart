@@ -56,6 +56,7 @@ class AddFoodController extends GetxController {
   //? to change tapped color of category card
   //? it wil updated in setCategoryTappedIndex() method
   int tappedIndex = 0;
+  //? to get by selected category
   String selectedCategory = COMMON_CATEGORY;
 
   //? to show add category card and text-field
@@ -79,11 +80,9 @@ class AddFoodController extends GetxController {
   getInitialCategory() {
 
     try {
-
       //? to show shimming loading
       isLoadingCategory = true;
       update();
-
       //?if no data in side data controller
       //? then load fresh data from db
       //?else fill _storedCategory from CategoryData controller
@@ -104,7 +103,7 @@ class AddFoodController extends GetxController {
         _myCategory.clear();
         _myCategory.addAll(_storedCategory);
         //? assign first category in list after loading category
-        selectedCategory = _myCategory.first.catName ?? COMMON_CATEGORY;
+        selectedCategory = _myCategory.isNotEmpty ?  _myCategory.first.catName ?? COMMON_CATEGORY :COMMON_CATEGORY ;
       }
       update();
     } catch (e) {
@@ -199,17 +198,23 @@ class AddFoodController extends GetxController {
 
 
   //? to delete the food
-  deleteCategory(int catId) async {
+  deleteCategory({required int catId ,required String catName}) async {
     try {
-      isLoadingCategory = true;
-      update();
-      MyResponse response = await _categoryRepo.deleteCategory(catId);
-      if (response.statusCode == 1) {
-        refreshCategory();
-        //! snack bar showing when refreshCategory no need to show here
-      } else {
-        AppSnackBar.errorSnackBar('Error', response.message);
-        return;
+      //? check user try to delete COMMON category
+      if(catName.toUpperCase() != COMMON_CATEGORY){
+        isLoadingCategory = true;
+        update();
+        MyResponse response = await _categoryRepo.deleteCategory(catId);
+        if (response.statusCode == 1) {
+          refreshCategory();
+          //! snack bar showing when refreshCategory no need to show here
+        } else {
+          AppSnackBar.errorSnackBar('Error', response.message);
+          return;
+        }
+      }
+      else{
+        AppSnackBar.errorSnackBar('Error', 'Cannot delete this category');
       }
     } catch (e) {
       AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');

@@ -64,13 +64,13 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              //if possible make id , its better
+/*              if possible make id , its better
 
-              // SmallText(
-              //   text: 'ORDER ID : ${singleOrder.settled_id}',
-              //   color: Colors.black54,
-              //   size: 15.sp,
-              // ),
+              SmallText(
+                text: 'ORDER ID : ${singleOrder.settled_id}',
+                color: Colors.black54,
+                size: 15.sp,
+              ),*/
               SmallText(
                 text: 'DATE : 01-05-2022',
                 color: Colors.black54,
@@ -104,11 +104,12 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
               shrinkWrap: false,
               itemBuilder: (context, index) {
                 return KotItemTile(
+                  hideKotNote: true,
                   index: index,
                   slNumber: index + 1,
-                  itemName: billingItems[index]['name'],
-                  qnt: billingItems[index]['qnt'],
-                  kitchenNote: billingItems[index]['ktNote'],
+                  itemName: billingItems[index]['name'] ?? '',
+                  qnt: billingItems[index]['qnt'] ?? 0,
+                  kitchenNote: billingItems[index]['ktNote'] ?? '',
                 );
               },
               itemCount: billingItems.length,

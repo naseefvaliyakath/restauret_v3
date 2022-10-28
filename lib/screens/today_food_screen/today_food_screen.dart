@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/round_border_icon_button.dart';
+import '../../widget/today_food_screen/category_drop_down_today.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/food_card.dart';
 import '../../widget/common_widget/food_search_bar.dart';
-import '../../widget/common_widget/food_sort_round_icon.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/common_widget/two_button-bottom_sheet.dart';
 import 'controller/today_food_controller.dart';
@@ -28,7 +28,8 @@ class TodayFoodScreen extends StatelessWidget {
               ? const MyLoading()
               : SafeArea(
             child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
+              //? when no item then pull to  refresh not work , that's why two physics
+              physics: ctrl.myTodayFoods.isNotEmpty ? const BouncingScrollPhysics() : const AlwaysScrollableScrollPhysics(),
               primary: false,
               slivers: <Widget>[
                 SliverAppBar(
@@ -77,7 +78,7 @@ class TodayFoodScreen extends StatelessWidget {
                               ctrl.searchTodayFood();
                             },
                           ),
-                          const FoodSortRoundIcon()
+                          const CategoryDropDownToday()
                         ],
                       ),
                     ),
@@ -110,7 +111,7 @@ class TodayFoodScreen extends StatelessWidget {
                                 });
                           },
                           child: FoodCard(
-                            img: ctrl.myTodayFoods[index].fdImg ?? 'https://mobizate.com/uploads/sample.jpg',
+                            img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
                             name: ctrl.myTodayFoods[index].fdName ?? '',
                             price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
                             today: ctrl.myTodayFoods[index].fdIsToday ?? 'no',

@@ -17,6 +17,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool autoFocus;
   final TextInputType keyBordType;
   final bool isNumberOnly;
+  final int txtLength;
 
   const TextFieldWidget(
       {Key? key,
@@ -31,7 +32,8 @@ class TextFieldWidget extends StatelessWidget {
       this.autoFocus = false,
       this.keyBordType = TextInputType.text,
       required this.onChange,
-      this.isNumberOnly = false})
+      this.isNumberOnly = false,
+      this.txtLength = 50})
       : super(key: key);
 
   @override
@@ -61,7 +63,7 @@ class TextFieldWidget extends StatelessWidget {
         ),
         //? if isNumberOnly true then only allow numbers and decimals
         inputFormatters: !isNumberOnly
-            ? []
+            ? [LengthLimitingTextInputFormatter(txtLength),]
             : [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,5}')),
               ],

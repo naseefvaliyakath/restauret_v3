@@ -7,9 +7,9 @@ part of 'food_response.dart';
 // **************************************************************************
 
 FoodResponse _$FoodResponseFromJson(Map<String, dynamic> json) => FoodResponse(
-      json['error'] as bool,
-      json['errorCode'] as String,
-      json['totalSize'] as int,
+      json['error'] as bool?,
+      json['errorCode'] as String?,
+      json['totalSize'] as int?,
       (json['data'] as List<dynamic>?)
           ?.map((e) => Foods.fromJson(e as Map<String, dynamic>))
           .toList(),

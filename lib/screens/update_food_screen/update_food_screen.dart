@@ -35,35 +35,10 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
   CrossFadeState state = CrossFadeState.showFirst;
   CrossFadeState statePic = CrossFadeState.showFirst;
 
-  //? update screen first time
-  update({fdName, fdFullPrice, fdThreeBiTwoPrsPrice, fdHalfPrice, fdQtrPrice, fdIsLoos, fdCategory}) async {
-    await Get.find<UpdateFoodController>().updateInitialValue(fdName, fdFullPrice, fdThreeBiTwoPrsPrice, fdHalfPrice, fdQtrPrice, fdIsLoos, fdCategory);
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    int id = Get.arguments['id'] ?? -1;
-    String fdName = Get.arguments['fdName'] ?? '';
-    String? fdCategory = Get.arguments['fdCategory'] ?? COMMON_CATEGORY;
-    double fdFullPrice = Get.arguments['fdFullPrice'] ?? 0;
-    double fdThreeBiTwoPrsPrice = Get.arguments['fdThreeBiTwoPrsPrice'] ?? 0;
-    double fdHalfPrice = Get.arguments['fdHalfPrice'] ?? 0;
-    double fdQtrPrice = Get.arguments['fdQtrPrice'] ?? 0;
-    String fdIsLoos = Get.arguments['fdIsLoos'] ?? 'no';
-    int cookTime = Get.arguments['cookTime'] ?? 0;
-    String fdImg = Get.arguments['fdImg'] ?? 'https://mobizate.com/uploads/sample.jpg';
-    String fdIsToday = Get.arguments['fdIsToday'] ?? 'no';
-
-    //? method calling to update data to controller
-    update(
-        fdName: fdName,
-        fdFullPrice: fdFullPrice,
-        fdThreeBiTwoPrsPrice: fdThreeBiTwoPrsPrice,
-        fdHalfPrice: fdHalfPrice,
-        fdQtrPrice: fdQtrPrice,
-        fdIsLoos: fdIsLoos,
-        fdCategory: fdCategory);
-
     //? setting price toggle initially
     state = Get.find<UpdateFoodController>().priceToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
 
@@ -86,7 +61,6 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
                       shrinkWrap: true,
                       children: [
                         Container(
-                          height: double.maxFinite,
                           width: double.maxFinite,
                           padding: EdgeInsets.symmetric(horizontal: 10.w),
                           child: Column(
@@ -134,14 +108,16 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
                                 child: ctrl.isLoadingCategory
                                     ? const  ShimmingEffect()
                                     : ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
                                   scrollDirection: Axis.horizontal,
                                   itemCount: ctrl.myCategory.length,
                                   itemBuilder: (BuildContext ctx, index) {
                                     return CategoryCard(
                                       onTap: () {
+                                        //? to change the color of tapped category
                                         ctrl.setCategoryTappedIndex(index);
                                         //? saving tapped category to fdCategory variable
-                                        fdCategory = ctrl.myCategory[index].catName ?? COMMON_CATEGORY;
+                                        ctrl.initialFdCategory = ctrl.myCategory[index].catName ?? COMMON_CATEGORY;
                                       },
                                       color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
                                       text: ctrl.myCategory[index].catName ?? COMMON_CATEGORY, onLongTap: (){},
@@ -153,7 +129,7 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
                               //?  upload image card
                               AnimatedCrossFade(
                                 firstChild: NetworkImgShowCard(
-                                  img: fdImg,
+                                  img: ctrl.initialFdImg,
                                 ),
                                 secondChild: Container(
                                   child: imageFile != null
@@ -190,6 +166,7 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
 
                               MyToggleSwitch(
                                 value: ctrl.imageToggle,
+                                forImg: true,
                                 onToggle: (val) {
                                   ctrl.setImageToggle(val);
                                   statePic = ctrl.imageToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
@@ -208,6 +185,7 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
                                 hintText: 'Enter Your Food Name ....',
                                 textEditingController: ctrl.fdNameTD,
                                 borderRadius: 15.r,
+                                txtLength: 35,
                                 onChange: (_) {},
                               ),
 
@@ -286,13 +264,13 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
                               //add food button
                               Center(
                                   child: RoundBorderButton(
-                                text: 'Add Food',
+                                text: 'Update Food',
                                 textColor: Colors.white,
                                 width: 0.9.sw,
                                 borderRadius: 20.r,
                                 onTap: () async {
                                   ctrl.file = imageFile;
-                                  await ctrl.validateFoodDetails(fdName: fdName, fdCategory: fdCategory, fdImg: fdImg, fdIsToday: fdIsToday, cookTime: cookTime, id: id);
+                                  await ctrl.validateFoodDetails();
                                   Get.offNamed(RouteHelper.getAllFoodScreen());
                                 },
                               ))

@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rest_verision_3/alerts/billing_cash_screen_alert/order_settil_screen_in_order_view.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
-import 'order_settil_screen.dart';
+import 'order_settil_screen_in_billing.dart';
 import 'order_update_settil_screen.dart';
 
 //? billing cash screen alert main body
 //? passing  OrderSettleScreen() & OrderUpdateSettleScreen() as body
 void billingCashScreenAlert({required context, required ctrl, required from}) {
+
   showAnimatedDialog(
     context: context,
     barrierDismissible: true,
@@ -21,8 +23,9 @@ void billingCashScreenAlert({required context, required ctrl, required from}) {
         actionsAlignment: MainAxisAlignment.center,
         title: const Center(child: BigText(text: 'Settle Order')),
         content: SingleChildScrollView(
-          //? two different  body to show its from billing screen or its from overview page
-            child: from == 'billing' ? OrderSettleScreen(ctrl: ctrl) : OrderUpdateSettleScreen(ctrl: ctrl)),
+          //? there is 3 alert in app for billing screen
+          //? 1 from billing screen & 2 from orderViewScreen for update settled bill and settle bill from KOT
+            child: from == 'billing' ? OrderSettleScreenInBilling(ctrl: ctrl) : from == 'kotAlert' ? OrderSettleScreenInOrderView(ctrl: ctrl) : OrderUpdateSettleScreen(ctrl: ctrl)),
       );
     },
     animationType: DialogTransitionType.scale,

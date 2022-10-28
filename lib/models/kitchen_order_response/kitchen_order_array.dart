@@ -11,10 +11,10 @@ class KitchenOrderArray {
   bool error;
 
   @JsonKey(name: "errorCode")
-  String errorCode;
+  String? errorCode;
 
   @JsonKey(name: "totalSize")
-  int totalSize;
+  int? totalSize;
 
 
 

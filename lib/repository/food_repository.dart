@@ -18,7 +18,7 @@ class FoodRepo extends GetxService {
     try {
       final response = await _httpService.getRequestWithBody(TODAY_FOOD_URL, {'fdShopId': SHOPE_ID});
       FoodResponse? parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', data: null, message: response.statusMessage.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
@@ -38,7 +38,7 @@ class FoodRepo extends GetxService {
     try {
       final response = await _httpService.getRequestWithBody(ALL_FOOD_URL, {'fdShopId': SHOPE_ID});
       FoodResponse? parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', data: null, message: response.statusMessage.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
@@ -95,7 +95,7 @@ class FoodRepo extends GetxService {
       Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsToday': isToday, 'fdShopId': SHOPE_ID};
       final response = await _httpService.updateData(TODAY_FOOD_UPDATE, foodData);
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
@@ -117,7 +117,7 @@ class FoodRepo extends GetxService {
       };
       final response = await _httpService.delete(DELETE_FOOD, foodData);
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
@@ -158,10 +158,10 @@ class FoodRepo extends GetxService {
         cookTime: cookTime,
       );
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
       } else {
-        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode);
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
@@ -203,10 +203,10 @@ class FoodRepo extends GetxService {
         fdId: id,
       );
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
       } else {
-        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode);
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));

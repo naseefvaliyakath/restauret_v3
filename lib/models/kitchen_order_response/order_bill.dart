@@ -20,10 +20,10 @@ class OrderBill{
 
 
   @JsonKey(name : "ktNote")
-  String ktNote;
+  String? ktNote;
 
   @JsonKey(name : "ordStatus")
-  String ordStatus;
+  String? ordStatus;
 
 
 

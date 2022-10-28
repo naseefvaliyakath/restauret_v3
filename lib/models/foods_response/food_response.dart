@@ -7,13 +7,13 @@ class FoodResponse{
 //flutter pub run build_runner build --delete-conflicting-outputs
 
   @JsonKey(name : "error")
-  bool error;
+  bool? error;
 
   @JsonKey(name : "errorCode")
-  String errorCode;
+  String? errorCode;
 
   @JsonKey(name : "totalSize")
-  int totalSize;
+  int? totalSize;
 
 
   @JsonKey(name : "data")

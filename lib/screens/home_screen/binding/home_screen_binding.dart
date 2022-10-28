@@ -6,18 +6,13 @@ import 'package:rest_verision_3/repository/room_repository.dart';
 import 'package:rest_verision_3/repository/settled_order_response.dart';
 import 'package:rest_verision_3/repository/table_chair_set_repository.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
-
 import '../../../api_data_loader/food_data.dart';
-import '../../../api_data_loader/online_app_data.dart';
-import '../../../api_data_loader/room_data.dart';
-import '../../../api_data_loader/settled_order_data.dart';
-import '../../../api_data_loader/table_chair_set_data.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../repository/category_repository.dart';
 import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
-import '../../billing_screen/controller/billing_screen_controller.dart';
+
 
 class HomeBinding implements Bindings {
   @override
@@ -33,18 +28,18 @@ class HomeBinding implements Bindings {
 
 
     //? common controllers
-    Get.lazyPut(() => HiveHoldBillController());
+    Get.put<HiveHoldBillController>(HiveHoldBillController(),permanent: true);
     Get.put<MyLocalStorage>(MyLocalStorage(),permanent: true);
     Get.put<SocketController>(SocketController());
 
 
     //?api data loader for initial loading data
     Get.put<FoodData>(FoodData(), permanent: true);
+    Get.put<CategoryData>(CategoryData(), permanent: true);
 
 
     //?screen binding
     Get.lazyPut(() => TodayFoodController());
-    //? BillingScreenController also call on initial because to load today food in billing screen also
-    Get.lazyPut(() => BillingScreenController());
+
   }
 }

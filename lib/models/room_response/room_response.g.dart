@@ -7,9 +7,9 @@ part of 'room_response.dart';
 // **************************************************************************
 
 RoomResponse _$RoomResponseFromJson(Map<String, dynamic> json) => RoomResponse(
-      json['error'] as bool,
-      json['errorCode'] as String,
-      json['totalSize'] as int,
+      json['error'] as bool?,
+      json['errorCode'] as String?,
+      json['totalSize'] as int?,
       (json['data'] as List<dynamic>?)
           ?.map((e) => Room.fromJson(e as Map<String, dynamic>))
           .toList(),

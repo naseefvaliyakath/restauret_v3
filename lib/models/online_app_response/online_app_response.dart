@@ -7,13 +7,13 @@ class OnlineAppResponse{
 
 
   @JsonKey(name : "error")
-  bool error;
+  bool? error;
 
   @JsonKey(name : "errorCode")
-  String errorCode;
+  String? errorCode;
 
   @JsonKey(name : "totalSize")
-  int totalSize;
+  int? totalSize;
 
 
 

@@ -18,7 +18,7 @@ class CategoryRepo extends GetxService {
     try {
       final response = await _httpService.getRequestWithBody(GET_CATEGORY, {'fdShopId': SHOPE_ID});
       CategoryResponse parsedResponse = CategoryResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
@@ -41,7 +41,7 @@ class CategoryRepo extends GetxService {
 
       final response = await _httpService.insertWithBody(INSERT_CATEGORY, categoryDetails);
       CategoryResponse parsedResponse = CategoryResponse.fromJson(response.data);
-      if (parsedResponse.error) {
+      if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
@@ -63,8 +63,9 @@ class CategoryRepo extends GetxService {
       };
       final response = await _httpService.delete(DELETE_CATEGORY, categoryData);
       CategoryResponse parsedResponse = CategoryResponse.fromJson(response.data);
-      if (parsedResponse.error) {
-        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+      if (parsedResponse.error ?? true) {
+        String errorCode = parsedResponse.errorCode == 'First delete foods with this category' ? 'Cannot delete !!' : 'Something went wrong';
+        return MyResponse(statusCode: 0, status: 'Cannot delete !', message: errorCode.toString());
       } else {
         return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
       }

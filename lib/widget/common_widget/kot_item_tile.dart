@@ -9,6 +9,8 @@ class KotItemTile extends StatelessWidget {
   final String itemName;
   final int qnt;
   final String kitchenNote;
+  //? in final invoice no need kitchen note
+  final bool hideKotNote;
 
 
   const KotItemTile(
@@ -17,7 +19,8 @@ class KotItemTile extends StatelessWidget {
       required this.itemName,
       required this.qnt,
       required this.kitchenNote,
-        this.index = 0})
+        this.index = 0,
+         this.hideKotNote = false})
       : super(key: key);
 
   @override
@@ -50,10 +53,13 @@ class KotItemTile extends StatelessWidget {
                       style: TextStyle(fontSize: 13.sp),
                     ),
                   ),
-                  Text(
-                    kitchenNote,
-                    maxLines: 1,
-                    style: TextStyle(fontSize: 8.sp, color: Colors.black),
+                  Visibility(
+                    visible: !hideKotNote ,
+                    child: Text(
+                      kitchenNote,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: 8.sp, color: Colors.black),
+                    ),
                   ),
                 ],
               ),

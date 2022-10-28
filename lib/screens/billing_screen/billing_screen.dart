@@ -1,18 +1,16 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../../alerts/common_alerts.dart';
 import '../../alerts/food_billing_alert/food_billing_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
+import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/billing_screen/billing_food_card.dart';
 import '../../widget/billing_screen/billing_food_err_card.dart';
 import '../../widget/billing_screen/billing_item_tile.dart';
 import '../../widget/billing_screen/billing_table_heading.dart';
-import '../../widget/billing_screen/category_drop_down.dart';
+import '../../widget/billing_screen/category_drop_down_billing.dart';
 import '../../widget/billing_screen/clear_all_bill_widget.dart';
 import '../../widget/billing_screen/search_bar_in_billing_screen.dart';
 import '../../widget/billing_screen/totel_price_txt.dart';
@@ -43,7 +41,7 @@ class BillingScreen extends StatelessWidget {
               .find<BillingScreenController>()
               .billingItems
               .isNotEmpty) {
-            askConfirm(context);
+            await Get.find<BillingScreenController>().saveBillInHive();
             return false;
           } else {
             return true;
@@ -65,6 +63,7 @@ class BillingScreen extends StatelessWidget {
                     width: double.maxFinite,
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         10.verticalSpace,
@@ -77,24 +76,20 @@ class BillingScreen extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.arrow_back,
-                                      size: 24.sp,
-                                    ),
-                                    onPressed: () {
+                                  BackButton(
+                                    onPressed: () async {
                                       //? if navigated from kot update  tab on back press not ask save in hive
                                       if (ctrl.isNavigateFromKotUpdate == true) {
                                         Get.back();
                                       } else {
                                         if (ctrl.billingItems.isNotEmpty) {
-                                          askConfirm(context);
+                                          await Get.find<BillingScreenController>().saveBillInHive();
+                                          Get.back();
                                         } else {
                                           Get.back();
                                         }
                                       }
                                     },
-                                    splashRadius: 24.sp,
                                   ),
                                   15.horizontalSpace,
                                   const HeadingRichText(name: 'Take away billing'),
@@ -115,7 +110,7 @@ class BillingScreen extends StatelessWidget {
                               ctrl.searchTodayFood();
                             }),
                             //? category dropdown
-                            const CategoryDropDown()
+                            const CategoryDropDownBilling()
                           ],
                         ),
                         //?  show foods to billing
@@ -125,6 +120,7 @@ class BillingScreen extends StatelessWidget {
                             padding: EdgeInsets.all(5.sp),
                             //height: 250,
                             child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
                                 return ctrl.isLoading
@@ -140,7 +136,7 @@ class BillingScreen extends StatelessWidget {
                                       foodBillingAlert(
                                         context,
                                         price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
-                                        img: ctrl.myTodayFoods[index].fdImg ?? 'https://mobizate.com/uploads/sample.jpg',
+                                        img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
                                         name: ctrl.myTodayFoods[index].fdName ?? '',
                                         fdId: ctrl.myTodayFoods[index].fdId ?? -1,
                                       );
@@ -148,13 +144,13 @@ class BillingScreen extends StatelessWidget {
                                     //? to close key bord on outside touch
                                     FocusScope.of(context).requestFocus(FocusNode());
                                   },
-                                  img: ctrl.myTodayFoods[index].fdImg ?? 'https://mobizate.com/uploads/sample.jpg',
+                                  img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
                                   name: ctrl.myTodayFoods[index].fdName ?? '',
                                   price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
                                 );
                               },
                               //? in loading to show 8 loading card
-                              itemCount: ctrl.isLoading ? 8 : ctrl.myTodayFoods.length ?? 0,
+                              itemCount: ctrl.isLoading ? 8 : ctrl.myTodayFoods.length,
                             )),
                         //? Items Ordered title
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -165,7 +161,12 @@ class BillingScreen extends StatelessWidget {
                           ),
                           //? clear bill btn
                           ClearAllBill(onTap: () {
-                            ctrl.clearAllBillItems();
+                            //? if settled button clicked cant clear item
+                            if (ctrl.isClickedSettle.value) {
+                              AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
+                            } else {
+                              ctrl.clearAllBillItems();
+                            }
                           }),
                         ]),
                         //? billing table
@@ -174,23 +175,25 @@ class BillingScreen extends StatelessWidget {
                           BoxDecoration(border: Border.all(color: AppColors.mainColor), borderRadius: BorderRadius.circular(5.r)),
                           padding: EdgeInsets.all(3.sp),
                           width: double.maxFinite,
-                          height: 0.52.sh,
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               //? billing table heading
                               const BillingTableHeading(),
                               6.verticalSpace,
                               SizedBox(
+                                height: 0.49.sh,
                                 child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     return BillingItemTile(
                                       index: index,
                                       slNumber: index + 1,
-                                      itemName: ctrl.billingItems[index]['name'],
-                                      qnt: ctrl.billingItems[index]['qnt'],
-                                      kitchenNote: ctrl.billingItems[index]['ktNote'],
-                                      price: ctrl.billingItems[index]['price'],
+                                      itemName: ctrl.billingItems[index]['name'] ?? '',
+                                      qnt: ctrl.billingItems[index]['qnt'] ?? 0,
+                                      kitchenNote: ctrl.billingItems[index]['ktNote'] ?? '',
+                                      price: ctrl.billingItems[index]['price'] ?? 0,
                                       onLongTap: () {
                                         //? to update or delete the items added in the billing list
                                         deleteItemFromBillAlert(context, index);
@@ -234,7 +237,7 @@ class BillingScreen extends StatelessWidget {
                                       color: Colors.redAccent,
                                       text: 'Cancel Update',
                                       onTap: () {
-                                        //  Get.offNamed(RouteHelper.getOrderViewScreen());
+                                        Get.offNamed(RouteHelper.getOrderViewScreen());
                                       },
                                     ),
                                   ),
@@ -276,7 +279,7 @@ class BillingScreen extends StatelessWidget {
                                       color: const Color(0xffee588f),
                                       text: 'Settle',
                                       onTap: () async {
-                                        ctrl.settleBillingCash(context, ctrl);
+                                        ctrl.settleBillingCashAlertShowing(context, ctrl);
                                       },
                                     ),
                                   ),
@@ -319,7 +322,7 @@ class BillingScreen extends StatelessWidget {
                                       color: const Color(0xff62c5ce),
                                       text: 'All Order',
                                       onTap: () {
-                                        //  Get.offNamed(RouteHelper.getOrderViewScreen());
+                                        Get.offNamed(RouteHelper.getOrderViewScreen());
                                       },
                                     ),
                                   ),

@@ -37,8 +37,8 @@ foodBillingAlert(
           ctrl.addFoodToBill(
             fdId ?? 0,
             name ?? '',
-            ctrl.count ?? 0,
-            ctrl.price ?? 0,
+            ctrl.count ,
+            ctrl.price ,
             ktNoteController.text ?? '',
           );
           Navigator.pop(context);

@@ -47,7 +47,7 @@ class AddCategoryCardTextField extends StatelessWidget {
                     maxLines: 1,
                     autofocus: true,
                     inputFormatters:[
-                      LengthLimitingTextInputFormatter(9),
+                      LengthLimitingTextInputFormatter(13),
                     ],
                     decoration: InputDecoration(
                       hintText: 'Name',

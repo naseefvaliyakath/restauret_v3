@@ -55,11 +55,18 @@ class UpdateFoodController extends GetxController {
   bool imageToggle = false;
   //? on init this variable fill the current category
   //? then after loading category check the variable data and set category index
+
+  String initialFdName = '';
   String initialFdCategory = COMMON_CATEGORY;
+  String initialFdImg = 'https://mobizate.com/uploads/sample.jpg';
+  String initialFdIsToday = 'no';
+  int initialCookTime = 0;
+  int initialId = -1;
 
   @override
   Future<void> onInit() async {
     initTxtCtrl();
+    receiveInitialValue();
     getInitialCategory();
     super.onInit();
   }
@@ -120,12 +127,17 @@ class UpdateFoodController extends GetxController {
 
   //? setting up setCategoryTappedIndex initially as per current category
   updateCategoryFirstTime(catName){
+
     try {
       _myCategory.asMap().forEach((index, value) {
+        print(value.catName);
             if(value.catName == catName){
               setCategoryTappedIndex(index);
+              print('updateCategoryFirstTime called $catName and index $index');
             }
           });
+
+      update();
     } catch (e) {
       rethrow;
     }
@@ -167,12 +179,39 @@ class UpdateFoodController extends GetxController {
 
   //////! category section !//////
 
-  //? for the initial initial from routing
+  receiveInitialValue(){
+    int id = Get.arguments['id'] ?? -1;
+    String fdName = Get.arguments['fdName'] ?? '';
+    String fdCategory = Get.arguments['fdCategory'] ?? COMMON_CATEGORY;
+    double fdFullPrice = Get.arguments['fdFullPrice'] ?? 0;
+    double fdThreeBiTwoPrsPrice = Get.arguments['fdThreeBiTwoPrsPrice'] ?? 0;
+    double fdHalfPrice = Get.arguments['fdHalfPrice'] ?? 0;
+    double fdQtrPrice = Get.arguments['fdQtrPrice'] ?? 0;
+    String fdIsLoos = Get.arguments['fdIsLoos'] ?? 'no';
+    int cookTime = Get.arguments['cookTime'] ?? 0;
+    String fdImg = Get.arguments['fdImg'] ?? IMG_LINK;
+    String fdIsToday = Get.arguments['fdIsToday'] ?? 'no';
+    if (kDebugMode) {
+      print('$fdName -- $fdCategory --  $fdFullPrice');
+    }
+
+    //? make the received values global
+    initialId = id;
+    initialFdName = fdName;
+    initialFdIsToday = fdIsToday;
+    initialFdImg = fdImg;
+    initialCookTime = cookTime;
+    initialFdCategory =fdCategory;
+
+    //? to set the values in controllers and btn's
+    updateInitialValue(fdName, fdFullPrice, fdThreeBiTwoPrsPrice, fdHalfPrice, fdQtrPrice, fdIsLoos, fdCategory);
+  }
+
+
+  //? for the initial  from routing
+  //? to set the vales initially in txt controllers and btn's
   updateInitialValue(fdNameIn, fdPriceIn, fdThreeBiTwoPrsPriceIn, fdHalfPriceIn, fdQtrPriceIn, fdIsLoos,fdCategory) {
     try {
-      //? this method is calling here and getInitialCategory() method also
-      //? because some time getInitialCategory() will call first time eg: if data loaded from localData
-      updateCategoryFirstTime(initialFdCategory);
 
       //? setting up value in txt controllers
       fdNameTD.text = fdNameIn;
@@ -204,25 +243,17 @@ class UpdateFoodController extends GetxController {
   }
 
   //validate before insert
-  validateFoodDetails({
-    required fdName,
-    required fdCategory,
-    required fdImg,
-    required fdIsToday,
-    required cookTime,
-    required id,
-  }) async {
+  validateFoodDetails() async {
     try {
-      print('object $fdCategory');
       if ((fdPriceTD.text.trim() != '' || fdFullPriceTD.text.trim() != '')) {
         var fdIsLoos = 'no';
         double fdPriceNew = 0;
-        var fdNameNew = fdName == null ? fdName = '' : fdName = fdName;
-        var fdCategoryNew = fdCategory == null ? fdCategory = COMMON_CATEGORY : fdCategory = fdCategory;
-        int idNew = id == null ? id = 0 : id = id;
-        var fdImgNew = fdImg == null ? fdImg = 'https://mobizate.com/uploads/sample.jpg' : fdImg = fdImg;
-        var fdIsTodayNew = fdIsToday == null ? fdIsToday = 'no' : fdIsToday = fdIsToday;
-        int cookTimeNew = cookTime == null ? cookTime = 0 : cookTime = cookTime;
+        var fdNameNew = initialFdName;
+        var fdCategoryNew = initialFdCategory;
+        int idNew = initialId;
+        var fdImgNew = initialFdImg;
+        var fdIsTodayNew = initialFdIsToday;
+        int cookTimeNew = initialCookTime;
         double fdThreeBiTwoPrsPriceNew = 0;
         double fdHalfPriceNew = 0;
         double fdQtrPriceNew = 0;
@@ -297,8 +328,8 @@ class UpdateFoodController extends GetxController {
           id: idNew);
       if (response.statusCode == 1) {
         //? to update all food and todayFood  after update in new food
-        _foodData.getAllFoods();
-        _foodData.getTodayFoods();
+        _foodData.getAllFoods(fromAllFood: true);
+        _foodData.getTodayFoods(fromTodayFood: true);
         AppSnackBar.successSnackBar('Success', response.message);
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);

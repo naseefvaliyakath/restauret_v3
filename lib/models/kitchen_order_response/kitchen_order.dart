@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'kot_tableChairSet.dart';
 import 'order_bill.dart';
-
-
 part 'kitchen_order.g.dart';
 
 @JsonSerializable()
@@ -9,33 +8,36 @@ class KitchenOrder {
 //flutter pub run build_runner build --delete-conflicting-outputs
 
   @JsonKey(name: "Kot_id")
-  int Kot_id;
+  int? Kot_id;
 
   @JsonKey(name: "error")
-  bool error;
+  bool? error;
 
   @JsonKey(name: "errorCode")
-  String errorCode;
+  String? errorCode;
 
   @JsonKey(name: "totalSize")
-  int totalSize;
+  int? totalSize;
 
   @JsonKey(name: "fdOrderStatus")
-  String fdOrderStatus;
+  String? fdOrderStatus;
 
   @JsonKey(name: "fdOrderType")
-  String fdOrderType;
+  String? fdOrderType;
 
   @JsonKey(name: "totelPrice")
-  num totalPrice;
+  num? totalPrice;
 
   @JsonKey(name: "fdOrder")
   List<OrderBill>? fdOrder;
 
 
 
+  @JsonKey(name: "kotTableChairSet")
+  List<KotTableChairSet>? kotTableChairSet;
+
   @JsonKey(name: "orderColor")
-  int orderColor;
+  int? orderColor;
 
   KitchenOrder({
     required this.Kot_id,

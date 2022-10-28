@@ -9,8 +9,8 @@ part of 'kitchen_order_array.dart';
 KitchenOrderArray _$KitchenOrderArrayFromJson(Map<String, dynamic> json) =>
     KitchenOrderArray(
       error: json['error'] as bool,
-      errorCode: json['errorCode'] as String,
-      totalSize: json['totalSize'] as int,
+      errorCode: json['errorCode'] as String?,
+      totalSize: json['totalSize'] as int?,
       kitchenOrder: (json['kitchenOrder'] as List<dynamic>?)
           ?.map((e) => KitchenOrder.fromJson(e as Map<String, dynamic>))
           .toList(),

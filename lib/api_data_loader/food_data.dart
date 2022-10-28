@@ -46,11 +46,20 @@ class FoodData extends GetxController {
         } else {
           _allFoods.clear();
           _allFoods.addAll(parsedResponse.data?.toList() ?? []);
-          //? checking method called from AllFoodController
-          //? else no need to call refreshMyAllFood() method
+          //? if fromAllFood is true then   Get.find<AllFoodController>().refreshMyAllFood(_allFoods) will call
+          //? and data inside the AllFoodController also refresh
+          //? else local data inside the foodData only refresh
           if(fromAllFood){
-            //? this will update data inside the allFood controller
-            Get.find<AllFoodController>().refreshMyAllFood(_allFoods);
+            //? registering controller if its not registered
+            if(Get.isRegistered<AllFoodController>()){
+              Get.find<AllFoodController>().refreshMyAllFood(_allFoods);
+            }
+            else{
+              //? this will update data inside the allFood controller
+              Get.lazyPut<AllFoodController>(() => AllFoodController());
+              Get.find<AllFoodController>().refreshMyAllFood(_allFoods);
+            }
+
           }
 
         }
@@ -63,7 +72,7 @@ class FoodData extends GetxController {
     update();
   }
 
-  getTodayFoods({bool fromTodayFood = false}) async {
+  getTodayFoods({bool fromTodayFood = false,bool fromBilling = false}) async {
     if (kDebugMode) {
       print('getTodayFoods() is called');
     }
@@ -78,13 +87,34 @@ class FoodData extends GetxController {
         } else {
           _todayFoods.clear();
           _todayFoods.addAll(parsedResponse.data?.toList() ?? []);
-          //? checking method called from TodayFoodController
-          //? else no need to call refreshMyTodayFood() method
+          //? if fromTodayFood is true then   Get.find<TodayFoodController>().refreshMyAllFood(_allFoods) will call
+          //? and data inside the TodayFoodController also refresh
+          //? else local data inside the foodData only refresh
           if(fromTodayFood){
-            //? this will update data inside the allFood controller
-            Get.find<TodayFoodController>().refreshMyTodayFood(_todayFoods);
-            //? also update today food in billing screen
-            Get.find<BillingScreenController>().refreshMyTodayFood(_todayFoods);
+            //?checking controller is registered
+            if(Get.isRegistered<TodayFoodController>()){
+              //? controller already in memory so just calling method
+              Get.find<TodayFoodController>().refreshMyTodayFood(_todayFoods);
+            }
+            else{
+              //? controller not registered registering and calling method
+              //? this will update data inside the allFood controller
+              Get.lazyPut<TodayFoodController>(() => TodayFoodController());
+              Get.find<TodayFoodController>().refreshMyTodayFood(_todayFoods);
+            }
+          }
+          if(fromBilling){
+           //?checking controller is registered
+           if(Get.isRegistered<BillingScreenController>()){
+             //? controller already in memory so just calling method
+             Get.find<BillingScreenController>().refreshMyTodayFood(_todayFoods);
+           }
+           else{
+             //? controller not registered registering and calling method
+             //? this will update data inside the allFood controller
+             Get.lazyPut<BillingScreenController>(() => BillingScreenController());
+             Get.find<BillingScreenController>().refreshMyTodayFood(_todayFoods);
+           }
           }
 
         }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_type__drop_down.dart';
+import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_drop_down_for_order_view.dart';
 import 'package:rest_verision_3/widget/common_widget/horizontal_divider.dart';
 import '../../constants/app_colors/app_colors.dart';
+import 'payment_drop_down_for_billing.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
@@ -12,10 +13,10 @@ import 'invoice_alert_for_billing_page.dart';
 
 
 //? this is the popup open when click settled btn click to enter cash details
-class OrderSettleScreen extends StatelessWidget {
+class OrderSettleScreenInOrderView extends StatelessWidget {
   final ctrl;
 
-  const OrderSettleScreen({Key? key, required this.ctrl}) : super(key: key);
+  const OrderSettleScreenInOrderView({Key? key, required this.ctrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,7 @@ class OrderSettleScreen extends StatelessWidget {
                     hintText: 'Net Amount',
                     isDens: true,
                     hintSize: 16,
+                    isNumberOnly:true,
                     borderRadius: 10.r,
                     onChange: (value) {
                       ctrl.calculateNetTotal();
@@ -74,6 +76,7 @@ class OrderSettleScreen extends StatelessWidget {
                     hintText: 'in %',
                     isDens: true,
                     hintSize: 16,
+                    isNumberOnly:true,
                     borderRadius: 10.r,
                     onChange: (value) {
                       ctrl.calculateNetTotal();
@@ -86,6 +89,7 @@ class OrderSettleScreen extends StatelessWidget {
                     isDens: true,
                     hintSize: 16,
                     borderRadius: 10.r,
+                    isNumberOnly:true,
                     onChange: (_) {
                       ctrl.calculateNetTotal();
                     },
@@ -108,6 +112,7 @@ class OrderSettleScreen extends StatelessWidget {
                     hintText: 'Amount',
                     hintSize: 16,
                     isDens: true,
+                    isNumberOnly:true,
                     borderRadius: 10.r,
                     onChange: (_) {
                       ctrl.calculateNetTotal();
@@ -132,6 +137,7 @@ class OrderSettleScreen extends StatelessWidget {
                     hintText: 'Grand Total',
                     isDens: true,
                     hintSize: 16,
+                        isNumberOnly:true,
                     borderRadius: 10.r,
                     onChange: (_) {},
                   ))
@@ -148,7 +154,7 @@ class OrderSettleScreen extends StatelessWidget {
                       color: AppColors.titleColor,
                     ),
                   ),
-                  const Flexible(child: PaymentTypeDropDown())
+                   const Flexible(child: PaymentDropDownForOrderView())
                 ],
               ),
               10.verticalSpace,
@@ -168,6 +174,7 @@ class OrderSettleScreen extends StatelessWidget {
                     hintText: 'Amount Received',
                     isDens: true,
                     hintSize: 16,
+                    isNumberOnly:true,
                     borderRadius: 10.r,
                     onChange: (value) {
                       ctrl.calculateNetTotal();
@@ -222,19 +229,18 @@ class OrderSettleScreen extends StatelessWidget {
                         color: const Color(0xff4caf50),
                         text: 'Print',
                         onTap: () {
-                          print('object');
                           Navigator.pop(context);
                           //? bill page to print invoice
                           invoiceAlertForBillingViewPage(
                               context: context,
-                              grandTotal:ctrl.grandTotalNew,
-                              discountPercent: ctrl.discountPresent,
-                              discountCash: ctrl.discountCash,
-                              charges: ctrl.charges,
-                              billingItems: ctrl.billingItems,
-                              change: ctrl.balanceChange.value,
-                              netAmount:ctrl.netTotal,
-                              cashReceived:ctrl.cashReceived,
+                              grandTotal:ctrl.grandTotalNew ?? 0,
+                              discountPercent: ctrl.discountPresent ?? 0,
+                              discountCash: ctrl.discountCash ?? 0,
+                              charges: ctrl.charges ?? 0,
+                              billingItems: ctrl.billingItems ?? [],
+                              change: ctrl.balanceChange.value ?? 0,
+                              netAmount:ctrl.netTotal ?? 0,
+                              cashReceived:ctrl.cashReceived ?? 0,
                               orderType: ctrl.orderType.toString().toUpperCase());
                         },
                       ),

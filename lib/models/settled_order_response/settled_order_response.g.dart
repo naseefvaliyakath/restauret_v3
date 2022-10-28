@@ -9,9 +9,9 @@ part of 'settled_order_response.dart';
 SettledOrderResponse _$SettledOrderResponseFromJson(
         Map<String, dynamic> json) =>
     SettledOrderResponse(
-      error: json['error'] as bool,
-      errorCode: json['errorCode'] as String,
-      totalSize: json['totalSize'] as int,
+      error: json['error'] as bool?,
+      errorCode: json['errorCode'] as String?,
+      totalSize: json['totalSize'] as int?,
       data: (json['data'] as List<dynamic>?)
           ?.map((e) => SettledOrder.fromJson(e as Map<String, dynamic>))
           .toList(),

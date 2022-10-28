@@ -2,11 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import '../constants/api_link/api_link.dart';
 import '../constants/app_secret_constants/app_secret_constants.dart';
+import '../models/foods_response/food_response.dart';
+import '../models/kitchen_order_response/kitchen_order.dart';
 import '../models/my_response.dart';
 import '../models/settled_order_response/settled_order_response.dart';
 import '../services/dio_error.dart';
 import '../services/service.dart';
-//! need to add fdShopId
+
 class SettledOrderRepo extends GetxService {
   final HttpService _httpService = Get.find<HttpService>();
 
@@ -31,4 +33,8 @@ class SettledOrderRepo extends GetxService {
 
     }
   }
+
+
+
+
 }

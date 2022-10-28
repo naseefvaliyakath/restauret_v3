@@ -70,15 +70,10 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.arrow_back,
-                                            size: 24.sp,
-                                          ),
+                                        BackButton(
                                           onPressed: () {
                                             Get.back();
                                           },
-                                          splashRadius: 24.sp,
                                         ),
                                         15.horizontalSpace,
                                         const HeadingRichText(name: 'Add Your Food'),
@@ -103,6 +98,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                               child: ctrl.isLoadingCategory == true
                                   ? const ShimmingEffect()
                                   : ListView.builder(
+                                      physics: const BouncingScrollPhysics(),
                                       scrollDirection: Axis.horizontal,
                                       itemCount: ctrl.myCategory!.length + 1,
                                       itemBuilder: (BuildContext ctx, index) {
@@ -122,11 +118,15 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                                 okBtn: 'Delete',
                                                 cancelBtn: 'Cancel',
                                                 context: context,
+                                                onCancelTap: () {},
                                                 onTap: () {
-                                                  ctrl.deleteCategory(ctrl.myCategory[index].CatId ?? -1);
+                                                  ctrl.deleteCategory(
+                                                    catId: ctrl.myCategory[index].CatId ?? -1,
+                                                    catName: ctrl.myCategory[index].catName ?? '',
+                                                  );
                                                 },
-                                              );
 
+                                              );
                                             },
                                           );
                                         }
@@ -200,6 +200,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                               hintText: 'Enter Your Food Name ....',
                               textEditingController: ctrl.fdNameTD,
                               borderRadius: 15.r,
+                              txtLength: 35,
                               onChange: (_) {},
                             ),
 

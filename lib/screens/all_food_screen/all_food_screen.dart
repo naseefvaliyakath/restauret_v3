@@ -7,12 +7,11 @@ import 'package:get/get.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
+import '../../widget/all_food_screen/category_drop_down_all.dart';
 import '../../widget/common_widget/food_card.dart';
 import '../../widget/common_widget/food_search_bar.dart';
-import '../../widget/common_widget/food_sort_round_icon.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/common_widget/two_button-bottom_sheet.dart';
-import '../today_food_screen/controller/today_food_controller.dart';
 import 'controller/all_food_controller.dart';
 
 class AllFoodScreen extends StatelessWidget {
@@ -34,7 +33,8 @@ class AllFoodScreen extends StatelessWidget {
                 ? const MyLoading()
                 : SafeArea(
                     child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
+                      //? when no item then pull to  refresh not work , that's why two physics
+                      physics: ctrl.myAllFoods.isNotEmpty ? const BouncingScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                       primary: false,
                       slivers: <Widget>[
                         SliverAppBar(
@@ -58,15 +58,10 @@ class AllFoodScreen extends StatelessWidget {
                                   )),
                             ),
                           ],
-                          leading: IconButton(
-                            icon: Icon(
-                              Icons.arrow_back,
-                              size: 24.sp,
-                            ),
+                          leading: BackButton(
                             onPressed: () {
                               Get.back();
                             },
-                            splashRadius: 24.sp,
                           ),
                           //? search bar and sort icon
                           bottom: PreferredSize(
@@ -82,7 +77,7 @@ class AllFoodScreen extends StatelessWidget {
                                       ctrl.searchAllFood();
                                     },
                                   ),
-                                  const FoodSortRoundIcon()
+                                  const CategoryDropDownAll()
                                 ],
                               ),
                             ),
@@ -123,7 +118,7 @@ class AllFoodScreen extends StatelessWidget {
                                                     'fdQtrPrice': ctrl.myAllFoods[index].fdQtrPrice ?? 0,
                                                     'fdIsLoos': ctrl.myAllFoods[index].fdIsLoos ?? 'no',
                                                     'cookTime': ctrl.myAllFoods[index].cookTime ?? 0,
-                                                    'fdImg': ctrl.myAllFoods[index].fdImg ?? 'https://mobizate.com/uploads/sample.jpg',
+                                                    'fdImg': ctrl.myAllFoods[index].fdImg ?? IMG_LINK,
                                                     'fdIsToday': ctrl.myAllFoods[index].fdIsToday ?? 'no',
                                                     'id': ctrl.myAllFoods[index].fdId ?? 0,
                                                   },
@@ -137,13 +132,14 @@ class AllFoodScreen extends StatelessWidget {
                                       okBtn: 'Delete',
                                       cancelBtn: 'Cancel',
                                       context: context,
+                                      onCancelTap: (){},
                                       onTap: () {
                                         ctrl.deleteFood(ctrl.myAllFoods[index].fdId ?? -1);
                                       },
                                     );
                                   },
                                   child: FoodCard(
-                                    img: ctrl.myAllFoods[index].fdImg ?? 'https://mobizate.com/uploads/sample.jpg',
+                                    img: ctrl.myAllFoods[index].fdImg ?? IMG_LINK,
                                     name: ctrl.myAllFoods[index].fdName ?? '',
                                     price: ctrl.myAllFoods[index].fdFullPrice ?? 0,
                                     today: ctrl.myAllFoods[index].fdIsToday ?? 'no',

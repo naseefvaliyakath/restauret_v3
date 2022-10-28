@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_type__drop_down.dart';
+import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_drop_down_for_update_settled_order.dart';
 import 'package:rest_verision_3/widget/common_widget/horizontal_divider.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
@@ -68,7 +68,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                   ),
                   Flexible(
                       child: TextFieldWidget(
-                    textEditingController: ctrl.settleDiscountPersentCtrl.value,
+                    textEditingController: ctrl.settleDiscountPercentageCtrl.value,
                     hintText: 'in %',
                     isDens: true,
                     hintSize: 16,
@@ -126,7 +126,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                   ),
                   Flexible(
                       child: TextFieldWidget(
-                    textEditingController: ctrl.settleGrandTotelCtrl.value,
+                    textEditingController: ctrl.settleGrandTotalCtrl.value,
                     hintText: 'Grand Total',
                     isDens: true,
                     hintSize: 16,
@@ -146,7 +146,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                       color: AppColors.titleColor,
                     ),
                   ),
-                  const Flexible(child: PaymentTypeDropDown())
+                  const Flexible(child: PaymentDropDownForUpdateSettledOrder())
                 ],
               ),
               10.verticalSpace,
@@ -162,7 +162,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                   ),
                   Flexible(
                       child: TextFieldWidget(
-                    textEditingController: ctrl.settleCashRecivedCtrl.value,
+                    textEditingController: ctrl.settleCashReceivedCtrl.value,
                     hintText: 'Amount Received',
                     isDens: true,
                     hintSize: 16,

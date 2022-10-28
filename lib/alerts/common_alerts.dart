@@ -31,48 +31,30 @@ void appCloseConfirm(context) {
 void twoFunctionAlert({
   required BuildContext context,
   required Function onTap,
+  required Function onCancelTap,
   required String title,
   required String subTitle,
-  required String okBtn,
-  required String cancelBtn,
+   String okBtn = 'Yes',
+   String cancelBtn = 'No',
 }) {
   MyDialogBody.myConfirmDialogBody(
     context: context,
     title: 'Delete this item?',
     desc: 'Do you want to delete this item ?',
-    btnCancelText: 'No',
-    btnOkText: 'Yes',
+    btnCancelText: cancelBtn,
+    btnOkText: okBtn,
     onTapOK: () async {
       await onTap();
       Navigator.pop(context);
     },
     onTapCancel: () async {
+      await onCancelTap();
       Navigator.pop(context);
     },
   );
 }
 
-//! to confirm save bill in hive before go back to main screen
-//! check can replaced this alert with common twoFunctionAlert
-void askConfirm(context) {
-  MyDialogBody.myConfirmDialogBody(
-    context: context,
-    title: 'Hold the items ?',
-    desc: 'Do you Want to hold the  item entered ?',
-    btnCancelText: 'No',
-    btnOkText: 'Yes',
-    onTapOK: () async {
-      await Get.find<BillingScreenController>().saveBillInHive();
-      Navigator.pop(context);
-      Navigator.pop(context, true);
-    },
-    onTapCancel: () async {
-      await Get.find<BillingScreenController>().clearBillInHive();
-      Navigator.pop(context);
-      Navigator.pop(context, true);
-    },
-  );
-}
+
 
 
 deleteItemFromBillAlert(context, index) async {

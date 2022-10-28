@@ -7,14 +7,16 @@ import '../../constants/app_colors/app_colors.dart';
 class MyToggleSwitch extends StatelessWidget {
   final Function onToggle;
   final bool value;
+  //? if its true then change btn text from full-loos to change-no for img upload
+  final bool forImg;
 
-  const MyToggleSwitch({Key? key, required this.onToggle, required this.value}) : super(key: key);
+  const MyToggleSwitch({Key? key, required this.onToggle, required this.value,  this.forImg = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FlutterSwitch(
-      inactiveText: 'Full',
-      activeText: 'Loos',
+      inactiveText: forImg ? 'image' : 'Full',
+      activeText: forImg ? 'choose' :'Loos',
       inactiveColor: AppColors.mainColor_2,
       height: 28.0.sp,
       width: 70.sp,

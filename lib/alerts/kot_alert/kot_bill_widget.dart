@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_widget/ticket_widget.dart';
+import '../../constants/strings/my_strings.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../../widget/common_widget/common_text/small_text.dart';
@@ -60,7 +61,7 @@ class KotBillWidget extends StatelessWidget {
                   color: Colors.black,
                 ),
                 MidText(
-                  text: type == 'DINING'
+                  text: type == DINING
                       ? 'TABLE NUMBER'
                       : type == 'ORDER_VIEW' ? 'TABLE :$tableName' :'TABLE :',
                   size: 13.sp,

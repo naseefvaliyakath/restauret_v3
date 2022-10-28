@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../routes/route_helper.dart';
@@ -57,28 +58,28 @@ class DashBordScreen extends StatelessWidget {
                       subTitle: 'food take away',
                       bgColor: AppColors.mainColor,
                       icon: FontAwesomeIcons.burger,
-                      onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen()),
+                      onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":TAKEAWAY}),
                     ),
                     DashBordCard(
                       title: 'Home Delivery',
                       subTitle: 'Home delivery Bills',
                       bgColor: const Color(0xff4db6ac),
                       icon: FontAwesomeIcons.wallet,
-                      onTap: () {},
+                      onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":HOME_DELEVERY}),
                     ),
                     DashBordCard(
                       title: 'Online Booking',
                       subTitle: 'Online Booking',
                       bgColor: const Color(0xff62c5ce),
                       icon: FontAwesomeIcons.kitchenSet,
-                      onTap: () {},
+                        onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":ONLINE}),
                     ),
                     DashBordCard(
                       title: 'Dining',
                       subTitle: 'Dining Foods',
                       bgColor: const Color(0xff4caf50),
                       icon: FontAwesomeIcons.burger,
-                      onTap: () {},
+                        onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":DINING})
                     ),
                     DashBordCard(
                       title: 'Waiter',

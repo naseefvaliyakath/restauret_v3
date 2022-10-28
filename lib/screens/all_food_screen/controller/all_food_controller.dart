@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
-
+import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
+import '../../../constants/strings/my_strings.dart';
+import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
 import '../../../repository/food_repository.dart';
@@ -13,6 +15,7 @@ class AllFoodController extends GetxController {
   //?controllers
   final FoodData _foodData = Get.find<FoodData>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
+  final CategoryData _categoryData = Get.find<CategoryData>();
 
   //? this will store all AllFood from the server
   //? not showing in UI or change
@@ -23,6 +26,15 @@ class AllFoodController extends GetxController {
 
   List<Foods> get myAllFoods => _myAllFoods;
 
+  //? this will store all Category from the server
+  //? not showing in UI or change
+  final List<Category> _storedCategory = [];
+
+  //? Category to show in UI
+  final List<Category> _myCategory = [];
+
+  List<Category> get myCategory => _myCategory;
+
   //? Search all food controller
   late TextEditingController searchTD;
 
@@ -30,12 +42,16 @@ class AllFoodController extends GetxController {
   bool isLoading = false;
 
 
+  //? to sort food as per category
+  String selectedCategory = COMMON_CATEGORY;
+
 
 
   @override
   void onInit() async {
     searchTD = TextEditingController();
     getInitialFood();
+    getInitialCategory();
     super.onInit();
   }
 
@@ -100,7 +116,7 @@ class AllFoodController extends GetxController {
       if (response.statusCode == 1) {
         refreshAllFood();
         //? to update today food also after adding in today food
-        _foodData.getTodayFoods();
+        _foodData.getTodayFoods(fromTodayFood: true);
         //! success message shown in refreshAllFood() method
         // AppSnackBar.successSnackBar('Success', response.message);
       } else {
@@ -146,8 +162,8 @@ class AllFoodController extends GetxController {
       MyResponse response = await _foodRepo.deleteFood(fdId);
       if (response.statusCode == 1) {
         refreshAllFood();
-        //? to update today food also after adding in today food
-        _foodData.getTodayFoods();
+        //? to update today food also after deleting in today food
+        _foodData.getTodayFoods(fromTodayFood: true);
          //! snack bar showing when refresh food no need to show here
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);
@@ -161,6 +177,89 @@ class AllFoodController extends GetxController {
     }
   }
 
+
+  //////! category section !//////
+
+  //? to load o first screen loading
+  getInitialCategory() {
+    try {
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedCategory from CategoryData controller
+      if (_categoryData.category.isEmpty) {
+        if (kDebugMode) {
+          print(_categoryData.category.length);
+          print('category data loaded from db');
+        }
+        _categoryData.getCategory(fromAllFood: true);
+      } else {
+        if (kDebugMode) {
+          print('category data loaded from category data');
+        }
+        //? load data from variable in categoryData
+        _storedCategory.clear();
+        _storedCategory.addAll(_categoryData.category);
+        //? to show full food in UI
+        _myCategory.clear();
+        _myCategory.addAll(_storedCategory);
+      }
+      update();
+    } catch (e) {
+      return;
+    }
+  }
+
+  //? this function will call getCategory() in CategoryData
+  //? ad refresh fresh data from server
+  refreshCategory() async {
+    try {
+      await _categoryData.getCategory(fromAllFood: true);
+      //? no need to show snack-bar
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? when call getCategory() in CategoryData this method will call in success
+  //? to update fresh data in CategoryData and _myCategory also
+  //? this method only for call getCategory method from CategoryData like callback
+  refreshMyCategory(List<Category> categoryFromCategoryData) {
+    try {
+      _storedCategory.clear();
+      _storedCategory.addAll(categoryFromCategoryData);
+      //? to show full food in UI
+      _myCategory.clear();
+      _myCategory.addAll(_storedCategory);
+      update();
+    } catch (e) {
+      return;
+    }
+  }
+
+  //? to sort food with sorting btn
+  sortFoodBySelectedCategory() {
+    try {
+
+      List<Foods> sortedFoodByCategory = [];
+      //? checking if selected category is COMMON or not selected
+      if (selectedCategory.toUpperCase() == COMMON_CATEGORY.toUpperCase()) {
+        _myAllFoods.clear();
+        _myAllFoods.addAll(_storedAllFoods);
+      } else {
+        for (var element in _storedAllFoods) {
+          //? iterating the food by selected category from dropdown list and saving inside sortedFoodByCategory list
+          if (element.fdCategory == selectedCategory) {
+            sortedFoodByCategory.add(element);
+          }
+        }
+        _myAllFoods.clear();
+        _myAllFoods.addAll(sortedFoodByCategory);
+      }
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   showLoading() {
     isLoading = true;

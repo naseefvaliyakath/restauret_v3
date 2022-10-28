@@ -8,6 +8,8 @@ import '../screens/billing_screen/billing_screen.dart';
 import '../screens/billing_screen/binding/billing_screen_binding.dart';
 import '../screens/home_screen/binding/home_screen_binding.dart';
 import '../screens/home_screen/home_screen.dart';
+import '../screens/order_view_screen/binding/order_view_binding.dart';
+import '../screens/order_view_screen/order_view _screen.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
 
 class RouteHelper {
@@ -16,12 +18,14 @@ class RouteHelper {
   static const String addFoodScreen = '/add-food';
   static const String updateFoodScreen = '/update-food';
   static const String billingScreen = '/billing-food';
+  static const String orderViewScreen = '/order-view-screen';
 
   static String getInitial() => initial;
   static String getAllFoodScreen() => allFoodScreen;
   static String getAddFoodScreen() => addFoodScreen;
   static String getUpdateFoodScreen() => updateFoodScreen;
   static String getBillingScreenScreen() => billingScreen;
+  static String getOrderViewScreen() => orderViewScreen;
 
   static List<GetPage> routes = [
     GetPage(
@@ -59,5 +63,10 @@ class RouteHelper {
       transition: Transition.fade,
       transitionDuration: const Duration(milliseconds: 500),
     ),
+    GetPage(
+        name: orderViewScreen,
+        page: () => OrderViewScreen(),
+        binding: OrderViewBinding(),
+        transitionDuration: const Duration(milliseconds: 400)),
   ];
 }

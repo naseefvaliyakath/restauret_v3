@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart';
 import '../../../alerts/kot_alert/kot_bill_show_alert.dart';
+import '../../../api_data_loader/category_data.dart';
 import '../../../constants/api_link/api_link.dart';
 import '../../../constants/app_secret_constants/app_secret_constants.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
@@ -16,10 +17,12 @@ import '../../../constants/strings/my_strings.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../../hive_database/hive_model/hold_item/hive_hold_item.dart';
 import '../../../local_storage/local_storage_controller.dart';
+import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/food_response.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/kitchen_order_response/kitchen_order.dart';
 import '../../../models/kitchen_order_response/order_bill.dart';
+import '../../../routes/route_helper.dart';
 import '../../../services/dio_error.dart';
 import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
@@ -29,6 +32,7 @@ class BillingScreenController extends GetxController {
   final FoodData _foodsData = Get.find<FoodData>();
   late IO.Socket socket;
 
+  final CategoryData _categoryData = Get.find<CategoryData>();
   final SocketController _socketCtrl = Get.find<SocketController>();
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
   final HttpService _httpService = Get.find<HttpService>();
@@ -39,6 +43,7 @@ class BillingScreenController extends GetxController {
   final RoundedLoadingButtonController btnControllerSettle = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerHold = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerUpdateKot = RoundedLoadingButtonController();
+
 
   //? to show loading when food is loading
   bool isLoading = false;
@@ -53,16 +58,40 @@ class BillingScreenController extends GetxController {
   //? today food to show in UI
   List<Foods> get myTodayFoods => _myTodayFoods;
 
+  //? this will store all Category from the server
+  //? not showing in UI or change
+  final List<Category> _storedCategory = [];
+
+  //? Category to show in UI
+  final List<Category> _myCategory = [];
+
+  List<Category> get myCategory => _myCategory;
+
+  //? to sort food as per category
+  String selectedCategory = COMMON_CATEGORY;
+
+  //?payment methods for dropdown in settle order popup
+
+  final List<String> _myPaymentMethods = [CASH, CARD, ONLINE, PENDINGCASH, TYPE_1, TYPE_2];
+
+  List<String> get myPaymentMethods => _myPaymentMethods;
+
+  //? to sort food as per category
+  String selectedPayment = CASH;
+
   //? count in billing popup and delete popup
   int _count = 1;
+
   int get count => _count;
 
   //? price in billing popup and delete popup
   double _price = 0;
+
   double get price => _price;
 
   //? billing list
   final List<dynamic> _billingItems = [];
+
   List<dynamic> get billingItems => _billingItems;
 
   //? to visible and hide edit billing item in delete popup
@@ -70,15 +99,17 @@ class BillingScreenController extends GetxController {
 
   //? total price in bill
   double _totalPrice = 0;
+
   double get totalPrice => _totalPrice;
 
+  //? to detect witch type of order like takeaway , homeDelivery , dining ..etc
   //? this will change as per selected billing type Eg : takeAway,homeDelivery,onlineBooking & Dining
-  final String _orderType = TAKEAWAY;
-  String get orderType => _orderType;
+   String orderType = TAKEAWAY;
+
+
 
   //? for search field text
   late TextEditingController searchTD;
-
 
   //? to disable button after click settle button
   var isClickedSettle = false.obs;
@@ -89,8 +120,6 @@ class BillingScreenController extends GetxController {
   //? kot id from orderView screen for update kot item,it will assign in when navigation
   //? from update from orderView screen
   int kotIdReceiveFromKotUpdate = -1;
-
-
 
   //? grandTotal & balanceChange obx value
   var grandTotal = 0.0.obs;
@@ -111,16 +140,35 @@ class BillingScreenController extends GetxController {
   double cashReceived = 0;
   double grandTotalNew = 0;
 
-
-
   @override
   void onInit() async {
     initTxtController();
-    getxArgumentReceiveHandler();
+    receivingBillingScreenType();
+    await getxArgumentReceiveHandler();
+    await initialLoadingBillFromHive();
+    getInitialCategory();
     getInitialFood();
     socket = _socketCtrl.socket;
-    await initialLoadingBillFromHive();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    disposeTxtController();
+    super.onClose();
+  }
+
+  //? when click user from home screen to check user clicked in witch billing scrren
+  //? eg TakeAway,HomeDelivery,online, or dining
+  receivingBillingScreenType(){
+    var args = Get.arguments ?? {'billingPage': TAKEAWAY};
+    orderType = args['billingPage'];
+    if(args != null){
+      if (kDebugMode) {
+        print('order tpe is $orderType');
+      }
+
+    }
   }
 
 
@@ -133,14 +181,14 @@ class BillingScreenController extends GetxController {
           'fdShopId': SHOPE_ID,
           'fdOrder': _billingItems,
           'fdOrderStatus': PENDING,
-          'fdOrderType': TAKEAWAY,
+          'fdOrderType': orderType,
         };
 
         final response = await _httpService.insertWithBody(ADD_KOT_ORDER, kotOrder);
         FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-        if (parsedResponse.error) {
+        if (parsedResponse.error ?? true) {
           btnControllerKot.error();
-          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode);
+          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
         } else {
           //? clearing bill table after sending kot
           _billingItems.clear();
@@ -148,7 +196,7 @@ class BillingScreenController extends GetxController {
           clearBillInHive();
           btnControllerKot.success();
           _totalPrice = 0;
-          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode);
+          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
           update();
         }
       }
@@ -170,7 +218,6 @@ class BillingScreenController extends GetxController {
     }
   }
 
-
   //? edit or update kot billing item  to receive data for orderView screen and process
   //? OK
   receiveUpdateKotBillingItem() {
@@ -181,7 +228,7 @@ class BillingScreenController extends GetxController {
         error: true,
         errorCode: 'SomethingWrong',
         totalSize: 0,
-        fdOrderStatus: 'Pending',
+        fdOrderStatus: PENDING,
         fdOrderType: TAKEAWAY,
         fdOrder: [],
         totalPrice: 0,
@@ -215,12 +262,12 @@ class BillingScreenController extends GetxController {
           //? adding items inside the KOT to the bill
           for (var element in orderBill) {
             _billingItems.add({
-              'fdId': element?.fdId ?? -1,
-              'name': element?.name ?? '',
-              'qnt': element?.qnt ?? 0,
+              'fdId': element.fdId ?? -1,
+              'name': element.name ?? '',
+              'qnt': element.qnt ?? 0,
               'price': element.price?.toDouble() ?? 0,
-              'ktNote': element?.ktNote ?? '',
-              'ordStatus': element?.ordStatus ?? PENDING
+              'ktNote': element.ktNote ?? '',
+              'ordStatus': element.ordStatus ?? PENDING
             });
           }
           //? finding total
@@ -248,16 +295,16 @@ class BillingScreenController extends GetxController {
         final response = await _httpService.updateData(UPDATE_KOT_ORDER, kotOrderUpdate);
 
         FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-        if (parsedResponse.error) {
+        if (parsedResponse.error ?? true) {
           btnControllerUpdateKot.error();
-          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode);
+          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
         } else {
           _billingItems.clear();
           clearBillInHive();
           btnControllerUpdateKot.success();
-          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode);
+          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
           //? after update returning to orderViewScreen
-          // Get.offNamed(RouteHelper.getOrderViewScreen());
+          Get.offNamed(RouteHelper.getOrderViewScreen());
           update();
         }
       }
@@ -282,16 +329,22 @@ class BillingScreenController extends GetxController {
   //?to handle Get.argument from different pages like from hold item or kot update .. etc
   //? OK
   getxArgumentReceiveHandler() {
+
+    //? to handle from main page
+    var args1 = Get.arguments ?? {'billingPage': TAKEAWAY};
+    String billingPageType = args1['billingPage'];
+    //? to handle from orderView page for KOT update
     KitchenOrder emptyKotOrder = KitchenOrder(
-        Kot_id: -1,
-        error: true,
-        errorCode: 'SomethingWrong',
-        totalSize: 0,
-        fdOrderStatus: PENDING,
-        fdOrderType: TAKEAWAY,
-        fdOrder: [],
-        totalPrice: 0,
-        orderColor: 111);
+      Kot_id: -1,
+      error: true,
+      errorCode: 'SomethingWrong',
+      totalSize: 0,
+      fdOrderStatus: PENDING,
+      fdOrderType: TAKEAWAY,
+      fdOrder: [],
+      totalPrice: 0,
+      orderColor: 111,
+    );
     //? receiving argument  from orderView page
     //? if its null we make a new args with empty kotItem and holdItem  {'holdItem': [], 'kotItem': emptyKotOrder}; to handle error
     var args = Get.arguments ?? {'holdItem': [], 'kotItem': emptyKotOrder};
@@ -301,6 +354,10 @@ class BillingScreenController extends GetxController {
     List<OrderBill>? orderBill = kotOrder?.fdOrder ?? [];
     //? taking holdItem from args
     List<dynamic>? holdItem = args['holdItem'] ?? [];
+
+    if(billingPageType != ''){
+      receivingBillingScreenType();
+    }
     //? check orderBill is not empty if its not empty then order is from Overview page for updateKOT
     if (orderBill.isNotEmpty) {
       //? calling method to handle this event (update KOT)
@@ -318,9 +375,8 @@ class BillingScreenController extends GetxController {
   //? kot printing dialog
   //? OK
   kotDialogBox(context) {
-    showKotBillAlert(type: TAKEAWAY, billingItems: _billingItems, context: context);
+    showKotBillAlert(type: orderType, billingItems: _billingItems, context: context);
   }
-
 
   //? checking int is in text field
   //? OK
@@ -345,7 +401,7 @@ class BillingScreenController extends GetxController {
 
       grandTotal.value = netTotal - discountCash - discountCashFromPercent - charges;
       grandTotalNew = double.parse(grandTotal.value.toStringAsFixed(3));
-      balanceChange.value = double.parse((settleCashReceivedCtrl.value.text == '' ? 0 : cashReceived - grandTotalNew).toStringAsFixed(3)); //limit double to 3 pont after decimal
+      balanceChange.value = double.parse((settleCashReceivedCtrl.value.text == '' ? 0 : cashReceived - grandTotalNew).toStringAsFixed(3)); //?limit double to 3 pont after decimal
       settleGrandTotalCtrl.value.text = '$grandTotalNew';
     } catch (e) {
       rethrow;
@@ -353,15 +409,10 @@ class BillingScreenController extends GetxController {
   }
 
   //? settle the  billing cash alert
-  settleBillingCash(context, ctrl) {
+  settleBillingCashAlertShowing(context, ctrl) {
     try {
       //? passing values to the textEditingControllers
       settleNetTotalCtrl.value.text = _totalPrice.toString();
-      settleDiscountCashCtrl.value.text = '0';
-      settleDiscountPercentageCtrl.value.text = '0';
-      settleChargesCtrl.value.text = '0';
-      settleGrandTotalCtrl.value.text = '0';
-      settleCashReceivedCtrl.value.text = '';
       calculateNetTotal();
       //? to show billing screen alert directly from billing screen
       billingCashScreenAlert(context: context, ctrl: ctrl, from: 'billing');
@@ -383,14 +434,14 @@ class BillingScreenController extends GetxController {
           'fdShopId': SHOPE_ID,
           'fdOrder': billingItems,
           'fdOrderKot': '-1', //? kotId will -1 so order not send as kot if bill settled from billing screen
-          'fdOrderStatus': 'pending',
-          'fdOrderType': TAKEAWAY,
+          'fdOrderStatus': PENDING,
+          'fdOrderType': orderType,
           'netAmount': netTotal,
           'discountPersent': discountPresent,
           'discountCash': discountCash,
           'charges': charges,
           'grandTotal': grandTotalNew,
-          'paymentType': 'cash',
+          'paymentType': selectedPayment,
           'cashReceived': cashReceived,
           'change': balanceChange.value
         };
@@ -398,14 +449,14 @@ class BillingScreenController extends GetxController {
         final response = await _httpService.insertWithBody(ADD_SETTLED_ORDER, settledBill);
 
         FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-        if (parsedResponse.error) {
+        if (parsedResponse.error ?? true) {
           btnControllerSettle.error();
-          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode);
+          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
         } else {
           btnControllerSettle.success();
           //? isClickedSettle will make true to avoid add new items and restrict btn clicks after settled the order
           isClickedSettle.value = true;
-          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode);
+          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
         }
       }
     } on DioError catch (e) {
@@ -425,9 +476,10 @@ class BillingScreenController extends GetxController {
     isClickedSettle.value = false;
     clearBillInHive();
     _billingItems.clear();
+    _totalPrice = 0;
+    setSettleCashTxtCtrlToZero();
     update();
   }
-
 
   //? to load o first screen loading
   getInitialFood() {
@@ -439,16 +491,16 @@ class BillingScreenController extends GetxController {
       if (_foodsData.todayFoods.isEmpty) {
         if (kDebugMode) {
           print(_foodsData.todayFoods.length);
-          print('data loaded from db');
+          print('food data loaded from db');
         }
-        _foodsData.getTodayFoods(fromTodayFood: true);
+        _foodsData.getTodayFoods(fromBilling: true);
       } else {
         if (kDebugMode) {
-          print('data loaded from food data');
+          print('food data loaded from food data ${_foodsData.todayFoods.length}');
         }
         //? load data from variable in todayFood
         _storedTodayFoods.clear();
-        _storedTodayFoods.addAll(_foodsData.allFoods);
+        _storedTodayFoods.addAll(_foodsData.todayFoods);
         //? to show full food in UI
         _myTodayFoods.clear();
         _myTodayFoods.addAll(_storedTodayFoods);
@@ -456,8 +508,7 @@ class BillingScreenController extends GetxController {
       update();
     } catch (e) {
       return;
-    }
-    finally{
+    } finally {
       hideLoading();
     }
   }
@@ -481,7 +532,7 @@ class BillingScreenController extends GetxController {
   //? this function will call getTodayFood() in FoodData
   //? ad refresh fresh data from server
   refreshTodayFood() async {
-    await _foodsData.getTodayFoods(fromTodayFood: true);
+    await _foodsData.getTodayFoods(fromBilling: true);
     AppSnackBar.successSnackBar('Success', 'Foods updated successfully');
   }
 
@@ -501,13 +552,98 @@ class BillingScreenController extends GetxController {
     }
   }
 
+  //////! category section !//////
 
+  //? to load o first screen loading
+  getInitialCategory() {
+    try {
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedCategory from CategoryData controller
+      if (_categoryData.category.isEmpty) {
+        if (kDebugMode) {
+          print(_categoryData.category.length);
+          print('category data loaded from db');
+        }
+        _categoryData.getCategory(fromBilling: true);
+      } else {
+        if (kDebugMode) {
+          print('category data loaded from category data');
+        }
+        //? load data from variable in todayFood
+        _storedCategory.clear();
+        _storedCategory.addAll(_categoryData.category);
+        //? to show full food in UI
+        _myCategory.clear();
+        _myCategory.addAll(_storedCategory);
+      }
+      update();
+    } catch (e) {
+      return;
+    }
+  }
+
+  //? this function will call getCategory() in CategoryData
+  //? ad refresh fresh data from server
+  refreshCategory() async {
+    try {
+      await _categoryData.getCategory(fromBilling: true);
+      //? no need to show snack-bar
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? when call getCategory() in CategoryData this method will call in success
+  //? to update fresh data in CategoryData and _myCategory also
+  //? this method only for call getCategory method from CategoryData like callback
+  refreshMyCategory(List<Category> categoryFromCategoryData) {
+    try {
+      _storedCategory.clear();
+      _storedCategory.addAll(categoryFromCategoryData);
+      //? to show full food in UI
+      _myCategory.clear();
+      _myCategory.addAll(_storedCategory);
+      update();
+    } catch (e) {
+      return;
+    }
+  }
+
+  //? to sort food with sorting btn
+  sortFoodBySelectedCategory() {
+    try {
+      List<Foods> sortedFoodByCategory = [];
+      //? checking if selected category is COMMON or not selected
+      if (selectedCategory.toUpperCase() == COMMON_CATEGORY.toUpperCase()) {
+        _myTodayFoods.clear();
+        _myTodayFoods.addAll(_storedTodayFoods);
+      } else {
+        for (var element in _storedTodayFoods) {
+          //? iterating the food by selected category from dropdown list and saving inside sortedFoodByCategory list
+          if (element.fdCategory == selectedCategory) {
+            sortedFoodByCategory.add(element);
+          }
+        }
+        _myTodayFoods.clear();
+        _myTodayFoods.addAll(sortedFoodByCategory);
+      }
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  updateSelectedPayment(String selectedPaymentFromDrop) {
+    selectedPayment = selectedPaymentFromDrop;
+    update();
+  }
 
   //!  bill manipulations (local bill adding removing and updating )
 
   //? add items to billing table
   //? OK
-  addFoodToBill(int fdId, String name, int qnt, double price, String ktNote) {
+  addFoodToBill(int? fdId, String? name, int? qnt, double? price, String? ktNote) {
     try {
       //? checking if the food already added
       var values = _billingItems.map((items) => items['fdId']).toList();
@@ -519,14 +655,21 @@ class BillingScreenController extends GetxController {
         //? getting the old qnt from bill
         int currentQnt = _billingItems[index]['qnt'] ?? 0;
         //? updating quantity with adding old quantity
-        int newQnt = currentQnt + qnt;
+        int newQnt = currentQnt + (qnt ?? 0);
         //? updating food to the billing table with the same index
         //? price will be the new price , old price will replace
-        updateFodToBill(index, newQnt, price, ktNote);
+        updateFodToBill(index, newQnt, price ?? 0, ktNote ?? '');
       }
       //? if food is not in the billing table the add food as new food
       else {
-        _billingItems.add({'fdId': fdId, 'name': name, 'qnt': qnt, 'price': price, 'ktNote': ktNote, 'ordStatus': 'pending'});
+        _billingItems.add({
+          'fdId': fdId ?? -1,
+          'name': name ?? '',
+          'qnt': qnt ?? 0,
+          'price': price ?? 0,
+          'ktNote': ktNote ?? '',
+          'ordStatus': PENDING,
+        });
       }
       //? calculating totalPrice
       findTotalPrice();
@@ -540,11 +683,11 @@ class BillingScreenController extends GetxController {
   //? update bill qnt and price
   //? this method is used in addFOodToBill() method if food is already available in the billing table
   //? OK
-  updateFodToBill(int index, int qnt, double price, String ktNote) {
+  updateFodToBill(int index, int? qnt, double? price, String? ktNote) {
     try {
-      _billingItems[index]['qnt'] = qnt;
-      _billingItems[index]['price'] = price;
-      _billingItems[index]['ktNote'] = ktNote;
+      _billingItems[index]['qnt'] = qnt ?? 0;
+      _billingItems[index]['price'] = price ?? 0;
+      _billingItems[index]['ktNote'] = ktNote ?? '';
       findTotalPrice();
     } catch (e) {
       rethrow;
@@ -572,6 +715,8 @@ class BillingScreenController extends GetxController {
     try {
       billingItems.clear();
       clearBillInHive();
+      //? to make total zero
+      findTotalPrice();
     } catch (e) {
       rethrow;
     }
@@ -584,7 +729,7 @@ class BillingScreenController extends GetxController {
     try {
       double totalScores = 0;
       for (var item in _billingItems) {
-        double result = item["price"] * item["qnt"];
+        double result = (item["price"] ?? 0) * (item["qnt"] ?? 0);
         totalScores += result;
       }
       _totalPrice = totalScores;
@@ -603,7 +748,6 @@ class BillingScreenController extends GetxController {
       rethrow;
     }
   }
-
 
   //? to read hold bill from hive db if again come to page
   //? OK
@@ -649,7 +793,6 @@ class BillingScreenController extends GetxController {
     }
   }
 
-
   //? hold billing to hold the bill to later its not like save bill saveBillInHive()
   //? saveBillInHive() its for save last entered bill like SharedPreferences
   //? hold item save hold bill in separate dB , it can save multiple hold bill
@@ -664,9 +807,12 @@ class BillingScreenController extends GetxController {
         String date = DateFormat('d MMM yyyy').format(now);
         String time = DateFormat('kk:mm:ss').format(now);
         int timeStamp = DateTime.now().millisecondsSinceEpoch;
-        HiveHoldItem holdBillingItem = HiveHoldItem(holdItem: _billingItems, date: date, time: time, id: timeStamp, totel: _totalPrice, orderType: TAKEAWAY);
+        //? should add _billingItems.toList() , if not add.toList() then item not showing without restart
+        HiveHoldItem holdBillingItem = HiveHoldItem(holdItem: _billingItems.toList(), date: date, time: time, id: timeStamp, totel: _totalPrice, orderType: orderType);
         await _hiveHoldBillController.createHoldBill(holdBillingItem: holdBillingItem);
         _hiveHoldBillController.getHoldBill();
+        //! this bug should fix
+        _billingItems.clear();
         clearBillInHive();
         btnControllerHold.success();
         update();
@@ -674,7 +820,6 @@ class BillingScreenController extends GetxController {
         AppSnackBar.errorSnackBar('No item Added', 'No any bill items to hold');
         btnControllerHold.error();
       }
-
     } catch (e) {
       btnControllerHold.error();
       rethrow;
@@ -684,10 +829,6 @@ class BillingScreenController extends GetxController {
       });
     }
   }
-
-
-
-
 
   //? un holding billing item when navigate page from orderViewScreen for un holding item
   //? OK
@@ -722,7 +863,6 @@ class BillingScreenController extends GetxController {
       rethrow;
     }
   }
-
 
 
   //? to visible and hide edit options in delete popup
@@ -804,6 +944,18 @@ class BillingScreenController extends GetxController {
     update();
   }
 
+  //? to set the text-controllers like discount, charge , cash received ..etc to zero or empty
+  //? currently not used any where
+  setSettleCashTxtCtrlToZero() {
+    settleNetTotalCtrl.value.text = '';
+    settleDiscountCashCtrl.value.text = '';
+    settleDiscountPercentageCtrl.value.text = '';
+    settleChargesCtrl.value.text = '';
+    settleGrandTotalCtrl.value.text = '';
+    settleCashReceivedCtrl.value.text = '';
+    update();
+  }
+
   //? initialize text controller
   initTxtController() {
     //? to search the food in billing screen
@@ -814,5 +966,16 @@ class BillingScreenController extends GetxController {
     settleChargesCtrl = TextEditingController().obs;
     settleGrandTotalCtrl = TextEditingController().obs;
     settleCashReceivedCtrl = TextEditingController().obs;
+  }
+
+  //? dispose all txtControllers
+  disposeTxtController() {
+    searchTD.dispose();
+    settleNetTotalCtrl.value.dispose();
+    settleDiscountCashCtrl.value.dispose();
+    settleDiscountPercentageCtrl.value.dispose();
+    settleChargesCtrl.value.dispose();
+    settleGrandTotalCtrl.value.dispose();
+    settleCashReceivedCtrl.value.dispose();
   }
 }

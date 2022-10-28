@@ -8,9 +8,9 @@ part of 'category_response.dart';
 
 CategoryResponse _$CategoryResponseFromJson(Map<String, dynamic> json) =>
     CategoryResponse(
-      json['error'] as bool,
-      json['errorCode'] as String,
-      json['totalSize'] as int,
+      json['error'] as bool?,
+      json['errorCode'] as String?,
+      json['totalSize'] as int?,
       (json['data'] as List<dynamic>?)
           ?.map((e) => Category.fromJson(e as Map<String, dynamic>))
           .toList(),
