@@ -5,6 +5,7 @@ const String UPDATE_FOOD_URL = 'food/updateFood/';
 const String ALL_FOOD_URL = 'food/getAllFood/';
 const String TODAY_FOOD_URL = 'food/getTodayFood/';
 const String TODAY_FOOD_UPDATE = 'food/updateTodayFood/';
+const String QUICK_FOOD_UPDATE = 'food/updateQuickBillFood/';
 const String SEARCH_TODAY_FOOD = 'food/searchTodayFood/';
 const String SEARCH_ALL_FOOD = 'food/searchAllFood/';
 const String DELETE_FOOD = 'food/deleteFood/';
@@ -25,6 +26,7 @@ const String UPDATE_SINGLE_ORDER_STATUS = 'orders/updateKotSingleStatus/';
 
 const String GET_ALL_ROOMS = 'room/allRoom/';
 const String INSERT_ROOMS = 'room/addRoom/';
+const String DELETE_ROOMS = 'room/deleteRoom/';
 
 const String INSERT_TABLE = 'table_manage/addTable/';
 const String GET_TABLE_SET = 'table_manage/getTableSet/';
@@ -36,4 +38,6 @@ const String DELETE_TABLE = 'table_manage/deleteTable/';
 const String INSERT_ONLINE_APP = 'online_apps/addOnlineApp/';
 const String GET_ONLINE_APP = 'online_apps/allOnlineApp/';
 const String DELETE_ONLINE_APP = 'online_apps/deleteOnlineApp/';
+
+const String GET_SHOP = 'shope_details/getShopWithSubId';
 

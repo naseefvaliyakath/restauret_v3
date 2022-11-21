@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
@@ -54,9 +53,11 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                 20.verticalSpace,
                                 //? to show heading in alert
                                 Text(
-                                  '${ctrl.kotBillingItems[index].fdOrder?.first.name ?? ''} and other ${ctrl.kotBillingItems[index]
-                                      .fdOrder!.length - 1} items',
-                                  style: TextStyle(fontSize: 20.sp, color: AppColors.titleColor, fontWeight: FontWeight.w600),
+                                  ctrl.kotBillingItems.isNotEmpty
+                                      ? ('${ctrl.kotBillingItems[index].fdOrder?.first.name ?? ''} and other ${ctrl.kotBillingItems[index].fdOrder!.length - 1} items')
+                                      : '',
+                                  style: TextStyle(
+                                      fontSize: 20.sp, color: AppColors.titleColor, fontWeight: FontWeight.w600),
                                   textAlign: TextAlign.center,
                                 ),
                                 10.verticalSpace,
@@ -87,7 +88,9 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                             color: AppColors.mainColor,
                                             text: 'Ring',
                                             onTap: () {
-                                              ctrl.ringKot(ctrl.kotBillingItems[index].Kot_id ?? -1);
+                                              if (ctrl.kotBillingItems.isNotEmpty) {
+                                                ctrl.ringKot(ctrl.kotBillingItems[index].Kot_id ?? -1);
+                                              }
                                             },
                                           ),
                                         ),
@@ -123,22 +126,28 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                             color: const Color(0xff62c5ce),
                                             text: 'KOT',
                                             onTap: () {
-                                              //? billing list
-                                              final List<OrderBill> fdOrder = [];
-                                              final List<dynamic> billingItems = [];
-                                              fdOrder.addAll(ctrl.kotBillingItems?[index].fdOrder?.toList() ?? []);
-                                              billingItems.clear();
-                                              for (var element in fdOrder) {
-                                                billingItems.add({
-                                                  'fdId': element.fdId ?? -1,
-                                                  'name': element.name ?? '',
-                                                  'qnt': element.qnt ?? 0,
-                                                  'price': (element.price ?? 0).toDouble(),
-                                                  'ktNote': element.ktNote ?? ''
-                                                });
+                                              if (ctrl.kotBillingItems.isNotEmpty) {
+                                                //? billing list
+                                                final List<OrderBill> fdOrder = [];
+                                                final List<dynamic> billingItems = [];
+                                                fdOrder.addAll(ctrl.kotBillingItems[index].fdOrder?.toList() ?? []);
+                                                billingItems.clear();
+                                                for (var element in fdOrder) {
+                                                  billingItems.add({
+                                                    'fdId': element.fdId ?? -1,
+                                                    'name': element.name ?? '',
+                                                    'qnt': element.qnt ?? 0,
+                                                    'price': (element.price ?? 0).toDouble(),
+                                                    'ktNote': element.ktNote ?? ''
+                                                  });
+                                                }
+                                                Navigator.pop(context);
+                                                ctrl.kotDialogBox(
+                                                    context,
+                                                    billingItems,
+                                                    ctrl.kotBillingItems[index].Kot_id ?? -1,
+                                                    ctrl.kotBillingItems[index]);
                                               }
-                                              Navigator.pop(context);
-                                              ctrl.kotDialogBox(context, billingItems, ctrl.kotBillingItems[index].Kot_id ?? -1);
                                             },
                                           ),
                                         ),
@@ -149,24 +158,16 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                             color: const Color(0xff4caf50),
                                             text: 'Edit',
                                             onTap: () {
-                                              //? before navigation should pop alert
-                                              Navigator.pop(context);
-                                              //? making emptyKotOrder otherwise will throw error
-                                              KitchenOrder emptyKotOrder = KitchenOrder(
-                                                  Kot_id: -1,
-                                                  error: true,
-                                                  errorCode: 'Something Wrong',
-                                                  totalSize: 0,
-                                                  fdOrderStatus: PENDING,
-                                                  fdOrderType: TAKEAWAY,
-                                                  fdOrder: [],
-                                                  totalPrice: 0,
-                                                  orderColor: 111);
-                                              ctrl.updateKotOrder(
-                                                //? sending full kot order , so need kot id also
-                                                kotBillingOrder: ctrl.kotBillingItems?[index] ?? emptyKotOrder,
-                                                orderType: ctrl.kotBillingItems?[index].fdOrderType ?? TAKEAWAY,
-                                              );
+                                              if (ctrl.kotBillingItems.isNotEmpty) {
+                                                //? before navigation should pop alert
+                                                Navigator.pop(context);
+                                                //? making emptyKotOrder otherwise will throw error
+                                                KitchenOrder emptyKotOrder = EMPTY_KITCHEN_ORDER;
+                                                ctrl.updateKotOrder(
+                                                  //? sending full kot order , so need kot id also
+                                                  kotBillingOrder: ctrl.kotBillingItems[index],
+                                                );
+                                              }
                                             },
                                           ),
                                         ),
@@ -179,11 +180,13 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                             ctrl: ctrl,
                                             color: const Color(0xffef2f28),
                                             onTap: () async {
-                                              await ctrl.deleteKotOrder(ctrl.kotBillingItems?[index].Kot_id ?? -1);
-                                              ctrl.refreshDatabaseKot();
-                                              Future.delayed(const Duration(seconds: 1), () {
-                                                Navigator.pop(context);
-                                              });
+                                              if (ctrl.kotBillingItems.isNotEmpty) {
+                                                await ctrl.deleteKotOrder(ctrl.kotBillingItems[index].Kot_id ?? -1);
+                                                ctrl.refreshDatabaseKot();
+                                                Future.delayed(const Duration(seconds: 1), () {
+                                                  Navigator.pop(context);
+                                                });
+                                              }
                                             },
                                           ),
                                         ),

@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:rest_verision_3/models/online_app_response/online_app.dart';
 import 'package:rest_verision_3/models/online_app_response/online_app_response.dart';
+import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 
-import '../constants/app_secret_constants/app_secret_constants.dart';
 import '../models/my_response.dart';
 import '../repository/online_app_repository.dart';
 
@@ -16,11 +16,10 @@ class OnlineAppData extends GetxController {
 
   @override
   Future<void> onInit() async {
-   // getOnlineApp();
     super.onInit();
   }
 
-  getOnlineApp() async {
+  Future<MyResponse> getOnlineApp() async {
     try {
       MyResponse response = await _onlineAppRepo.getOnlineApp();
 
@@ -28,16 +27,23 @@ class OnlineAppData extends GetxController {
         OnlineAppResponse parsedResponse = response.data;
         if (parsedResponse.data == null) {
           _allOnlineApp;
+          return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
         } else {
+          _allOnlineApp.clear();
           _allOnlineApp.addAll(parsedResponse.data?.toList() ?? []);
+
+          return MyResponse(statusCode: 1,data: _allOnlineApp, status: 'Success', message:  'Updated successfully');
         }
       } else {
-        return;
+        return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
       }
+
     } catch (e) {
-      rethrow;
+      return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
+    }finally{
+      update();
     }
-    update();
+
   }
 
 

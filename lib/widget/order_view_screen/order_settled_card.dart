@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+
 import '../../constants/app_colors/app_colors.dart';
 
 
@@ -11,7 +13,7 @@ class OrderSettledCard extends StatelessWidget {
   final int settledId;
   final int kotId;
   final int totalItem;
-  final String dateTime;
+  final DateTime dateTime;
   final String orderType;
 
   final Function onTap;
@@ -21,8 +23,7 @@ class OrderSettledCard extends StatelessWidget {
       {Key? key,
       required this.name,
       required this.price,
-      required this.onTap,
-        required this.onLongTap,
+      required this.onTap, required this.onLongTap,
       required this.orderStatus,
       required this.settledId,
       required this.totalItem,
@@ -167,7 +168,7 @@ class OrderSettledCard extends StatelessWidget {
                     5.verticalSpace,
                     FittedBox(
                       child: Text(
-                        dateTime == '' ? 'error' : dateTime,
+                        DateFormat('dd-MM-yyyy  hh:mm aa').format(dateTime),
                         softWrap: false,
                         style: TextStyle(
                           fontSize: 10.sp,

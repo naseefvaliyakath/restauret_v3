@@ -1,11 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart';
 import '../../../alerts/kot_alert/kot_bill_show_alert.dart';
+import '../../../check_internet/check_internet.dart';
 import '../../../constants/api_link/api_link.dart';
 import '../../../constants/app_secret_constants/app_secret_constants.dart';
 import '../../../constants/strings/my_strings.dart';
@@ -18,17 +20,15 @@ import '../../../models/kitchen_order_response/order_bill.dart';
 import '../../../models/my_response.dart';
 import '../../../models/settled_order_response/settled_order.dart';
 import '../../../models/settled_order_response/settled_order_response.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../repository/settled_order_response.dart';
 import '../../../routes/route_helper.dart';
 import '../../../services/dio_error.dart';
 import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
 import '../../../widget/common_widget/snack_bar.dart';
-
+import '../../login_screen/controller/startup_controller.dart';
 
 class OrderViewController extends GetxController {
-
   final SettledOrderRepo _settledOrderRepo = Get.find<SettledOrderRepo>();
   final HttpService _httpService = Get.find<HttpService>();
   final IO.Socket _socket = Get.find<SocketController>().socket;
@@ -38,7 +38,7 @@ class OrderViewController extends GetxController {
   bool isLoading = false;
 
   //? to toggle KOT ,settled order , hold order ..etc
-  int tappedIndex = -1;
+  int tappedIndex = 0;
   String tappedTabName = 'KOT';
 
   //? this value will fill index of KOT order list when settle button is click in KOT order  when  settleKotBillingCash() is calling for settle btn click
@@ -51,8 +51,10 @@ class OrderViewController extends GetxController {
 
   //? to disable button after click settle button
   var isClickedSettle = false.obs;
+
   //? btn controller for settle KOT order
   final RoundedLoadingButtonController btnControllerSettle = RoundedLoadingButtonController();
+
   //? btn controller for cancel KOT order
   final RoundedLoadingButtonController btnControllerCancellKOtOrder = RoundedLoadingButtonController();
 
@@ -94,11 +96,16 @@ class OrderViewController extends GetxController {
   List<dynamic> get billingItems => _billingItems;
 
   //? to show in invoice of settled order from KOT alert
-  String orderType =  TAKEAWAY;
+  String orderType = TAKEAWAY;
+  Map<String, dynamic> fdDelAddress = {'name': '', 'number': 0, 'address': ''};
+
+  //? to show in invoice of settled order from KOT alert
+  String selectedOnlineApp = NO_ONLINE_APP;
+
 
   //?payment methods for dropdown in settle order popup
 
-  final List<String> _myPaymentMethods = [CASH,CARD,ONLINE,PENDINGCASH,TYPE_1,TYPE_2];
+  final List<String> _myPaymentMethods = [CASH, CARD, ONLINE_PAY, PENDINGCASH, TYPE_1, TYPE_2];
 
   List<String> get myPaymentMethods => _myPaymentMethods;
 
@@ -108,15 +115,20 @@ class OrderViewController extends GetxController {
 //? to receive selected payment for update settled bill
   String selectedPaymentForUpdateSettledOrder = CASH;
 
-
+  //? to sort settled order
+  DateTimeRange selectedDateRangeForSettledOrder = DateTimeRange(
+    start: DateTime.now(),
+    end: DateTime.now(),
+  );
 
   final player = AudioPlayer();
   final cache = AudioCache();
 
   @override
   void onInit() async {
-    _socket.connect();
     initTxtController();
+    checkInternetConnection();
+    _socket.connect();
     getAllHoldOrder();
     setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
     setUpKitchenOrderSingleListener(); //? for new kot order
@@ -135,15 +147,7 @@ class OrderViewController extends GetxController {
   //? for single order adding live
   setUpKitchenOrderSingleListener() {
     try {
-      KitchenOrder order = KitchenOrder(
-          fdOrderType: TAKEAWAY,
-          totalPrice: 0,
-          fdOrderStatus: PENDING,
-          Kot_id: -1,
-          errorCode: 'error',
-          totalSize: 0,
-          error: true,
-          orderColor: 111);
+      KitchenOrder order = EMPTY_KITCHEN_ORDER;
       _socket.on('kitchen_orders_receive', (data) async {
         if (kDebugMode) {
           print('kot order single received');
@@ -192,13 +196,13 @@ class OrderViewController extends GetxController {
         List<KitchenOrder> kitchenOrders = [];
         kitchenOrders.addAll(order.kitchenOrder ?? []);
         //? no error
-        bool err = order.error ?? true;
+        bool err = order.error;
         if (!err) {
           //? check if item is already in list
           _kotBillingItems.clear();
           //? adding KOT order by if is exist then not added
-          _kotBillingItems
-              .addAll(kitchenOrders.where((newItem) => _kotBillingItems.every((oldItem) => newItem.Kot_id != oldItem.Kot_id)));
+          _kotBillingItems.addAll(
+              kitchenOrders.where((newItem) => _kotBillingItems.every((oldItem) => newItem.Kot_id != oldItem.Kot_id)));
           update();
         } else {
           return;
@@ -217,7 +221,7 @@ class OrderViewController extends GetxController {
   //? this emit will receive server and emit from server to with kotID to ring order
   //? used when ring btn click in KOT order manage alert
   ringKot(int kotId) {
-    _socket.emit('for-ring-to-kitchen',kotId);
+    _socket.emit('for-ring-to-kitchen', kotId);
   }
 
   //? get all settled order
@@ -240,9 +244,7 @@ class OrderViewController extends GetxController {
       }
     } catch (e) {
       rethrow;
-    }
-    finally{
-    }
+    } finally {}
     update();
   }
 
@@ -259,10 +261,14 @@ class OrderViewController extends GetxController {
   calculateNetTotal() {
     try {
       netTotal = !isNumeric(settleNetTotalCtrl.value.text) ? 0 : double.parse(settleNetTotalCtrl.value.text);
-      discountCash = !isNumeric(settleDiscountCashCtrl.value.text) ? 0 : double.parse(settleDiscountCashCtrl.value.text);
-      discountPresent = !isNumeric(settleDiscountPercentageCtrl.value.text) ? 0 : double.parse(settleDiscountPercentageCtrl.value.text);
+      discountCash =
+          !isNumeric(settleDiscountCashCtrl.value.text) ? 0 : double.parse(settleDiscountCashCtrl.value.text);
+      discountPresent = !isNumeric(settleDiscountPercentageCtrl.value.text)
+          ? 0
+          : double.parse(settleDiscountPercentageCtrl.value.text);
       charges = !isNumeric(settleChargesCtrl.value.text) ? 0 : double.parse(settleChargesCtrl.value.text);
-      cashReceived = !isNumeric(settleCashReceivedCtrl.value.text) ? 0 : double.parse(settleCashReceivedCtrl.value.text);
+      cashReceived =
+          !isNumeric(settleCashReceivedCtrl.value.text) ? 0 : double.parse(settleCashReceivedCtrl.value.text);
       //? finding discount value from %
       double discountCashFromPercent = (netTotal / 100) * discountPresent;
 
@@ -280,8 +286,7 @@ class OrderViewController extends GetxController {
   settleKotBillingCash(context, ctrl, index) {
     indexFromKotOrder = index;
     try {
-      if(indexFromKotOrder != -1) {
-
+      if (indexFromKotOrder != -1) {
         billingItems.clear();
         //? billing list
         final List<OrderBill> fdOrder = [];
@@ -299,6 +304,10 @@ class OrderViewController extends GetxController {
         }
         //? to show in invoice of settled order from KOT alert
         orderType = _kotBillingItems[index].fdOrderType ?? TAKEAWAY;
+        //? to show in invoice of settled order from KOT alert
+        fdDelAddress = _kotBillingItems[index].fdDelAddress ?? {'name': '', 'number': 0, 'address': ''};
+        //? to show in invoice of settled order from KOT alert
+        selectedOnlineApp = _kotBillingItems[index].fdOnlineApp ?? NO_ONLINE_APP;
 
         settleNetTotalCtrl.value.text = (_kotBillingItems[index].totalPrice ?? 0).toString();
         settleDiscountCashCtrl.value.text = '0';
@@ -317,18 +326,18 @@ class OrderViewController extends GetxController {
     }
   }
 
-
-
   //? insert settled to dB bill from kot
   //? this not called here , so there is many progress btn status changing
   insertSettledBill(BuildContext context) async {
     try {
       Map<String, dynamic> settledBill = {
-        'fdShopId': SHOPE_ID,
+        'fdShopId': Get.find<StartupController>().SHOPE_ID,
         'fdOrder': indexFromKotOrder != -1 ? (_kotBillingItems[indexFromKotOrder].fdOrder ?? []) : [],
         'fdOrderKot': _kotBillingItems[indexFromKotOrder].Kot_id ?? -1,
         'fdOrderStatus': COMPLETE,
         'fdOrderType': _kotBillingItems[indexFromKotOrder].fdOrderType ?? TAKEAWAY,
+        'fdDelAddress': _kotBillingItems[indexFromKotOrder].fdDelAddress ?? {'name': '', 'number': 0, 'address': ''},
+        'fdOnlineApp': _kotBillingItems[indexFromKotOrder].fdOnlineApp ?? NO_ONLINE_APP,
         'netAmount': netTotal,
         'discountPersent': discountPresent,
         'discountCash': discountCash,
@@ -373,7 +382,7 @@ class OrderViewController extends GetxController {
     try {
       showLoading();
       Map<String, dynamic> data = {
-        'fdShopId':SHOPE_ID,
+        'fdShopId': Get.find<StartupController>().SHOPE_ID,
         'settled_id': settledId ?? -1,
       };
       final response = await _httpService.delete(DELETE_SETTLED_ORDER, data);
@@ -400,7 +409,7 @@ class OrderViewController extends GetxController {
   updateSettleBillingCash(context, ctrl, index) {
     indexSettledOrder = index;
     try {
-      if(indexSettledOrder != -1) {
+      if (indexSettledOrder != -1) {
         //? setting payment type from db so payment is already settled , don't show default
         selectedPaymentForUpdateSettledOrder = _settledBillingItems[index].paymentType ?? CASH;
         update();
@@ -425,7 +434,7 @@ class OrderViewController extends GetxController {
   updateSettledBill(context) async {
     try {
       Map<String, dynamic> updatedSettledBill = {
-        'fdShopId': SHOPE_ID,
+        'fdShopId': Get.find<StartupController>().SHOPE_ID,
         'settled_id': _settledBillingItems[indexSettledOrder].settled_id ?? -1,
         'netAmount': netTotal,
         'discountPersent': discountPresent,
@@ -475,7 +484,6 @@ class OrderViewController extends GetxController {
   }
 
   //? unHold holdItem sending data to billing screen to un hold
-  //! need to complete
   unHoldHoldItem({required holdBillingItems, required int holdItemIndex, required String orderType}) async {
     switch (orderType) {
       case TAKEAWAY:
@@ -514,59 +522,29 @@ class OrderViewController extends GetxController {
   }
 
   //? edit kot order or update kot order navigate to billing screen
-  //!need to complete
-  updateKotOrder({required kotBillingOrder, required String orderType}) {
-    switch (orderType) {
-      case TAKEAWAY:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder});
-        }
-        break;
 
-      case HOME_DELEVERY:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder});
-        }
-        break;
-
-      case ONLINE:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder});
-        }
-        break;
-
-      case DINING:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder});
-        }
-        break;
-
-      default:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder});
-        }
-        break;
-    }
+  updateKotOrder({required kotBillingOrder}) {
+    Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder});
   }
 
   //? to delete / cancel kot order
   deleteKotOrder(int kotId) async {
     try {
-if(kotId != -1){
-  Map<String, dynamic> data = {
-    'fdShopId': SHOPE_ID,
-    'Kot_id': kotId,
-  };
-  final response = await _httpService.delete(DELETE_KOT_ORDER, data);
-  FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-  if (parsedResponse.error ?? true) {
-    btnControllerCancellKOtOrder.error();
-    AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
-  } else {
-    btnControllerCancellKOtOrder.success();
-    AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
-  }
-}
+      if (kotId != -1) {
+        Map<String, dynamic> data = {
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
+          'Kot_id': kotId,
+        };
+        final response = await _httpService.delete(DELETE_KOT_ORDER, data);
+        FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+        if (parsedResponse.error ?? true) {
+          btnControllerCancellKOtOrder.error();
+          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
+        } else {
+          btnControllerCancellKOtOrder.success();
+          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
+        }
+      }
     } on DioError catch (e) {
       btnControllerCancellKOtOrder.error();
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
@@ -584,11 +562,17 @@ if(kotId != -1){
   //? kot printing dialog
   //? billing item and kotId get from tapping in kot order list from order view
   //! need to configure table name
-  kotDialogBox(context, billingItems, kotId) {
-if(kotId != -1){
-  showKotBillAlert(type: 'ORDER_VIEW', billingItems: billingItems, context: context, kotId: kotId, tableName: 'T1-C4');
-}
-
+  kotDialogBox(context, billingItems, kotId, KitchenOrder fullKot) {
+    if (kotId != -1) {
+      showKotBillAlert(
+        type: 'ORDER_VIEW',
+        billingItems: billingItems,
+        context: context,
+        kotId: kotId,
+        tableName: 'T1-C4',
+        fullKot: fullKot,
+      );
+    }
   }
 
   //? to update selected table like KOT,SETTLED,HOLD
@@ -606,13 +590,13 @@ if(kotId != -1){
   }
 
   //? this for payment dropdown for settled bill from KOT alert
-  updateSelectedPayment(String selectedPaymentFromDrop){
+  updateSelectedPayment(String selectedPaymentFromDrop) {
     selectedPayment = selectedPaymentFromDrop;
     update();
   }
 
   //? this for payment dropdown for update settled bill
-  updateSelectedPaymentForUpdateSettledOrder(String selectedPaymentFromDrop){
+  updateSelectedPaymentForUpdateSettledOrder(String selectedPaymentFromDrop) {
     selectedPaymentForUpdateSettledOrder = selectedPaymentFromDrop;
     update();
   }
@@ -621,10 +605,32 @@ if(kotId != -1){
     if (kDebugMode) {
       print('ring sound');
     }
-    Uri uri = await cache.load('sounds/ring_two.mp3');
-    String url = uri.path;
-    player.setSourceUrl(url);
-    player.resume();
+    await player.setSource(AssetSource('sounds/ring_two.mp3'));
+    await player.resume();
+  }
+
+
+
+  //? to show date picker to sort settled order
+  datePickerForSettledOrder(BuildContext context) async {
+   try {
+     DateTimeRange? dateRange =  await showDateRangePicker(
+           context: context,
+           initialEntryMode: DatePickerEntryMode.input,
+           initialDateRange: selectedDateRangeForSettledOrder,
+           //? user can only select last one month date
+           firstDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day - 31),
+           lastDate: DateTime.now(),
+         );
+     if (dateRange != null && dateRange != selectedDateRangeForSettledOrder) {
+           selectedDateRangeForSettledOrder = dateRange;
+         }
+   } catch (e) {
+     rethrow;
+   }
+   finally{
+     update();
+   }
   }
 
   initTxtController() {
@@ -656,6 +662,4 @@ if(kotId != -1){
     isLoading = false;
     update();
   }
-
 }
-

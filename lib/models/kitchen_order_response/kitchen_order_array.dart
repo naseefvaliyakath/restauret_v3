@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'kitchen_order.dart';
+
 part 'kitchen_order_array.g.dart';
 
 @JsonSerializable()

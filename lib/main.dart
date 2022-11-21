@@ -5,11 +5,13 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/screens/home_screen/binding/home_screen_binding.dart';
 import 'package:rest_verision_3/screens/home_screen/home_screen.dart';
-
+import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
 import 'constants/app_colors/app_colors.dart';
 import 'hive_database/hive_init.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await MyHiveInit.initMyHive();
   runApp(const MyApp());
 }
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.amber,
           ),
           initialRoute: RouteHelper.getInitial(),
-          initialBinding: HomeBinding(),
+          initialBinding: LoginBinding(),
           unknownRoute: GetPage(name: '/notFount', page: () => const HomeScreen()),
           defaultTransition: Transition.fade,
           getPages: RouteHelper.routes,

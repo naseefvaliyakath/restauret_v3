@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import '../kitchen_order_response/order_bill.dart';
+
 part 'settled_order.g.dart';
 
 @JsonSerializable()
@@ -23,6 +25,12 @@ class SettledOrder {
 
   @JsonKey(name: "fdOrderType")
   String? fdOrderType;
+
+  @JsonKey(name: "fdDelAddress")
+  Map<String,dynamic>? fdDelAddress;
+
+  @JsonKey(name: "fdOnlineApp")
+  String? fdOnlineApp;
 
   @JsonKey(name: "netAmount")
   num? netAmount;
@@ -48,6 +56,9 @@ class SettledOrder {
   @JsonKey(name: "change")
   num? change;
 
+  @JsonKey(name: "createdAt")
+  DateTime? settledTime;
+
   SettledOrder(
       { this.settled_id,
        this.fdShopId,
@@ -55,6 +66,7 @@ class SettledOrder {
        this.fdOrderKot,
        this.fdOrderStatus,
        this.fdOrderType,
+        this.fdDelAddress,
        this.netAmount,
        this.discountPersent,
        this.discountCash,

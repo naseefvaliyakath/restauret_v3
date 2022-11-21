@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rest_verision_3/models/table_chair_response/table_chair_set.dart';
+
 part 'table_chair_set_response.g.dart';
 
 @JsonSerializable()

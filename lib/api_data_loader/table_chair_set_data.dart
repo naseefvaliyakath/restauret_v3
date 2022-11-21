@@ -3,7 +3,6 @@ import 'package:rest_verision_3/models/table_chair_response/table_chair_set.dart
 import 'package:rest_verision_3/models/table_chair_response/table_chair_set_response.dart';
 import 'package:rest_verision_3/repository/table_chair_set_repository.dart';
 
-import '../constants/app_secret_constants/app_secret_constants.dart';
 import '../models/my_response.dart';
 
 class TableChairSetData extends GetxController {
@@ -30,6 +29,7 @@ class TableChairSetData extends GetxController {
         if (parsedResponse.data == null) {
           _allTableChairSet;
         } else {
+          _allTableChairSet.clear();
           _allTableChairSet.addAll(parsedResponse.data?.toList() ?? []);
         }
       } else {

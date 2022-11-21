@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -46,7 +45,7 @@ class PaymentDropDownForBilling extends StatelessWidget {
                     },
                     items: ctrl.myPaymentMethods.map((e) {
                       return DropdownMenuItem<String>(
-                        value: e ?? CASH,
+                        value: e,
                         // value: _mySelection,
                         child: SizedBox(
                           width: 0.3 * 1.sw,
@@ -59,7 +58,7 @@ class PaymentDropDownForBilling extends StatelessWidget {
                               10.horizontalSpace,
                               Flexible(
 
-                                child: Text((e ?? CASH).toUpperCase(),
+                                child: Text((e).toUpperCase(),
                                   style: TextStyle(
                                       fontSize: 12.sp
                                   ),

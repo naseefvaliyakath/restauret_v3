@@ -11,10 +11,16 @@ class FoodCard extends StatelessWidget {
   final String img;
   final String name;
   final double price;
+  final double priceThreeByTwo;
+  final double priceHalf;
+  final double priceQuarter;
+  final String fdIsLoos;
   final String today;
+  final String quick;
+
 
   const FoodCard(
-      {Key? key, required this.img, required this.name, required this.price,  this.today = 'no'})
+      {Key? key, required this.img, required this.name, required this.price,  this.today = 'no', required this.priceThreeByTwo, required this.priceHalf, required this.priceQuarter, required this.fdIsLoos, required this.quick})
       : super(key: key);
 
   @override
@@ -81,33 +87,88 @@ class FoodCard extends StatelessWidget {
                     ),
                     overflow: TextOverflow.fade,
                   ),
-                  Text(price.toString(),
+                  Text(fdIsLoos == 'yes' ? 'Full      : $price' : 'Rs : $price',
                       softWrap: false,
                       style: TextStyle(
                         fontSize: 1.sh / 49,
-                        color: Colors.white,
+                        color: AppColors.mainColor_2,
                         fontWeight: FontWeight.bold,
                       )),
+                  Visibility(
+                    visible: fdIsLoos == 'yes' ? true : false,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('3 by 4       : $priceThreeByTwo',
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: 1.sh / 69,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        Text('Half           : $priceHalf',
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: 1.sh / 69,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        Text('Quarter    : $priceQuarter',
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: 1.sh / 69,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ],
+                    ),
+                  ),
                 ],
               )),
           Positioned(
               top: 1.sh / 68.3,
               right: 1.sw / 41.1,
-              child: Visibility(
-                visible: today == 'no'? false : true,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 2.sp),
-                  decoration: BoxDecoration(
-                    color: AppColors.mainColor.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(5.r),
+              child: Column(
+                children: [
+                  Visibility(
+                    visible: today == 'no'? false : true,
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 2.sp),
+                          decoration: BoxDecoration(
+                            color: AppColors.mainColor.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(5.r),
+                          ),
+                          child: BigText(
+                            text: 'Today',
+                            color: Colors.white,
+                            size: 12.sp,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: BigText(
-                    text: 'Today',
-                    color: Colors.white,
-                    size: 12.sp,
+                  15.verticalSpace,
+                  Visibility(
+                    visible: quick == 'no'? false : true,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 2.sp),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(5.r),
+                      ),
+                      child: BigText(
+                        text: 'Quick',
+                        color: Colors.white,
+                        size: 12.sp,
+                      ),
+                    ),
                   ),
-                ),
-              ))
+                ],
+              ),
+          )
         ],
       ),
     );

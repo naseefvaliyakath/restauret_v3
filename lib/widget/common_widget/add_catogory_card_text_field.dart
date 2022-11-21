@@ -4,22 +4,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors/app_colors.dart';
 
-
 class AddCategoryCardTextField extends StatelessWidget {
   final Function onTapAdd;
   final Function onTapBack;
+  final double height;
   final TextEditingController nameController;
 
-   const AddCategoryCardTextField({Key? key, required this.onTapAdd, required this.onTapBack, required this.nameController}) : super(key: key);
+  const AddCategoryCardTextField({
+    Key? key,
+    required this.onTapAdd,
+    required this.onTapBack,
+    required this.nameController,
+    required this.height,
+
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
       child: SizedBox(
-        height: 60.h,
+        height: height,
         width: MediaQuery.of(context).size.width * 0.39,
         child: Center(
           child: Padding(
@@ -29,7 +35,7 @@ class AddCategoryCardTextField extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InkWell(
-                onTap: ()=>onTapBack(),
+                  onTap: () => onTapBack(),
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
                       child: Container(
@@ -46,13 +52,16 @@ class AddCategoryCardTextField extends StatelessWidget {
                     controller: nameController,
                     maxLines: 1,
                     autofocus: true,
-                    inputFormatters:[
+                    inputFormatters: [
                       LengthLimitingTextInputFormatter(13),
                     ],
                     decoration: InputDecoration(
                       hintText: 'Name',
                       border: InputBorder.none,
-                      hintStyle:  TextStyle(color: AppColors.textGrey,fontSize:14.sp,),
+                      hintStyle: TextStyle(
+                        color: AppColors.textGrey,
+                        fontSize: 14.sp,
+                      ),
                       filled: true,
                       isDense: true,
                       fillColor: Colors.white,
@@ -62,7 +71,7 @@ class AddCategoryCardTextField extends StatelessWidget {
 
                 //onTap for add category
                 InkWell(
-                  onTap: ()=>onTapAdd(),
+                  onTap: () => onTapAdd(),
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
                       child: Container(
@@ -76,7 +85,6 @@ class AddCategoryCardTextField extends StatelessWidget {
                 ),
 
                 6.horizontalSpace,
-
               ],
             ),
           ),

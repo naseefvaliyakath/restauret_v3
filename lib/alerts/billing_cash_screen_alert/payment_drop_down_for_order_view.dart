@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 
 import '../../constants/strings/my_strings.dart';
 import '../../screens/order_view_screen/controller/order_view_controller.dart';
@@ -47,7 +45,7 @@ class PaymentDropDownForOrderView extends StatelessWidget {
                     },
                     items: ctrl.myPaymentMethods.map((e) {
                       return DropdownMenuItem<String>(
-                        value: e ?? CASH,
+                        value: e,
                         // value: _mySelection,
                         child: SizedBox(
                           width: 0.3 * 1.sw,
@@ -60,7 +58,7 @@ class PaymentDropDownForOrderView extends StatelessWidget {
                               10.horizontalSpace,
                               Flexible(
 
-                                child: Text((e ?? CASH).toUpperCase(),
+                                child: Text((e).toUpperCase(),
                                   style: TextStyle(
                                       fontSize: 12.sp
                                   ),

@@ -55,231 +55,237 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
                 onRefresh: () async {
                  await ctrl.refreshCategory();
                 },
-                child: SafeArea(
-                    child: ListView(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children: [
-                        Container(
-                          width: double.maxFinite,
-                          padding: EdgeInsets.symmetric(horizontal: 10.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //? heading and notification icon back arrow
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  //? back arrow
-                                  Flexible(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.arrow_back,
-                                            size: 24.sp,
+                child: GestureDetector(
+                  onTap: (){
+                    //? close keyboard on outside click in ios
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  child: SafeArea(
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: [
+                          Container(
+                            width: double.maxFinite,
+                            padding: EdgeInsets.symmetric(horizontal: 10.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                //? heading and notification icon back arrow
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    //? back arrow
+                                    Flexible(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.arrow_back,
+                                              size: 24.sp,
+                                            ),
+                                            onPressed: () {
+                                              Get.offNamed(RouteHelper.getAllFoodScreen());
+                                            },
+                                            splashRadius: 24.sp,
                                           ),
-                                          onPressed: () {
-                                            Get.offNamed(RouteHelper.getAllFoodScreen());
-                                          },
-                                          splashRadius: 24.sp,
-                                        ),
-                                        15.horizontalSpace,
-                                        const HeadingRichText(name: 'Update Your Food'),
-                                      ],
+                                          15.horizontalSpace,
+                                          const HeadingRichText(name: 'Update Your Food'),
+                                        ],
+                                      ),
                                     ),
-                                  ),
 
-                                  //? notification icon
-                                  NotificationIcon(onTap: () {}),
-                                ],
-                              ),
-                              15.verticalSpace,
-                              //? select category heading
-                              BigText(
-                                text: 'Select Category :',
-                                size: 17.sp,
-                              ),
-                              10.verticalSpace,
-                              //? category scrolling
-                              SizedBox(
-                                height: 60.h,
-                                child: ctrl.isLoadingCategory
-                                    ? const  ShimmingEffect()
-                                    : ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: ctrl.myCategory.length,
-                                  itemBuilder: (BuildContext ctx, index) {
-                                    return CategoryCard(
-                                      onTap: () {
-                                        //? to change the color of tapped category
-                                        ctrl.setCategoryTappedIndex(index);
-                                        //? saving tapped category to fdCategory variable
-                                        ctrl.initialFdCategory = ctrl.myCategory[index].catName ?? COMMON_CATEGORY;
-                                      },
-                                      color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                      text: ctrl.myCategory[index].catName ?? COMMON_CATEGORY, onLongTap: (){},
-                                    );
+                                    //? notification icon
+                                    NotificationIcon(onTap: () {}),
+                                  ],
+                                ),
+                                15.verticalSpace,
+                                //? select category heading
+                                BigText(
+                                  text: 'Select Category :',
+                                  size: 17.sp,
+                                ),
+                                10.verticalSpace,
+                                //? category scrolling
+                                SizedBox(
+                                  height: 60.h,
+                                  child: ctrl.isLoadingCategory
+                                      ? const  ShimmingEffect()
+                                      : ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: ctrl.myCategory.length,
+                                    itemBuilder: (BuildContext ctx, index) {
+                                      return CategoryCard(
+                                        onTap: () {
+                                          //? to change the color of tapped category
+                                          ctrl.setCategoryTappedIndex(index);
+                                          //? saving tapped category to fdCategory variable
+                                          ctrl.initialFdCategory = ctrl.myCategory[index].catName ?? COMMON_CATEGORY;
+                                        },
+                                        color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
+                                        text: ctrl.myCategory[index].catName ?? COMMON_CATEGORY, onLongTap: (){},
+                                      );
+                                    },
+                                  ),
+                                ),
+                                20.verticalSpace,
+                                //?  upload image card
+                                AnimatedCrossFade(
+                                  firstChild: NetworkImgShowCard(
+                                    img: ctrl.initialFdImg,
+                                  ),
+                                  secondChild: Container(
+                                    child: imageFile != null
+                                        ? ShowPickedImgCard(
+                                            file: imageFile,
+                                            cancelEvent: () {
+                                              setState(() {
+                                                imageFile = null;
+                                              });
+                                            },
+                                            choseFileEvent: () {
+                                              TwoBtnBottomSheet.bottomSheet(
+                                                b1Name: 'From Gallery',
+                                                b2Name: 'From Camara',
+                                                b1Function: _getFromGallery,
+                                                b2Function: _getFromCamara,
+                                              );
+                                            },
+                                          )
+                                        : InkWell(
+                                            onTap: () {
+                                              TwoBtnBottomSheet.bottomSheet(b1Name: 'From Gallery', b2Name: 'From Camara', b1Function: _getFromGallery, b2Function: _getFromCamara);
+                                            },
+                                            child: const ChooseImage()),
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                  crossFadeState: statePic,
+                                  firstCurve: Curves.fastLinearToSlowEaseIn,
+                                  secondCurve: Curves.linear,
+                                ),
+
+                                //? edit img toggle
+                                5.verticalSpace,
+
+                                MyToggleSwitch(
+                                  value: ctrl.imageToggle,
+                                  forImg: true,
+                                  onToggle: (val) {
+                                    ctrl.setImageToggle(val);
+                                    statePic = ctrl.imageToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                   },
                                 ),
-                              ),
-                              20.verticalSpace,
-                              //?  upload image card
-                              AnimatedCrossFade(
-                                firstChild: NetworkImgShowCard(
-                                  img: ctrl.initialFdImg,
+
+                                20.verticalSpace,
+
+                                //?food  name text-field
+                                BigText(
+                                  text: 'Food Name ',
+                                  size: 14.sp,
                                 ),
-                                secondChild: Container(
-                                  child: imageFile != null
-                                      ? ShowPickedImgCard(
-                                          file: imageFile,
-                                          cancelEvent: () {
-                                            setState(() {
-                                              imageFile = null;
-                                            });
-                                          },
-                                          choseFileEvent: () {
-                                            TwoBtnBottomSheet.bottomSheet(
-                                              b1Name: 'From Gallery',
-                                              b2Name: 'From Camara',
-                                              b1Function: _getFromGallery,
-                                              b2Function: _getFromCamara,
-                                            );
-                                          },
-                                        )
-                                      : InkWell(
-                                          onTap: () {
-                                            TwoBtnBottomSheet.bottomSheet(b1Name: 'From Gallery', b2Name: 'From Camara', b1Function: _getFromGallery, b2Function: _getFromCamara);
-                                          },
-                                          child: const ChooseImage()),
-                                ),
-                                duration: const Duration(seconds: 1),
-                                crossFadeState: statePic,
-                                firstCurve: Curves.fastLinearToSlowEaseIn,
-                                secondCurve: Curves.linear,
-                              ),
-
-                              //? edit img toggle
-                              5.verticalSpace,
-
-                              MyToggleSwitch(
-                                value: ctrl.imageToggle,
-                                forImg: true,
-                                onToggle: (val) {
-                                  ctrl.setImageToggle(val);
-                                  statePic = ctrl.imageToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
-                                },
-                              ),
-
-                              20.verticalSpace,
-
-                              //?food  name text-field
-                              BigText(
-                                text: 'Food Name ',
-                                size: 14.sp,
-                              ),
-                              5.verticalSpace,
-                              TextFieldWidget(
-                                hintText: 'Enter Your Food Name ....',
-                                textEditingController: ctrl.fdNameTD,
-                                borderRadius: 15.r,
-                                txtLength: 35,
-                                onChange: (_) {},
-                              ),
-
-                              20.verticalSpace,
-                              //? price text-field
-                              Row(
-                                children: [
-                                  BigText(
-                                    text: 'Food Price ',
-                                    size: 14.sp,
-                                  ),
-                                  MyToggleSwitch(
-                                    onToggle: (val) {
-                                      ctrl.setPriceToggle(val);
-                                      state = ctrl.priceToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
-                                    },
-                                    value: ctrl.priceToggle,
-                                  ),
-                                ],
-                              ),
-                              5.verticalSpace,
-                              AnimatedCrossFade(
-                                firstChild: TextFieldWidget(
-                                  keyBordType: TextInputType.number,
-                                  hintText: 'Enter Your Food Price ....',
-                                  textEditingController: ctrl.fdPriceTD,
+                                5.verticalSpace,
+                                TextFieldWidget(
+                                  hintText: 'Enter Your Food Name ....',
+                                  textEditingController: ctrl.fdNameTD,
                                   borderRadius: 15.r,
+                                  txtLength: 35,
                                   onChange: (_) {},
                                 ),
-                                secondChild: Row(
+
+                                20.verticalSpace,
+                                //? price text-field
+                                Row(
                                   children: [
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        keyBordType: TextInputType.number,
-                                        hintText: 'Full',
-                                        textEditingController: ctrl.fdFullPriceTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
+                                    BigText(
+                                      text: 'Food Price ',
+                                      size: 14.sp,
                                     ),
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        keyBordType: TextInputType.number,
-                                        hintText: '3/4',
-                                        textEditingController: ctrl.fdThreeBiTwoPrsTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        keyBordType: TextInputType.number,
-                                        hintText: 'Half',
-                                        textEditingController: ctrl.fdHalfPriceTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        keyBordType: TextInputType.number,
-                                        hintText: 'Quarter',
-                                        textEditingController: ctrl.fdQtrPriceTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
+                                    MyToggleSwitch(
+                                      onToggle: (val) {
+                                        ctrl.setPriceToggle(val);
+                                        state = ctrl.priceToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                      },
+                                      value: ctrl.priceToggle,
                                     ),
                                   ],
                                 ),
-                                duration: const Duration(seconds: 1),
-                                crossFadeState: state,
-                                firstCurve: Curves.fastLinearToSlowEaseIn,
-                                secondCurve: Curves.linear,
-                              ),
-                              20.verticalSpace,
-                              //add food button
-                              Center(
-                                  child: RoundBorderButton(
-                                text: 'Update Food',
-                                textColor: Colors.white,
-                                width: 0.9.sw,
-                                borderRadius: 20.r,
-                                onTap: () async {
-                                  ctrl.file = imageFile;
-                                  await ctrl.validateFoodDetails();
-                                  Get.offNamed(RouteHelper.getAllFoodScreen());
-                                },
-                              ))
-                            ],
-                          ),
-                        )
-                      ],
+                                5.verticalSpace,
+                                AnimatedCrossFade(
+                                  firstChild: TextFieldWidget(
+                                    keyBordType: TextInputType.number,
+                                    hintText: 'Enter Your Food Price ....',
+                                    textEditingController: ctrl.fdPriceTD,
+                                    borderRadius: 15.r,
+                                    onChange: (_) {},
+                                  ),
+                                  secondChild: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFieldWidget(
+                                          keyBordType: TextInputType.number,
+                                          hintText: 'Full',
+                                          textEditingController: ctrl.fdFullPriceTD,
+                                          borderRadius: 15.r,
+                                          onChange: (_) {},
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TextFieldWidget(
+                                          keyBordType: TextInputType.number,
+                                          hintText: '3/4',
+                                          textEditingController: ctrl.fdThreeBiTwoPrsTD,
+                                          borderRadius: 15.r,
+                                          onChange: (_) {},
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TextFieldWidget(
+                                          keyBordType: TextInputType.number,
+                                          hintText: 'Half',
+                                          textEditingController: ctrl.fdHalfPriceTD,
+                                          borderRadius: 15.r,
+                                          onChange: (_) {},
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TextFieldWidget(
+                                          keyBordType: TextInputType.number,
+                                          hintText: 'Quarter',
+                                          textEditingController: ctrl.fdQtrPriceTD,
+                                          borderRadius: 15.r,
+                                          onChange: (_) {},
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                  crossFadeState: state,
+                                  firstCurve: Curves.fastLinearToSlowEaseIn,
+                                  secondCurve: Curves.linear,
+                                ),
+                                20.verticalSpace,
+                                //add food button
+                                Center(
+                                    child: RoundBorderButton(
+                                  text: 'Update Food',
+                                  textColor: Colors.white,
+                                  width: 0.9.sw,
+                                  borderRadius: 20.r,
+                                  onTap: () async {
+                                    ctrl.file = imageFile;
+                                    await ctrl.validateFoodDetails();
+                                    Get.offNamed(RouteHelper.getAllFoodScreen());
+                                  },
+                                ))
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                ),
               );
         }), // This trailing comma makes auto-formatting nicer for build methods.
       ),
@@ -293,7 +299,7 @@ class _UpdateFoodScreenState extends State<UpdateFoodScreen> {
   }
 
   void _getFromCamara() async {
-    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080);
+    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080,imageQuality: 30);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }

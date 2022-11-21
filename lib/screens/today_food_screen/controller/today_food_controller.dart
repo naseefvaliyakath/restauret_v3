@@ -3,12 +3,14 @@ import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/repository/food_repository.dart';
+
 import '../../../api_data_loader/category_data.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class TodayFoodController extends GetxController {
   //?controllers
@@ -43,10 +45,15 @@ class TodayFoodController extends GetxController {
   //? to sort food as per category
   String selectedCategory = COMMON_CATEGORY;
 
+  //? to authorize cashier or waiter
+  bool isCashier = false;
+
 
   @override
   void onInit() async {
     searchTD = TextEditingController();
+    await checkIsCashier();
+    getInitialTodayFood();
     getInitialCategory();
     super.onInit();
   }
@@ -96,29 +103,94 @@ class TodayFoodController extends GetxController {
     }
   }
 
-  //? this function will call getTodayFood() in FoodData
-  //? ad refresh fresh data from server
-  refreshTodayFood() async {
-   await _foodData.getTodayFoods(fromTodayFood: true);
-   AppSnackBar.successSnackBar('Success', 'Foods updated successfully');
-  }
-
-  //? when call getTodayFood() in FoodData this method will call in success
-  //? to update fresh data in FoodData and today food also
-  //? this method only call from FoodData like callback
-  refreshMyTodayFood(List<Foods> todayFoodsFromFoodData) {
+  //? to remove from today food
+  updateToQuickBill(int fdId, String isQuick) async {
     try {
-      _storedTodayFoods.clear();
-      _storedTodayFoods.addAll(todayFoodsFromFoodData);
-      //? to show full food in UI
-      _myTodayFoods.clear();
-      _myTodayFoods.addAll(_storedTodayFoods);
-      update();
+      //? block user to add more than 4 quick bill from cline side (server side also blocking)
+      if(isQuick == 'yes' && _myTodayFoods.where((element) => element.fdIsQuick == 'yes').length >= 4){
+        AppSnackBar.errorSnackBar('Cant add', 'You cannot add more than 4 quick bill');
+      }
+      else {
+        showLoading();
+        MyResponse response = await _foodRepo.updateQuickBillFood(fdId, isQuick);
+        if (response.statusCode == 1) {
+          refreshTodayFood();
+          //? to update today food after it removing
+          _foodData.getAllFoods();
+          //! success message shown in refreshTodayFood() method
+        } else {
+          AppSnackBar.errorSnackBar('Error', response.message);
+          return;
+        }
+      }
     } catch (e) {
-      return;
+      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+    } finally {
+      hideLoading();
+      update();
     }
   }
 
+
+  //? to load o first screen loading
+  getInitialTodayFood() {
+    try {
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedTodayFoods from foodData controller
+      showLoading();
+      if (_foodData.todayFoods.isEmpty) {
+        if (kDebugMode) {
+          print(_foodData.todayFoods.length);
+          print('food data loaded from db');
+        }
+        refreshTodayFood(showSnack: false);
+      } else {
+        if (kDebugMode) {
+          print('food data loaded from food data ${_foodData.todayFoods.length}');
+        }
+        //? load data from variable in todayFood
+        _storedTodayFoods.clear();
+        _storedTodayFoods.addAll(_foodData.todayFoods);
+        //? to show full food in UI
+        _myTodayFoods.clear();
+        _myTodayFoods.addAll(_storedTodayFoods);
+      }
+      update();
+    } catch (e) {
+      return;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  //? this function will call getTodayFood() in FoodData
+  refreshTodayFood({bool showSnack = true}) async {
+    try {
+      MyResponse response = await _foodData.getTodayFoods();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Foods>  foods = response.data;
+          _storedTodayFoods.clear();
+          _storedTodayFoods.addAll(foods);
+          //? to show full food in UI
+          _myTodayFoods.clear();
+          _myTodayFoods.addAll(_storedTodayFoods);
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      update();
+    }
+  }
 
 
   //////! category section !//////
@@ -134,7 +206,7 @@ class TodayFoodController extends GetxController {
           print(_categoryData.category.length);
           print('category data loaded from db');
         }
-        _categoryData.getCategory(fromToday: true);
+        refreshCategory(showSnack: false);
       } else {
         if (kDebugMode) {
           print('category data loaded from category data');
@@ -152,32 +224,35 @@ class TodayFoodController extends GetxController {
     }
   }
 
-  //? this function will call getCategory() in CategoryData
   //? ad refresh fresh data from server
-  refreshCategory() async {
+  refreshCategory({bool showSnack = true}) async {
     try {
-      await _categoryData.getCategory(fromToday: true);
-      //? no need to show snack-bar
+      MyResponse response = await _categoryData.getCategory();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Category>  category = response.data;
+          _storedCategory.clear();
+          _storedCategory.addAll(category);
+          //? to show full category in UI
+          _myCategory.clear();
+          _myCategory.addAll(_storedCategory);
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
     } catch (e) {
       rethrow;
+    } finally {
+      update();
     }
   }
 
-  //? when call getCategory() in CategoryData this method will call in success
-  //? to update fresh data in CategoryData and _myCategory also
-  //? this method only for call getCategory method from CategoryData like callback
-  refreshMyCategory(List<Category> categoryFromCategoryData) {
-    try {
-      _storedCategory.clear();
-      _storedCategory.addAll(categoryFromCategoryData);
-      //? to show full food in UI
-      _myCategory.clear();
-      _myCategory.addAll(_storedCategory);
-      update();
-    } catch (e) {
-      return;
-    }
-  }
+
 
   //? to sort food with sorting btn
   sortFoodBySelectedCategory() {
@@ -198,6 +273,22 @@ class TodayFoodController extends GetxController {
         _myTodayFoods.clear();
         _myTodayFoods.addAll(sortedFoodByCategory);
       }
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? to authorize cashier or waiter
+  checkIsCashier() async {
+    try {
+      int appModeNumber = await Get.find<StartupController>().readAppModeInHive();
+      if(appModeNumber == 1){
+            isCashier = true;
+          }
+          else{
+            isCashier = false;
+          }
       update();
     } catch (e) {
       rethrow;

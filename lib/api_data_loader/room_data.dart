@@ -2,8 +2,9 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/models/room_response/room.dart';
 import 'package:rest_verision_3/models/room_response/room_response.dart';
 import 'package:rest_verision_3/repository/room_repository.dart';
-import '../constants/app_secret_constants/app_secret_constants.dart';
+
 import '../models/my_response.dart';
+import '../screens/billing_screen/controller/billing_screen_controller.dart';
 
 class RoomData extends GetxController {
   final RoomRepo _roomRepo = Get.find<RoomRepo>();
@@ -15,11 +16,10 @@ class RoomData extends GetxController {
 
   @override
   Future<void> onInit() async {
-    //getAllRoom();
     super.onInit();
   }
 
-  getAllRoom() async {
+  Future<MyResponse> getAllRoom() async {
     try {
       MyResponse response = await _roomRepo.getRoom();
 
@@ -27,16 +27,21 @@ class RoomData extends GetxController {
         RoomResponse parsedResponse = response.data;
         if (parsedResponse.data == null) {
           _allRoom;
+          return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
         } else {
+          _allRoom.clear();
           _allRoom.addAll(parsedResponse.data?.toList() ?? []);
+          return MyResponse(statusCode: 1,data: _allRoom, status: 'Success', message:  'Updated successfully');
         }
       } else {
-        return;
+        return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
       }
     } catch (e) {
-      rethrow;
+      return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
+    }finally{
+      update();
     }
-    update();
+
   }
 
 

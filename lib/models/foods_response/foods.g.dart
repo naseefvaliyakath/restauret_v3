@@ -19,6 +19,7 @@ Foods _$FoodsFromJson(Map<String, dynamic> json) => Foods(
       json['fdShopId'] as int?,
       json['fdImg'] as String?,
       json['fdIsToday'] as String?,
+      json['fdIsQuick'] as String?,
       json['createdAt'] as String?,
     );
 
@@ -35,5 +36,6 @@ Map<String, dynamic> _$FoodsToJson(Foods instance) => <String, dynamic>{
       'fdShopId': instance.fdShopId,
       'fdImg': instance.fdImg,
       'fdIsToday': instance.fdIsToday,
+      'fdIsQuick': instance.fdIsQuick,
       'createdAt': instance.createdAt,
     };

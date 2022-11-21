@@ -47,11 +47,11 @@ class ViewOrderListContent extends StatelessWidget {
                       qnt: ctrl.kotBillingItems[kotInt].fdOrder?[index].qnt ?? 0,
                       kitchenNote: ctrl.kotBillingItems[kotInt].fdOrder?[index].ktNote ?? 'Error',
                       price: ctrl.kotBillingItems[kotInt].fdOrder?[index].price ?.toDouble() ?? 0,
-                      ordStatus: ctrl.kotBillingItems?[kotInt].fdOrder?[index].ordStatus ?? PENDING,
+                      ordStatus: ctrl.kotBillingItems[kotInt].fdOrder?[index].ordStatus ?? PENDING,
                       onLongTap: () {},
                     );
                   },
-                  itemCount: ctrl.kotBillingItems[kotInt].fdOrder?.length ?? 0,
+                  itemCount: ctrl.kotBillingItems.isNotEmpty ? ( ctrl.kotBillingItems[kotInt].fdOrder?.length ?? 0) : 0,
                 ),
               ),
             ),

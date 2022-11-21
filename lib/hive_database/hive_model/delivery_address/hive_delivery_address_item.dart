@@ -1,4 +1,5 @@
 import 'package:hive_flutter/adapters.dart';
+
 part 'hive_delivery_address_item.g.dart';
 
 @HiveType(typeId: 1)

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../models/settled_order_response/settled_order.dart';
 import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'invoice_alert_body_order_view.dart';
 
-//? to show invoice when click to settled order to print the invoice
+//? to show invoice when click to settled order to print the invoice not in KOT list
 void invoiceAlertForOrderViewPage({
   required SettledOrder singleOrder,
   required List<dynamic> billingItems,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+
 import '../../constants/app_colors/app_colors.dart';
 
 class OrderStatusCard extends StatelessWidget {
@@ -8,7 +10,7 @@ class OrderStatusCard extends StatelessWidget {
   final String orderStatus;
   final int orderId;
   final int totalItem;
-  final String dateTime;
+  final DateTime dateTime;
   final String orderType;
   final Color borderColor;
   final Color cardColor;
@@ -112,7 +114,7 @@ class OrderStatusCard extends StatelessWidget {
                             size: 10.sp,
                           ),
                           Text(
-                            '5 Min',
+                            '  ${DateTime.now().difference(dateTime).inMinutes.toString()} min',
                             style: TextStyle(fontSize: 10.sp),
                           )
                         ],
@@ -149,7 +151,7 @@ class OrderStatusCard extends StatelessWidget {
                     5.verticalSpace,
                     FittedBox(
                       child: Text(
-                        dateTime == '' ? 'error' : dateTime,
+                        DateFormat('dd-MM-yyyy  hh:mm aa').format(dateTime),
                         softWrap: false,
                         style: TextStyle(
                           fontSize: 10.sp,

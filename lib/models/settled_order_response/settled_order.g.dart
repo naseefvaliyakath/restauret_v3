@@ -15,6 +15,7 @@ SettledOrder _$SettledOrderFromJson(Map<String, dynamic> json) => SettledOrder(
       fdOrderKot: json['fdOrderKot'] as int?,
       fdOrderStatus: json['fdOrderStatus'] as String?,
       fdOrderType: json['fdOrderType'] as String?,
+      fdDelAddress: json['fdDelAddress'] as Map<String, dynamic>?,
       netAmount: json['netAmount'] as num?,
       discountPersent: json['discountPersent'] as num?,
       discountCash: json['discountCash'] as num?,
@@ -23,7 +24,11 @@ SettledOrder _$SettledOrderFromJson(Map<String, dynamic> json) => SettledOrder(
       paymentType: json['paymentType'] as String?,
       cashReceived: json['cashReceived'] as num?,
       change: json['change'] as num?,
-    );
+    )
+      ..fdOnlineApp = json['fdOnlineApp'] as String?
+      ..settledTime = json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String);
 
 Map<String, dynamic> _$SettledOrderToJson(SettledOrder instance) =>
     <String, dynamic>{
@@ -33,6 +38,8 @@ Map<String, dynamic> _$SettledOrderToJson(SettledOrder instance) =>
       'fdOrderKot': instance.fdOrderKot,
       'fdOrderStatus': instance.fdOrderStatus,
       'fdOrderType': instance.fdOrderType,
+      'fdDelAddress': instance.fdDelAddress,
+      'fdOnlineApp': instance.fdOnlineApp,
       'netAmount': instance.netAmount,
       'discountPersent': instance.discountPersent,
       'discountCash': instance.discountCash,
@@ -41,4 +48,5 @@ Map<String, dynamic> _$SettledOrderToJson(SettledOrder instance) =>
       'paymentType': instance.paymentType,
       'cashReceived': instance.cashReceived,
       'change': instance.change,
+      'createdAt': instance.settledTime?.toIso8601String(),
     };

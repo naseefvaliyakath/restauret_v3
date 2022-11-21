@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../common_widget/common_text/mid_text.dart';
 
 class BillingTableHeading extends StatelessWidget {
@@ -44,7 +45,7 @@ class BillingTableHeading extends StatelessWidget {
             ),
             SizedBox(
               width: 1.sw * 0.1,
-              child: FittedBox(
+              child: const FittedBox(
                   alignment: Alignment.centerLeft,
                   fit: BoxFit.scaleDown,
                   child: MidText(text: 'Qnt')),
@@ -55,7 +56,7 @@ class BillingTableHeading extends StatelessWidget {
             ),
             SizedBox(
               width: 1.sw * 0.1,
-              child: FittedBox(
+              child: const FittedBox(
                 alignment: Alignment.centerLeft,
                 fit: BoxFit.scaleDown,
                 child: MidText(

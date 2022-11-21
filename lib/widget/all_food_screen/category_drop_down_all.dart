@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:rest_verision_3/screens/all_food_screen/controller/all_food_controller.dart';
-import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
+
 import '../../constants/strings/my_strings.dart';
 
 class CategoryDropDownAll extends StatelessWidget {

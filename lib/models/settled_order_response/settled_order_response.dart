@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rest_verision_3/models/settled_order_response/settled_order.dart';
+
 part 'settled_order_response.g.dart';
 
 @JsonSerializable()

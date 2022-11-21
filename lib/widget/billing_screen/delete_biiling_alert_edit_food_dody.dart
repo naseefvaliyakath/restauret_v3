@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../constants/app_colors/app_colors.dart';
 import '../common_widget/common_text/big_text.dart';
 import '../common_widget/text_field_widget.dart';

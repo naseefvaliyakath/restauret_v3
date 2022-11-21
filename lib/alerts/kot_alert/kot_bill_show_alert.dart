@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:rest_verision_3/models/kitchen_order_response/kitchen_order.dart';
 import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'kot_bill_widget.dart';
 
@@ -11,7 +12,10 @@ void showKotBillAlert({
   //? this kotId only get from order view
   //? from billing page its -1 so kot not send to server in billing page
   int kotId = -1,
+  //? this tableName is get from billing screen if its dining , els its ''
   String tableName = '',
+  //? full KOT will get only from orderView page so its needed for take delivery address and order type of already sent KOT
+  required KitchenOrder fullKot,
 }) {
   try {
     showAnimatedDialog(
@@ -45,6 +49,7 @@ void showKotBillAlert({
                 type: type,
                 billingItems: billingItems,
                 kotId: kotId,
+                fullKot: fullKot,
               ),
             ],
           ),

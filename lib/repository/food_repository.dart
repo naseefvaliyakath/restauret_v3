@@ -1,10 +1,13 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/app_secret_constants/app_secret_constants.dart';
+
 import '../constants/api_link/api_link.dart';
 import '../models/foods_response/food_response.dart';
 import '../models/my_response.dart';
+import '../screens/login_screen/controller/startup_controller.dart';
 import '../services/dio_error.dart';
 import '../services/service.dart';
 
@@ -16,7 +19,7 @@ class FoodRepo extends GetxService {
   Future<MyResponse> getTodayFoods() async {
     // TODO: implement getNewsHeadline
     try {
-      final response = await _httpService.getRequestWithBody(TODAY_FOOD_URL, {'fdShopId': SHOPE_ID});
+      final response = await _httpService.getRequestWithBody(TODAY_FOOD_URL, {'fdShopId': Get.find<StartupController>().SHOPE_ID});
       FoodResponse? parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', data: null, message: response.statusMessage.toString());
@@ -26,9 +29,8 @@ class FoodRepo extends GetxService {
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
     } catch (e) {
-      rethrow;
-      // return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
-    } finally {}
+      return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
+    }
   }
 
   //? getALl food
@@ -36,7 +38,7 @@ class FoodRepo extends GetxService {
     // TODO: implement getNewsHeadline
 
     try {
-      final response = await _httpService.getRequestWithBody(ALL_FOOD_URL, {'fdShopId': SHOPE_ID});
+      final response = await _httpService.getRequestWithBody(ALL_FOOD_URL, {'fdShopId': Get.find<StartupController>().SHOPE_ID});
       FoodResponse? parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
         return MyResponse(statusCode: 0, status: 'Error', data: null, message: response.statusMessage.toString());
@@ -46,9 +48,8 @@ class FoodRepo extends GetxService {
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
     } catch (e) {
-      rethrow;
-      // return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
-    } finally {}
+      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+    }
   }
 
   //? search today food
@@ -65,9 +66,8 @@ class FoodRepo extends GetxService {
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
     } catch (e) {
-      rethrow;
-      // return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
-    } finally {}
+       return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
+    }
   }
 
   //? search all food
@@ -92,40 +92,57 @@ class FoodRepo extends GetxService {
   //? update today food
   Future<MyResponse> updateTodayFood(int fdId, String isToday) async {
     try {
-      Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsToday': isToday, 'fdShopId': SHOPE_ID};
+      Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsToday': isToday, 'fdShopId': Get.find<StartupController>().SHOPE_ID};
       final response = await _httpService.updateData(TODAY_FOOD_UPDATE, foodData);
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
-        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
       } else {
         return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
       }
     } on DioError catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
     } catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
     }
   }
 
+  //? update quickBill food
+  Future<MyResponse> updateQuickBillFood(int fdId, String isQuick) async {
+    try {
+      Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsQuick': isQuick, 'fdShopId': Get.find<StartupController>().SHOPE_ID};
+      final response = await _httpService.updateData(QUICK_FOOD_UPDATE, foodData);
+      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+      if (parsedResponse.error ?? true) {
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
+    }
+  }
 
   //? delete food
   deleteFood(int id) async {
     try {
       Map<String, dynamic> foodData = {
-        'fdShopId': SHOPE_ID,
+        'fdShopId': Get.find<StartupController>().SHOPE_ID,
         'fdId': id,
       };
       final response = await _httpService.delete(DELETE_FOOD, foodData);
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
-        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
       } else {
         return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
       }
     } on DioError catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
     } catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
     }
   }
 
@@ -146,7 +163,7 @@ class FoodRepo extends GetxService {
 
     try {
       final response = await _httpService.insertFood(
-        fdShopId: SHOPE_ID,
+        fdShopId: Get.find<StartupController>().SHOPE_ID,
         file: file,
         fdName: fdName,
         fdCategory: fdCategory,
@@ -159,14 +176,14 @@ class FoodRepo extends GetxService {
       );
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
-        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
       } else {
         return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
     } catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ?  e.toString() : 'Something wrong !!');
     }
   }
 
@@ -197,21 +214,21 @@ class FoodRepo extends GetxService {
         fdQtrPrice: fdQtrPrice,
         fdIsLoos: fdIsLoos,
         cookTime: cookTime,
-        fdShopId: SHOPE_ID,
+        fdShopId: Get.find<StartupController>().SHOPE_ID,
         fdImg: fdImg,
         fdIsToday: fdIsToday,
         fdId: id,
       );
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
-        return MyResponse(statusCode: 0, status: 'Error', message: response.statusMessage.toString());
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
       } else {
         return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
     }catch (e){
-      return MyResponse(statusCode: 0, status: 'Error', message: 'Error');
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString(): 'Something wrong !!');
     }
 
   }

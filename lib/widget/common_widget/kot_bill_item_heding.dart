@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,12 +17,10 @@ class KotBillItemHeading extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: Text(
-                'S/N',
-                maxLines: 1,
-                style: TextStyle(fontSize: 13.sp),
-              ),
+            Text(
+              'S/N',
+              maxLines: 1,
+              style: TextStyle(fontSize: 13.sp),
             ),
             SizedBox(
               child: Column(

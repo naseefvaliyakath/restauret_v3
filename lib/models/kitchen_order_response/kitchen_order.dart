@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'kot_tableChairSet.dart';
+
 import 'order_bill.dart';
+
 part 'kitchen_order.g.dart';
 
 @JsonSerializable()
@@ -25,6 +26,12 @@ class KitchenOrder {
   @JsonKey(name: "fdOrderType")
   String? fdOrderType;
 
+  @JsonKey(name: "fdDelAddress")
+  Map<String,dynamic>? fdDelAddress;
+
+  @JsonKey(name: "fdOnlineApp")
+  String? fdOnlineApp;
+
   @JsonKey(name: "totelPrice")
   num? totalPrice;
 
@@ -34,10 +41,13 @@ class KitchenOrder {
 
 
   @JsonKey(name: "kotTableChairSet")
-  List<KotTableChairSet>? kotTableChairSet;
+  List<dynamic>? kotTableChairSet;
 
   @JsonKey(name: "orderColor")
   int? orderColor;
+
+  @JsonKey(name: "createdAt")
+  DateTime? kotTime;
 
   KitchenOrder({
     required this.Kot_id,
@@ -47,6 +57,7 @@ class KitchenOrder {
     this.fdOrder,
     required this.fdOrderStatus,
     required this.fdOrderType,
+    required this.fdDelAddress,
     required this.totalPrice,
     required this.orderColor,
   });

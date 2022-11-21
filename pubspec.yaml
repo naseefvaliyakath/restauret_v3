@@ -31,8 +31,20 @@ dependencies:
   ticket_widget: 0.0.1
   intl: 0.17.0
   audioplayers: 1.1.1
+  flutter_picker: ^2.0.5
+  dropdown_button2: ^1.8.9
+  fluttertoast: ^8.1.1
+  internet_connection_checker: ^1.0.0+1
+  flutter_speed_dial: ^6.2.0
+  flutter_native_splash: ^2.2.14
   flutter: 
     sdk: flutter
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/image/welcome_splash.png
+
+
 
 dev_dependencies: 
   flutter_lints: ^2.0.0

@@ -1,15 +1,17 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
+
 import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
+import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
 import '../../../repository/food_repository.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class AllFoodController extends GetxController {
   //?controllers
@@ -45,11 +47,16 @@ class AllFoodController extends GetxController {
   //? to sort food as per category
   String selectedCategory = COMMON_CATEGORY;
 
+  //? to authorize cashier and waiter
+  bool isCashier = false;
+
 
 
   @override
   void onInit() async {
     searchTD = TextEditingController();
+    await checkIsCashier();
+    checkInternetConnection();
     getInitialFood();
     getInitialCategory();
     super.onInit();
@@ -73,7 +80,7 @@ class AllFoodController extends GetxController {
           print(_foodData.allFoods.length);
           print('data loaded from db');
         }
-        _foodData.getAllFoods(fromAllFood: true);
+        refreshAllFood(showSnack: false);
       } else {
         if (kDebugMode) {
           print('data loaded from food data');
@@ -116,7 +123,7 @@ class AllFoodController extends GetxController {
       if (response.statusCode == 1) {
         refreshAllFood();
         //? to update today food also after adding in today food
-        _foodData.getTodayFoods(fromTodayFood: true);
+        _foodData.getTodayFoods();
         //! success message shown in refreshAllFood() method
         // AppSnackBar.successSnackBar('Success', response.message);
       } else {
@@ -131,28 +138,37 @@ class AllFoodController extends GetxController {
     }
   }
 
-  //? this function will call getAllFood() in FoodData
+
   //? ad refresh fresh data from server
-  refreshAllFood() async {
-    await _foodData.getAllFoods(fromAllFood: true);
-    AppSnackBar.successSnackBar('Success', 'Foods updated successfully');
+  refreshAllFood({bool showSnack = true}) async {
+   try {
+     MyResponse response = await _foodData.getAllFoods();
+     if(response.statusCode == 1){
+       if(response.data != null){
+         List<Foods>  foods = response.data;
+         _storedAllFoods.clear();
+         _storedAllFoods.addAll(foods);
+         //? to show full food in UI
+         _myAllFoods.clear();
+         _myAllFoods.addAll(_storedAllFoods);
+         if(showSnack) {
+           AppSnackBar.successSnackBar('Success', 'Updated successfully');
+         }
+       }
+     }else{
+       if(showSnack) {
+         AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+       }
+     }
+   } catch (e) {
+     return;
+   }finally{
+     update();
+   }
+
   }
 
-  //? when call getAllFood() in FoodData this method will call in success
-  //? to update fresh data in FoodData and today food also
-  //? this method only call from FoodData like callback
-  refreshMyAllFood(List<Foods> todayFoodsFromFoodData) {
-    try {
-      _storedAllFoods.clear();
-      _storedAllFoods.addAll(todayFoodsFromFoodData);
-      //? to show full food in UI
-      _myAllFoods.clear();
-      _myAllFoods.addAll(_storedAllFoods);
-      update();
-    } catch (e) {
-      return;
-    }
-  }
+
 
 
   //? to delete the food
@@ -163,7 +179,7 @@ class AllFoodController extends GetxController {
       if (response.statusCode == 1) {
         refreshAllFood();
         //? to update today food also after deleting in today food
-        _foodData.getTodayFoods(fromTodayFood: true);
+        _foodData.getTodayFoods();
          //! snack bar showing when refresh food no need to show here
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);
@@ -191,7 +207,7 @@ class AllFoodController extends GetxController {
           print(_categoryData.category.length);
           print('category data loaded from db');
         }
-        _categoryData.getCategory(fromAllFood: true);
+        refreshCategory(showSnack: false);
       } else {
         if (kDebugMode) {
           print('category data loaded from category data');
@@ -209,30 +225,34 @@ class AllFoodController extends GetxController {
     }
   }
 
-  //? this function will call getCategory() in CategoryData
   //? ad refresh fresh data from server
-  refreshCategory() async {
+  refreshCategory({bool showSnack = true}) async {
     try {
-      await _categoryData.getCategory(fromAllFood: true);
-      //? no need to show snack-bar
+
+      MyResponse response = await _categoryData.getCategory();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Category>  category = response.data;
+          _storedCategory.clear();
+          _storedCategory.addAll(category);
+          //? to show full food in UI
+          _myCategory.clear();
+          _myCategory.addAll(_storedCategory);
+          //? to hide snack-bar on page starting , because this method is calling page starting
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        //? to hide snack-bar on page starting , because this method is calling page starting
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
     } catch (e) {
       rethrow;
-    }
-  }
-
-  //? when call getCategory() in CategoryData this method will call in success
-  //? to update fresh data in CategoryData and _myCategory also
-  //? this method only for call getCategory method from CategoryData like callback
-  refreshMyCategory(List<Category> categoryFromCategoryData) {
-    try {
-      _storedCategory.clear();
-      _storedCategory.addAll(categoryFromCategoryData);
-      //? to show full food in UI
-      _myCategory.clear();
-      _myCategory.addAll(_storedCategory);
+    } finally {
       update();
-    } catch (e) {
-      return;
     }
   }
 
@@ -254,6 +274,22 @@ class AllFoodController extends GetxController {
         }
         _myAllFoods.clear();
         _myAllFoods.addAll(sortedFoodByCategory);
+      }
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? to authorize cashier or waiter
+  checkIsCashier() async {
+    try {
+      int appModeNumber = await Get.find<StartupController>().readAppModeInHive();
+      if(appModeNumber == 1){
+        isCashier = true;
+      }
+      else{
+        isCashier = false;
       }
       update();
     } catch (e) {

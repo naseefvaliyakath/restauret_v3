@@ -2,6 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
 
 class NotificationIcon extends StatelessWidget {
   final Function onTap;
@@ -10,6 +11,8 @@ class NotificationIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(50),
+      splashColor: AppColors.mainColor_2,
       onTap: () {
        onTap();
       },

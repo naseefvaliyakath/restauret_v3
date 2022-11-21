@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+
 import '../constants/hive_constants/hive_costants.dart';
 class MyLocalStorage extends GetxController {
 

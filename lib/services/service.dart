@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
+import '../check_internet/check_internet.dart';
 import '../constants/api_link/api_link.dart';
-import '../widget/common_widget/snack_bar.dart';
-import 'dio_error.dart';
+
 
 class HttpService {
   Dio _dio = Dio();
@@ -262,8 +263,9 @@ class HttpService {
   }
 
   initializeInterceptors() {
-    _dio.interceptors.add(InterceptorsWrapper(onRequest: (request, handler) {
+    _dio.interceptors.add(InterceptorsWrapper(onRequest: (request, handler) async {
       // Do something before request is sent
+      checkInternetConnection();
       if (kDebugMode) {
         print("${request.method} | ${request.path}");
       }
@@ -279,7 +281,7 @@ class HttpService {
       if (kDebugMode) {
         print('deo error${e.message}');
       }
-      AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
+      // AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
       return handler.next(e);
     }));
   }

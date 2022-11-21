@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
+
 import '../../alerts/invoice_alert_for_order_view_page/invoice_alert_for_order_view.dart';
 import '../../alerts/kot_order_manage_alert/kot_order_manage_alert.dart';
 import '../../alerts/my_dialog_body.dart';
@@ -29,8 +30,6 @@ class OrderViewScreen extends StatelessWidget {
     {'text': "KOT", 'circleColor': Colors.redAccent},
     {'text': "SETTLED", 'circleColor': Colors.green},
     {'text': "HOLD", 'circleColor': Colors.blueAccent},
-    {'text': "QUICK PAY", 'circleColor': Colors.yellowAccent},
-    {'text': "ALL ORDER", 'circleColor': Colors.pink},
   ];
 
   @override
@@ -93,7 +92,12 @@ class OrderViewScreen extends StatelessWidget {
                                       text: 'Today Date : ',
                                       size: 18.sp,
                                     )),
-                                    const DatePickerForOrderView(),
+                                     DatePickerForOrderView(
+                                       dateTime: ctrl.selectedDateRangeForSettledOrder,
+                                      onTap: () async {
+                                       await ctrl.datePickerForSettledOrder(context);
+                                      },
+                                    ),
                                     const QrScannerIconBtn(),
                                   ],
                                 ),
@@ -148,7 +152,9 @@ class OrderViewScreen extends StatelessWidget {
                               // checking witch tab is selected
                               if (ctrl.tappedTabName == 'KOT') {
                                 return OrderStatusCard(
-                                  name: ctrl.kotBillingItems[index].fdOrder!.isEmpty ? "error" : ctrl.kotBillingItems[index].fdOrder?[0].name ?? "",
+                                  name: ctrl.kotBillingItems[index].fdOrder!.isEmpty
+                                      ? "error"
+                                      : ctrl.kotBillingItems[index].fdOrder?[0].name ?? "",
                                   price: (ctrl.kotBillingItems[index].totalPrice ?? 0).toString(),
                                   onTap: () {
                                     //? to show all KOT management buttons
@@ -173,14 +179,16 @@ class OrderViewScreen extends StatelessWidget {
                                   orderId: ctrl.kotBillingItems[index].Kot_id ?? -1,
                                   orderStatus: ctrl.kotBillingItems[index].fdOrderStatus ?? PENDING,
                                   orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
-                                  dateTime: '26-04-20222 : 10:30',
+                                  dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
                                   totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0,
                                 );
                               }
                               if (ctrl.tappedTabName == 'SETTLED') {
                                 return OrderSettledCard(
                                   //? to show first item name in the settled order
-                                  name: ((ctrl.settledBillingItems[index].fdOrder) ?? []).isEmpty ? "no item" : (ctrl.settledBillingItems[index].fdOrder?[0].name ?? ""),
+                                  name: ((ctrl.settledBillingItems[index].fdOrder) ?? []).isEmpty
+                                      ? "no item"
+                                      : (ctrl.settledBillingItems[index].fdOrder?[0].name ?? ""),
                                   price: '${ctrl.settledBillingItems[index].grandTotal ?? 0}',
                                   onLongTap: () {
                                     MyDialogBody.myConfirmDialogBody(
@@ -228,7 +236,7 @@ class OrderViewScreen extends StatelessWidget {
                                   settledId: ctrl.settledBillingItems[index].settled_id ?? -1,
                                   orderStatus: ctrl.settledBillingItems[index].fdOrderStatus ?? 'error',
                                   orderType: ctrl.settledBillingItems[index].fdOrderType ?? 'error',
-                                  dateTime: '26-04-20222 : 10:30',
+                                  dateTime: ctrl.settledBillingItems[index].settledTime ?? DateTime.now(),
                                   totalItem: ctrl.settledBillingItems[index].fdOrder?.length ?? 0,
                                   kotId: ctrl.settledBillingItems[index].fdOrderKot ?? -1,
                                   payType: ctrl.settledBillingItems[index].paymentType ?? CASH,
@@ -238,7 +246,9 @@ class OrderViewScreen extends StatelessWidget {
                               if (ctrl.tappedTabName == 'HOLD') {
                                 return OrderHoldCard(
                                   //? checking if bill array is empty
-                                  name: ctrl.holdBillingItems[index].holdItem!.isEmpty ? 'error' : ctrl.holdBillingItems[index].holdItem?[0]['name'] ?? 'error',
+                                  name: ctrl.holdBillingItems[index].holdItem!.isEmpty
+                                      ? 'error'
+                                      : ctrl.holdBillingItems[index].holdItem?[0]['name'] ?? 'error',
                                   price: (ctrl.holdBillingItems[index].totel ?? 0).toString(),
                                   onTap: () {
                                     MyDialogBody.myConfirmDialogBody(
@@ -248,10 +258,14 @@ class OrderViewScreen extends StatelessWidget {
                                         btnCancelText: 'Delete',
                                         btnOkText: 'Update',
                                         onTapOK: () {
-                                          ctrl.unHoldHoldItem(
-                                              holdBillingItems: ctrl.holdBillingItems[index].holdItem ?? [],
-                                              holdItemIndex: index,
-                                              orderType: ctrl.holdBillingItems[index].orderType ?? TAKEAWAY);
+                                          Get.back();
+                                          //? delayed for just animation
+                                          Future.delayed(const Duration(seconds: 1), () {
+                                            ctrl.unHoldHoldItem(
+                                                holdBillingItems: ctrl.holdBillingItems[index].holdItem ?? [],
+                                                holdItemIndex: index,
+                                                orderType: ctrl.holdBillingItems[index].orderType ?? TAKEAWAY);
+                                          });
                                         },
                                         onTapCancel: () async {
                                           //? delete the hold item from list
@@ -263,7 +277,8 @@ class OrderViewScreen extends StatelessWidget {
                                   },
                                   orderId: index + 1,
                                   orderType: ctrl.holdBillingItems[index].orderType ?? TAKEAWAY,
-                                  dateTime: '${ctrl.holdBillingItems[index].date ?? 'date'} ${ctrl.holdBillingItems[index].time ?? 'time'}',
+                                  dateTime:
+                                      '${ctrl.holdBillingItems[index].date ?? 'date'} ${ctrl.holdBillingItems[index].time ?? 'time'}',
                                   totalItem: ctrl.holdBillingItems[index].holdItem?.length ?? 0,
                                 );
                               }

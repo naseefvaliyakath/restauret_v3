@@ -1,16 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class DatePickerForOrderView extends StatelessWidget {
-  const DatePickerForOrderView({Key? key}) : super(key: key);
+  final DateTimeRange dateTime;
+  final Function onTap;
+  const DatePickerForOrderView({Key? key, required this.onTap, required this.dateTime}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: InkWell(
-        onTap: () {
-          // Get.to(DateRangePickerDemo());
+        onTap: () async {
+         await onTap();
         },
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
@@ -24,15 +26,16 @@ class DatePickerForOrderView extends StatelessWidget {
                     Icon(
                       Icons.calendar_today,
                       color: Colors.grey,
-                      size: 24.sp,
+                      size: 20.sp,
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10.0.w),
                       child: FittedBox(
                         child: Text(
-                          "22/03/2022 (Today)",
+                          '${DateFormat('dd-MM-yyyy').format(dateTime.start)} - ${DateFormat('dd-MM-yyyy').format(dateTime.end)}',
+                          overflow: TextOverflow.fade,
                           style: TextStyle(
-                            fontSize: 15.sp,
+                            fontSize: 13.sp,
                             color: Colors.grey,
                           ),
                         ),

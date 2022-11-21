@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 part 'foods.g.dart';
 
 @JsonSerializable()
@@ -40,6 +41,9 @@ class Foods{
   @JsonKey(name : "fdIsToday")
   String? fdIsToday;
 
+  @JsonKey(name : "fdIsQuick")
+  String? fdIsQuick;
+
   @JsonKey(name : "createdAt")
   String? createdAt;
 
@@ -57,6 +61,7 @@ class Foods{
       this.fdShopId,
       this.fdImg,
       this.fdIsToday,
+      this.fdIsQuick,
       this.createdAt); // DateTime get getPublishedAtDate => DateTime.tryParse(publishedAt);
 
   factory Foods.fromJson(Map<String, dynamic> json) => _$FoodsFromJson(json);

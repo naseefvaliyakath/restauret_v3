@@ -5,6 +5,7 @@ import '../constants/api_link/api_link.dart';
 import '../constants/app_secret_constants/app_secret_constants.dart';
 import '../models/my_response.dart';
 import '../models/table_chair_response/table_chair_set_response.dart';
+import '../screens/login_screen/controller/startup_controller.dart';
 import '../services/dio_error.dart';
 import '../services/service.dart';
 
@@ -15,7 +16,7 @@ class TableChairSetRepo extends GetxService {
     // TODO: implement getNewsHeadline
 
     try {
-      final response = await _httpService.getRequestWithBody(GET_TABLE_SET, {'fdShopId': SHOPE_ID});
+      final response = await _httpService.getRequestWithBody(GET_TABLE_SET, {'fdShopId': Get.find<StartupController>().SHOPE_ID});
       TableChairSetResponse? parsedResponse = TableChairSetResponse.fromJson(response.data);
       return MyResponse(
           statusCode: 1,

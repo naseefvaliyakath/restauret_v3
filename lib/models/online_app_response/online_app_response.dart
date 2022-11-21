@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'online_app.dart';
+
 part 'online_app_response.g.dart';
 
 @JsonSerializable()

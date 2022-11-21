@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_drop_down_for_order_view.dart';
 import 'package:rest_verision_3/widget/common_widget/horizontal_divider.dart';
+
 import '../../constants/app_colors/app_colors.dart';
-import 'payment_drop_down_for_billing.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
@@ -12,7 +12,7 @@ import '../../widget/common_widget/text_field_widget.dart';
 import 'invoice_alert_for_billing_page.dart';
 
 
-//? this is the popup open when click settled btn click to enter cash details
+//? this is the popup open when click settled btn click to enter cash details in order view page from kot mange tab
 class OrderSettleScreenInOrderView extends StatelessWidget {
   final ctrl;
 
@@ -213,7 +213,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                   children: [
                     Flexible(
                         child: ctrl.isClickedSettle.value
-                            ? AppMiniButton(text: 'Settled', color: Colors.grey, onTap: () {}) //disable if already click
+                            ? AppMiniButton(text: 'Settled', color: Colors.grey, onTap: () {}) //? disable if already click
                             : ProgressButton(
                                 btnCtrlName: 'settle',
                                 ctrl: ctrl,
@@ -241,19 +241,29 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                               change: ctrl.balanceChange.value ?? 0,
                               netAmount:ctrl.netTotal ?? 0,
                               cashReceived:ctrl.cashReceived ?? 0,
-                              orderType: ctrl.orderType.toString().toUpperCase());
+                              orderType: ctrl.orderType.toString(),
+                              deliveryAddress: ctrl.fdDelAddress,
+                              selectedOnlineApp: ctrl.selectedOnlineApp,
+                          );
                         },
                       ),
                     ),
                     3.horizontalSpace,
                     Flexible(
                       child: ctrl.isClickedSettle.value
-                          ? AppMiniButton(text: 'Settle & print', color: Colors.grey, onTap: () {}) //disable if already click
-                          : AppMiniButton(
-                              color: AppColors.mainColor,
-                              text: 'Settle & print',
-                              onTap: () {},
-                            ),
+                          ? AppMiniButton(text: 'Settle & print', color: Colors.grey, onTap: () {}) //?disable if already click
+                          : ProgressButton(
+                        btnCtrlName: 'settle_print',
+                        ctrl: ctrl,
+                        textSize: 13.sp,
+                        color: AppColors.mainColor,
+                        text: 'settle & print',
+                        onTap: () async {
+                          //? pass parameter to this method like insertSettledBill(context,print_true);
+                          //? then inside controller after success if print parameter is true then call print method after success
+                          await ctrl.insertSettledBill(context);
+                        },
+                      ),
                     ),
                     3.horizontalSpace,
                   ],

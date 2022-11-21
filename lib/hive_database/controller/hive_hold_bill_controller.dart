@@ -1,20 +1,20 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 import '../box_repository.dart';
-import '../hive_model/delivery_address/hive_delivery_address_item.dart';
 import '../hive_model/hold_item/hive_hold_item.dart';
 
 
 
 class HiveHoldBillController extends GetxController {
-  ///hold items
+  ///?hold items
   final Box _holdBillItemBox = BoxRepository.getHoldBillingBox();
   Box get holdBillItemBox => _holdBillItemBox;
 
 
 
 
-  ///hold items
+  //? hold items create
   createHoldBill({required HiveHoldItem holdBillingItem}) async {
    try {
      await  _holdBillItemBox.add(holdBillingItem);
@@ -33,6 +33,7 @@ class HiveHoldBillController extends GetxController {
     }
   }
 
+  //? get all hold item
   List<HiveHoldItem> getHoldBill() {
     try {
       List<HiveHoldItem> holdBillingItems = [];
@@ -49,6 +50,7 @@ class HiveHoldBillController extends GetxController {
     }
   }
 
+  //? delete hold item
   deleteHoldBill({required int index}) async {
     try {
       await  _holdBillItemBox.deleteAt(index);
@@ -58,9 +60,14 @@ class HiveHoldBillController extends GetxController {
     }
   }
 
+  //? delete all hold item
   clearBill({required int index}) async {
-    await _holdBillItemBox.clear();
-    update();
+    try {
+      await _holdBillItemBox.clear();
+      update();
+    } catch (e) {
+     rethrow;
+    }
   }
 
 

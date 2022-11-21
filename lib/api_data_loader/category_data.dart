@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/add_food_screen/controller/add_food_controller.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 import 'package:rest_verision_3/screens/update_food_screen/controller/update_food_controller.dart';
-import '../constants/app_secret_constants/app_secret_constants.dart';
+
 import '../models/category_response/category.dart';
 import '../models/category_response/category_response.dart';
 import '../models/my_response.dart';
@@ -25,13 +25,7 @@ class CategoryData extends GetxController {
     super.onInit();
   }
 
-  getCategory({
-    bool fromAddFood = false,
-    bool fromUpdateFood = false,
-    bool fromBilling = false,
-    bool fromToday = false,
-    bool fromAllFood = false,
-  }) async {
+  Future<MyResponse> getCategory() async {
     try {
       MyResponse response = await _categoryRepo.getCategory();
 
@@ -39,58 +33,20 @@ class CategoryData extends GetxController {
         CategoryResponse parsedResponse = response.data;
         if (parsedResponse.data == null) {
           _category;
+          return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
         } else {
           _category.clear();
           _category.addAll(parsedResponse.data?.toList() ?? []);
-          if (fromAddFood) {
-            if (Get.isRegistered<AddFoodController>()) {
-              Get.find<AddFoodController>().refreshMyCategory(_category);
-            } else {
-              Get.lazyPut<AddFoodController>(() => AddFoodController());
-              Get.find<AddFoodController>().refreshMyCategory(_category);
-            }
-          }
-          if (fromUpdateFood) {
-            if (Get.isRegistered<UpdateFoodController>()) {
-              Get.find<UpdateFoodController>().refreshMyCategory(_category);
-            } else {
-              Get.lazyPut<UpdateFoodController>(() => UpdateFoodController());
-              Get.find<UpdateFoodController>().refreshMyCategory(_category);
-            }
-          }
-          if (fromBilling) {
-            if (Get.isRegistered<BillingScreenController>()) {
-              Get.find<BillingScreenController>().refreshMyCategory(_category);
-            } else {
-              Get.lazyPut<BillingScreenController>(() => BillingScreenController());
-              Get.find<BillingScreenController>().refreshMyCategory(_category);
-            }
-          }
-
-          if (fromToday) {
-            if (Get.isRegistered<TodayFoodController>()) {
-              Get.find<TodayFoodController>().refreshMyCategory(_category);
-            } else {
-              Get.lazyPut<TodayFoodController>(() => TodayFoodController());
-              Get.find<TodayFoodController>().refreshMyCategory(_category);
-            }
-          }
-
-          if (fromAllFood) {
-            if (Get.isRegistered<AllFoodController>()) {
-              Get.find<AllFoodController>().refreshMyCategory(_category);
-            } else {
-              Get.lazyPut<AllFoodController>(() => AllFoodController());
-              Get.find<AllFoodController>().refreshMyCategory(_category);
-            }
-          }
+          return MyResponse(statusCode: 1,data: _category, status: 'Success', message:  'Updated successfully');
         }
       } else {
-        return;
+        return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
       }
     } catch (e) {
-      rethrow;
+      return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
+    }finally{
+      update();
     }
-    update();
+
   }
 }

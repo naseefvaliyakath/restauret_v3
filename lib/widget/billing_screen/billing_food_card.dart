@@ -9,13 +9,27 @@ class BillingFoodCard extends StatelessWidget {
   final String img;
   final String name;
   final double price;
+  final double priceThreeByTwo;
+  final double priceHalf;
+  final double priceQuarter;
+  final String fdIsLoos;
   final Function onTap;
+  final Function onLongTap;
+  final Function onSwipeDown;
 
-  const BillingFoodCard({Key? key, required this.img, required this.name, required this.price, required this.onTap}) : super(key: key);
+  const BillingFoodCard({Key? key, required this.img, required this.name, required this.price, required this.onTap, required this.onLongTap, required this.onSwipeDown, required this.priceThreeByTwo, required this.priceHalf, required this.priceQuarter, required this.fdIsLoos}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
+      onVerticalDragEnd: (detals){
+        int sensitivity = 8;
+        if(detals.primaryVelocity! > 0){
+          onSwipeDown();
+          return;
+        }
+      },
+      onLongPress: ()=>onLongTap(),
       onTap: ()=>onTap(),
       child: Container(
         margin: EdgeInsets.only(right: 6.sp),
@@ -97,6 +111,36 @@ class BillingFoodCard extends StatelessWidget {
                             color: AppColors.mainColor,
                             fontWeight: FontWeight.bold,
                           )),
+                      Visibility(
+                        visible: fdIsLoos == 'yes' ? true : false,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('3 by 4    : $priceThreeByTwo',
+                                softWrap: false,
+                                style: TextStyle(
+                                  fontSize: 1.sh / 99,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            Text('Half        : $priceHalf',
+                                softWrap: false,
+                                style: TextStyle(
+                                  fontSize: 1.sh / 99,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            Text('Quarter : $priceQuarter',
+                                softWrap: false,
+                                style: TextStyle(
+                                  fontSize: 1.sh / 99,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 )),

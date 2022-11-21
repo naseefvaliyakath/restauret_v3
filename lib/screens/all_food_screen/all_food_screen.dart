@@ -1,6 +1,6 @@
 import 'package:badges/badges.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -27,6 +27,8 @@ class AllFoodScreen extends StatelessWidget {
         body: GetBuilder<AllFoodController>(builder: (ctrl) {
           return RefreshIndicator(
             onRefresh: () async {
+              //? to vibrate
+              HapticFeedback.mediumImpact();
               await ctrl.refreshAllFood();
             },
             child: ctrl.isLoading
@@ -34,7 +36,8 @@ class AllFoodScreen extends StatelessWidget {
                 : SafeArea(
                     child: CustomScrollView(
                       //? when no item then pull to  refresh not work , that's why two physics
-                      physics: ctrl.myAllFoods.isNotEmpty ? const BouncingScrollPhysics() : const AlwaysScrollableScrollPhysics(),
+                      //? length grater than 5 for 3 row
+                      physics: ctrl.myAllFoods.length > 5 ? const BouncingScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                       primary: false,
                       slivers: <Widget>[
                         SliverAppBar(
@@ -86,8 +89,8 @@ class AllFoodScreen extends StatelessWidget {
                         ),
                         //? body section
                         SliverPadding(
-                          padding: const EdgeInsets.all(20),
-                          sliver: SliverGrid(
+                          padding:  EdgeInsets.all(20.sp),
+                          sliver:SliverGrid(
                             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 200.0.sp,
                               mainAxisSpacing: 18.sp,
@@ -98,32 +101,35 @@ class AllFoodScreen extends StatelessWidget {
                               (BuildContext context, int index) {
                                 return InkWell(
                                   onTap: () {
-                                    TwoBtnBottomSheet.bottomSheet(
-                                        b1Name: 'Add To Today Food',
-                                        b2Name: 'Edit Food',
-                                        b1Function: () {
-                                          Navigator.pop(context);
-                                          ctrl.addToToday(ctrl.myAllFoods[index].fdId ?? -1, 'yes');
-                                        },
-                                        b2Function: () {
-                                          Navigator.pop(context);
-                                                Get.offAndToNamed(
-                                                  RouteHelper.updateFoodScreen,
-                                                  arguments: {
-                                                    'fdName': ctrl.myAllFoods[index].fdName ?? '',
-                                                    'fdCategory': ctrl.myAllFoods[index].fdCategory ?? COMMON_CATEGORY,
-                                                    'fdFullPrice': ctrl.myAllFoods[index].fdFullPrice ?? 0,
-                                                    'fdThreeBiTwoPrsPrice': ctrl.myAllFoods[index].fdThreeBiTwoPrsPrice ?? 0,
-                                                    'fdHalfPrice': ctrl.myAllFoods[index].fdHalfPrice ?? 0,
-                                                    'fdQtrPrice': ctrl.myAllFoods[index].fdQtrPrice ?? 0,
-                                                    'fdIsLoos': ctrl.myAllFoods[index].fdIsLoos ?? 'no',
-                                                    'cookTime': ctrl.myAllFoods[index].cookTime ?? 0,
-                                                    'fdImg': ctrl.myAllFoods[index].fdImg ?? IMG_LINK,
-                                                    'fdIsToday': ctrl.myAllFoods[index].fdIsToday ?? 'no',
-                                                    'id': ctrl.myAllFoods[index].fdId ?? 0,
-                                                  },
-                                                );
-                                        });
+                                    if(ctrl.isCashier) {
+                                      TwoBtnBottomSheet.bottomSheet(
+                                          b1Name: 'Add To Today Food',
+                                          b2Name: 'Edit Food',
+                                          b1Function: () {
+                                            Navigator.pop(context);
+                                            ctrl.addToToday(ctrl.myAllFoods[index].fdId ?? -1, 'yes');
+                                          },
+                                          b2Function: () {
+                                            Navigator.pop(context);
+                                            Get.offAndToNamed(
+                                              RouteHelper.updateFoodScreen,
+                                              arguments: {
+                                                'fdName': ctrl.myAllFoods[index].fdName ?? '',
+                                                'fdCategory': ctrl.myAllFoods[index].fdCategory ?? COMMON_CATEGORY,
+                                                'fdFullPrice': ctrl.myAllFoods[index].fdFullPrice ?? 0,
+                                                'fdThreeBiTwoPrsPrice': ctrl.myAllFoods[index].fdThreeBiTwoPrsPrice ??
+                                                    0,
+                                                'fdHalfPrice': ctrl.myAllFoods[index].fdHalfPrice ?? 0,
+                                                'fdQtrPrice': ctrl.myAllFoods[index].fdQtrPrice ?? 0,
+                                                'fdIsLoos': ctrl.myAllFoods[index].fdIsLoos ?? 'no',
+                                                'cookTime': ctrl.myAllFoods[index].cookTime ?? 0,
+                                                'fdImg': ctrl.myAllFoods[index].fdImg ?? IMG_LINK,
+                                                'fdIsToday': ctrl.myAllFoods[index].fdIsToday ?? 'no',
+                                                'id': ctrl.myAllFoods[index].fdId ?? 0,
+                                              },
+                                            );
+                                          });
+                                    }
                                   },
                                   onLongPress: () {
                                     twoFunctionAlert(
@@ -142,7 +148,12 @@ class AllFoodScreen extends StatelessWidget {
                                     img: ctrl.myAllFoods[index].fdImg ?? IMG_LINK,
                                     name: ctrl.myAllFoods[index].fdName ?? '',
                                     price: ctrl.myAllFoods[index].fdFullPrice ?? 0,
+                                    priceThreeByTwo: ctrl.myAllFoods[index].fdThreeBiTwoPrsPrice ?? 0,
+                                     priceHalf: ctrl.myAllFoods[index].fdHalfPrice ?? 0,
+                                    priceQuarter: ctrl.myAllFoods[index].fdQtrPrice ?? 0,
                                     today: ctrl.myAllFoods[index].fdIsToday ?? 'no',
+                                    quick: ctrl.myAllFoods[index].fdIsQuick ?? 'no',
+                                    fdIsLoos: ctrl.myAllFoods[index].fdIsLoos ?? 'no',
                                   ),
                                 );
                               },

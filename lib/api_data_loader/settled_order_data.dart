@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/models/settled_order_response/settled_order.dart';
 import 'package:rest_verision_3/repository/settled_order_response.dart';
 
-import '../constants/app_secret_constants/app_secret_constants.dart';
 import '../models/my_response.dart';
 import '../models/settled_order_response/settled_order_response.dart';
 
@@ -17,7 +16,6 @@ class SettledOrderData extends GetxController {
 
   @override
   Future<void> onInit() async {
-   // getAllSettledOrder();
     super.onInit();
   }
 
@@ -30,6 +28,7 @@ class SettledOrderData extends GetxController {
         if (parsedResponse.data == null) {
           _allSettledOrder;
         } else {
+          _allSettledOrder.clear();
           _allSettledOrder.addAll(parsedResponse.data?.toList() ?? []);
         }
       } else {

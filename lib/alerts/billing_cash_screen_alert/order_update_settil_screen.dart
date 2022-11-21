@@ -1,15 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_drop_down_for_update_settled_order.dart';
 import 'package:rest_verision_3/widget/common_widget/horizontal_divider.dart';
+
 import '../../constants/app_colors/app_colors.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/text_field_widget.dart';
 
+//? this is the popup open when click settled btn click to enter cash details in order view page from settled order for update it
 class OrderUpdateSettleScreen extends StatelessWidget {
   final ctrl;
 
@@ -212,14 +213,6 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                                   await ctrl.updateSettledBill(context);
                                 },
                               )),
-                    3.horizontalSpace,
-                    Flexible(
-                      child: AppMiniButton(
-                        color: const Color(0xff4caf50),
-                        text: 'Print',
-                        onTap: () {},
-                      ),
-                    ),
                     3.horizontalSpace,
                     Flexible(
                       child:AppMiniButton(

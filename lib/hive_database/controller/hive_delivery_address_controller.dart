@@ -4,12 +4,12 @@ import '../box_repository.dart';
 import '../hive_model/delivery_address/hive_delivery_address_item.dart';
 
 class HiveDeliveryAddressController extends GetxController {
-  ///delivery address
+  ///? delivery address
   final Box _deliveryAddressBox = BoxRepository.getDeliveryAddressBox();
   Box get deliveryAddressBox => _deliveryAddressBox;
 
 
-  ///delivery address
+  //? delivery address create
   createDeliveryAddress({required HiveDeliveryAddress deliveryAddressItem}) async {
     try {
       await _deliveryAddressBox.add(deliveryAddressItem);
@@ -19,6 +19,7 @@ class HiveDeliveryAddressController extends GetxController {
     }
   }
 
+  //? delivery address update
   updateDeliveryAddress({required int key, required HiveDeliveryAddress deliveryAddressItem}) async {
     try {
       await _deliveryAddressBox.put(key, deliveryAddressItem);
@@ -28,6 +29,7 @@ class HiveDeliveryAddressController extends GetxController {
     }
   }
 
+  //? get all delivery address
   List<HiveDeliveryAddress> getDeliveryAddress() {
     try {
       List<HiveDeliveryAddress> deliveryAddressItems = [];
@@ -44,6 +46,7 @@ class HiveDeliveryAddressController extends GetxController {
     }
   }
 
+  //? delete delivery address
   deleteDeliveryAddress({required int index}) async {
     try {
       await _deliveryAddressBox.deleteAt(index);
@@ -53,9 +56,14 @@ class HiveDeliveryAddressController extends GetxController {
     }
   }
 
-  clearDeliveryAddress({required int index}) async {
-    await _deliveryAddressBox.clear();
-    update();
+  //? delete all delivery address
+  clearDeliveryAddress() async {
+    try {
+      await _deliveryAddressBox.clear();
+      update();
+    } catch (e) {
+      rethrow;
+    }
   }
 
 }

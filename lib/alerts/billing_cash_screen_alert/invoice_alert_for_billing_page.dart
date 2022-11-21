@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+
 import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'invoice_widget_for_billing_page.dart';
 
@@ -7,6 +8,8 @@ import 'invoice_widget_for_billing_page.dart';
 void invoiceAlertForBillingViewPage({
   required List<dynamic> billingItems,
   required String orderType,
+  required String selectedOnlineApp,
+  required Map<String,dynamic> deliveryAddress,
   required num grandTotal,
   required num change,
   required num cashReceived,
@@ -49,6 +52,8 @@ void invoiceAlertForBillingViewPage({
                 netAmount: netAmount,
                 cashReceived: cashReceived,
                 orderType: orderType,
+                selectedOnlineApp: selectedOnlineApp,
+                deliveryAddress: deliveryAddress,
                 discountPercent: discountPercent,
                 discountCash: discountCash,
                 charges: charges,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart' hide Response;
@@ -5,7 +7,8 @@ import 'package:rest_verision_3/api_data_loader/category_data.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/models/category_response/category.dart';
 import 'package:rest_verision_3/repository/category_repository.dart';
-import 'dart:io';
+
+import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../models/my_response.dart';
 import '../../../repository/food_repository.dart';
@@ -64,6 +67,7 @@ class AddFoodController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    checkInternetConnection();
     initTxtCtrl();
     getInitialCategory();
     super.onInit();
@@ -91,7 +95,7 @@ class AddFoodController extends GetxController {
           print(_categoryData.category.length);
           print('data loaded from db');
         }
-        _categoryData.getCategory(fromAddFood: true);
+        refreshCategory(showSnack: false);
       } else {
         if (kDebugMode) {
           print('data loaded from category data');
@@ -117,13 +121,29 @@ class AddFoodController extends GetxController {
 
   //? this function will call getCategory() in CategoryData
   //? ad refresh fresh data from server
-  refreshCategory() async {
+  refreshCategory({bool showSnack = true}) async {
     try {
       //? to show shimming loading
       isLoadingCategory = true;
       update();
-      await _categoryData.getCategory(fromAddFood: true);
-      AppSnackBar.successSnackBar('Success', 'Updated successfully');
+      MyResponse response = await _categoryData.getCategory();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Category>  category = response.data;
+          _storedCategory.clear();
+          _storedCategory.addAll(category);
+          //? to show full category in UI
+          _myCategory.clear();
+          _myCategory.addAll(_storedCategory);
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
     } catch (e) {
       rethrow;
     } finally {
@@ -132,21 +152,7 @@ class AddFoodController extends GetxController {
     }
   }
 
-  //? when call getCategory() in CategoryData this method will call in success
-  //? to update fresh data in CategoryData and _myCategory also
-  //? this method only for call getCategory method from CategoryData like callback
-  refreshMyCategory(List<Category> categoryFromCategoryData) {
-    try {
-      _storedCategory.clear();
-      _storedCategory.addAll(categoryFromCategoryData);
-      //? to show full food in UI
-      _myCategory.clear();
-      _myCategory.addAll(_storedCategory);
-      update();
-    } catch (e) {
-      return;
-    }
-  }
+
 
   //? to change tapped category
   setCategoryTappedIndex(int val,String fdCategorySelected) {
@@ -207,7 +213,6 @@ class AddFoodController extends GetxController {
         MyResponse response = await _categoryRepo.deleteCategory(catId);
         if (response.statusCode == 1) {
           refreshCategory();
-          //! snack bar showing when refreshCategory no need to show here
         } else {
           AppSnackBar.errorSnackBar('Error', response.message);
           return;

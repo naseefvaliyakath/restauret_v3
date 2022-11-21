@@ -16,11 +16,15 @@ KitchenOrder _$KitchenOrderFromJson(Map<String, dynamic> json) => KitchenOrder(
           .toList(),
       fdOrderStatus: json['fdOrderStatus'] as String?,
       fdOrderType: json['fdOrderType'] as String?,
+      fdDelAddress: json['fdDelAddress'] as Map<String, dynamic>?,
       totalPrice: json['totelPrice'] as num?,
       orderColor: json['orderColor'] as int?,
-    )..kotTableChairSet = (json['kotTableChairSet'] as List<dynamic>?)
-        ?.map((e) => KotTableChairSet.fromJson(e as Map<String, dynamic>))
-        .toList();
+    )
+      ..fdOnlineApp = json['fdOnlineApp'] as String?
+      ..kotTableChairSet = json['kotTableChairSet'] as List<dynamic>?
+      ..kotTime = json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String);
 
 Map<String, dynamic> _$KitchenOrderToJson(KitchenOrder instance) =>
     <String, dynamic>{
@@ -30,8 +34,11 @@ Map<String, dynamic> _$KitchenOrderToJson(KitchenOrder instance) =>
       'totalSize': instance.totalSize,
       'fdOrderStatus': instance.fdOrderStatus,
       'fdOrderType': instance.fdOrderType,
+      'fdDelAddress': instance.fdDelAddress,
+      'fdOnlineApp': instance.fdOnlineApp,
       'totelPrice': instance.totalPrice,
       'fdOrder': instance.fdOrder,
       'kotTableChairSet': instance.kotTableChairSet,
       'orderColor': instance.orderColor,
+      'createdAt': instance.kotTime?.toIso8601String(),
     };

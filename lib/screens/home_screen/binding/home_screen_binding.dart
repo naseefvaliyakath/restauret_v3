@@ -10,15 +10,20 @@ import '../../../api_data_loader/food_data.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../repository/category_repository.dart';
+import '../../../repository/startup_repository.dart';
 import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
+import '../../settings_page_screen/controller/settings_controller.dart';
 
 
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
-    //? services
-    Get.put<HttpService>(HttpService(), permanent: true);
+
+    //? settings controller (settings page)
+    Get.put<SettingsController>(SettingsController(), permanent: true);
+
+
     Get.put<FoodRepo>(FoodRepo(), permanent: true);
     Get.put<CategoryRepo>(CategoryRepo(), permanent: true);
     Get.put<RoomRepo>(RoomRepo(), permanent: true);
@@ -26,10 +31,7 @@ class HomeBinding implements Bindings {
     Get.put<SettledOrderRepo>(SettledOrderRepo(), permanent: true);
     Get.put<TableChairSetRepo>(TableChairSetRepo(), permanent: true);
 
-
-    //? common controllers
-    Get.put<HiveHoldBillController>(HiveHoldBillController(),permanent: true);
-    Get.put<MyLocalStorage>(MyLocalStorage(),permanent: true);
+    //? socket controllers
     Get.put<SocketController>(SocketController());
 
 
@@ -39,7 +41,9 @@ class HomeBinding implements Bindings {
 
 
     //?screen binding
-    Get.lazyPut(() => TodayFoodController());
+    //? today screen should permanent , else when change mode from waiter to cashier it threw error
+    Get.put<TodayFoodController>(TodayFoodController(), permanent: true);
+
 
   }
 }

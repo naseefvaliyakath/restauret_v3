@@ -1,20 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
-import 'package:intl/intl.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
+import 'package:rest_verision_3/api_data_loader/online_app_data.dart';
+import 'package:rest_verision_3/api_data_loader/room_data.dart';
+import 'package:rest_verision_3/models/online_app_response/online_app.dart';
+import 'package:rest_verision_3/models/room_response/room.dart';
+import 'package:rest_verision_3/repository/online_app_repository.dart';
+import 'package:rest_verision_3/repository/room_repository.dart';
+import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart';
 import '../../../alerts/kot_alert/kot_bill_show_alert.dart';
 import '../../../api_data_loader/category_data.dart';
+import '../../../check_internet/check_internet.dart';
 import '../../../constants/api_link/api_link.dart';
 import '../../../constants/app_secret_constants/app_secret_constants.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../hive_database/controller/hive_delivery_address_controller.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
+import '../../../hive_database/hive_model/delivery_address/hive_delivery_address_item.dart';
 import '../../../hive_database/hive_model/hold_item/hive_hold_item.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../models/category_response/category.dart';
@@ -22,6 +32,7 @@ import '../../../models/foods_response/food_response.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/kitchen_order_response/kitchen_order.dart';
 import '../../../models/kitchen_order_response/order_bill.dart';
+import '../../../models/my_response.dart';
 import '../../../routes/route_helper.dart';
 import '../../../services/dio_error.dart';
 import '../../../services/service.dart';
@@ -33,10 +44,15 @@ class BillingScreenController extends GetxController {
   late IO.Socket socket;
 
   final CategoryData _categoryData = Get.find<CategoryData>();
+  final OnlineAppData _onlineAppData = Get.find<OnlineAppData>();
+  final RoomData _roomData = Get.find<RoomData>();
+  final RoomRepo _roomRepo = Get.find<RoomRepo>();
+  final OnlineAppRepo _onlineAppRepo = Get.find<OnlineAppRepo>();
   final SocketController _socketCtrl = Get.find<SocketController>();
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
   final HttpService _httpService = Get.find<HttpService>();
   final HiveHoldBillController _hiveHoldBillController = Get.find<HiveHoldBillController>();
+  final HiveDeliveryAddressController _hiveDeliveryAddressController = Get.find<HiveDeliveryAddressController>();
 
   //? button controller
   final RoundedLoadingButtonController btnControllerKot = RoundedLoadingButtonController();
@@ -44,6 +60,8 @@ class BillingScreenController extends GetxController {
   final RoundedLoadingButtonController btnControllerHold = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerUpdateKot = RoundedLoadingButtonController();
 
+  //? for insert online app
+  final RoundedLoadingButtonController btnControllerSubmitOnlineApp = RoundedLoadingButtonController();
 
   //? to show loading when food is loading
   bool isLoading = false;
@@ -67,12 +85,89 @@ class BillingScreenController extends GetxController {
 
   List<Category> get myCategory => _myCategory;
 
+  //! home delivery address \\!
+
+  //? delivery address model
+  HiveDeliveryAddress deliveryAddressItem = HiveDeliveryAddress(id: -1, name: '', number: 0, address: '');
+
+  //? to sending to db in send kot , send settiled order .. etc
+  //? data will fill when submit address from popup
+  Map<String, dynamic> fdDelAddress = {'name': '', 'number': 0, 'address': ''};
+
+  //? to show text in 'Enter address' white btn
+  String selectDeliveryAddrTxt = 'Enter address';
+
+  //! home delivery address \\!
+
+  //! online app screen section !\\
+  //? this will store all onlineApp from the server
+  //? not showing in UI or change
+  final List<OnlineApp> _storedOnlineApp = [];
+
+  //? onlineApp to show in UI
+  final List<OnlineApp> _myOnlineApp = [];
+
+  List<OnlineApp> get myOnlineApp => _myOnlineApp;
+
+  //? add online app textCtrl
+  late TextEditingController onlineAppNameTD;
+
+  //? to store selected online app name
+  String selectedOnlineApp = NO_ONLINE_APP;
+
+  //? to show text in 'Select online' white btn
+  String selectedOnlineAppNameTxt = 'Select app';
+
+  //! online app screen section !\\
+
+  //! dining screen !\\
+
+  //? this will store all onlineApp from the server
+  //? not showing in UI or change
+  final List<Room> _storedRoom = [];
+
+  //? onlineApp to show in UI
+  final List<Room> _myRoom = [];
+
+  List<Room> get myRoom => _myRoom;
+
+  //? to show inside the table select dropdown
+  final List<int> _tableNumber = TABLE_NUMBER;
+
+  List<int> get tableNumber => _tableNumber;
+
+  //? to show inside the chair select dropdown
+  final List<int> _chairNumber = CHAIR_NUMBER;
+
+  List<int> get chairNumber => _chairNumber;
+
+  //? to store the selected table and showing selected table in drop down
+  int selectedTable = TABLE_NUMBER[0];
+
+  //? to store the selected chair and showing selected chair in drop down
+  int selectedChair = CHAIR_NUMBER[0];
+
+  //? to store the selected room name and showing selected room in drop down
+  String selectedRoom = MAIN_ROOM;
+
+  List<dynamic> selectedTableChairSet = [MAIN_ROOM, -1, -1]; //? [room,table,chair]
+
+  //? to set white btn text in billing screen
+  String selectTableTxt = 'Select table';
+
+  bool showAddRoom = false;
+
+  //? to show loading while add new room
+  bool addRoomLoading = false;
+
+  //! dining screen !\\
+
   //? to sort food as per category
   String selectedCategory = COMMON_CATEGORY;
 
   //?payment methods for dropdown in settle order popup
 
-  final List<String> _myPaymentMethods = [CASH, CARD, ONLINE, PENDINGCASH, TYPE_1, TYPE_2];
+  final List<String> _myPaymentMethods = [CASH, CARD, ONLINE_PAY, PENDINGCASH, TYPE_1, TYPE_2];
 
   List<String> get myPaymentMethods => _myPaymentMethods;
 
@@ -102,11 +197,16 @@ class BillingScreenController extends GetxController {
 
   double get totalPrice => _totalPrice;
 
+  //? handling multiple price radio buttons
+  int selectedMultiplePrice = 1;
+  String multiSelectedFoodName = '';
+
   //? to detect witch type of order like takeaway , homeDelivery , dining ..etc
   //? this will change as per selected billing type Eg : takeAway,homeDelivery,onlineBooking & Dining
-   String orderType = TAKEAWAY;
+  String orderType = TAKEAWAY;
 
-
+  //? to set screen heading in header of page
+  String screenName = TAKEAWAY_SCREEN_NAME;
 
   //? for search field text
   late TextEditingController searchTD;
@@ -133,6 +233,14 @@ class BillingScreenController extends GetxController {
   late Rx<TextEditingController> settleGrandTotalCtrl;
   late Rx<TextEditingController> settleCashReceivedCtrl;
 
+  //? delivery address txt controller
+  late TextEditingController deliveryAddrNameCtrl;
+  late TextEditingController deliveryAddrNumberCtrl;
+  late TextEditingController deliveryAddrAddressCtrl;
+
+  //? to enter room
+  late TextEditingController roomNameTD;
+
   double netTotal = 0;
   double discountCash = 0;
   double discountPresent = 0;
@@ -143,12 +251,20 @@ class BillingScreenController extends GetxController {
   @override
   void onInit() async {
     initTxtController();
-    receivingBillingScreenType();
-    await getxArgumentReceiveHandler();
+    checkInternetConnection();
     await initialLoadingBillFromHive();
-    getInitialCategory();
-    getInitialFood();
+    await getxArgumentReceiveHandler();
     socket = _socketCtrl.socket;
+    getInitialFood();
+    getInitialCategory();
+    //? online apps data only need in online app billing screen
+    if (orderType == ONLINE) {
+      getInitialOnlineApp();
+    }
+    //? rooms only needed in DINING screen
+    if (orderType == DINING) {
+      getInitialRoom();
+    }
     super.onInit();
   }
 
@@ -160,17 +276,24 @@ class BillingScreenController extends GetxController {
 
   //? when click user from home screen to check user clicked in witch billing scrren
   //? eg TakeAway,HomeDelivery,online, or dining
-  receivingBillingScreenType(){
-    var args = Get.arguments ?? {'billingPage': TAKEAWAY};
-    orderType = args['billingPage'];
-    if(args != null){
+  receivingBillingScreenType(String orderTypeOfScreen) {
+    orderType = orderTypeOfScreen;
       if (kDebugMode) {
-        print('order tpe is $orderType');
+        print('order type is $orderType');
       }
+      //? assigning screen name as per billing page
+      settingUpScreenName(orderType);
 
-    }
   }
 
+  //? to handle quickBill
+  handleQuickBill({required fdIsLoos, required fdId, required name, required qnt, required fdPrice, required ktNote}) {
+    _billingItems.clear();
+    clearAllBillItems();
+    clearAllBillItems();
+    addFoodToBill(fdIsLoos, fdId, name, qnt, fdPrice, ktNote);
+    settleBillingCashAlertShowing(Get.context!,this);
+  }
 
   //? sending kot (this api calling method is directly called in controlled  not in repo)
   //? OK
@@ -178,10 +301,14 @@ class BillingScreenController extends GetxController {
     try {
       if (_billingItems.isNotEmpty) {
         Map<String, dynamic> kotOrder = {
-          'fdShopId': SHOPE_ID,
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
           'fdOrder': _billingItems,
           'fdOrderStatus': PENDING,
           'fdOrderType': orderType,
+          //? if order settled from kot (in order view screen) need address
+          'fdDelAddress': fdDelAddress,
+          'fdOnlineApp': selectedOnlineApp,
+          'kotTableChairSet': selectedTableChairSet
         };
 
         final response = await _httpService.insertWithBody(ADD_KOT_ORDER, kotOrder);
@@ -196,6 +323,13 @@ class BillingScreenController extends GetxController {
           clearBillInHive();
           btnControllerKot.success();
           _totalPrice = 0;
+          //? making white btn txt to 'Select app' if its in online billing
+          selectedOnlineAppNameTxt = 'Select app';
+          //? make selected app NO_ONLINE_APP
+          selectedOnlineApp = NO_ONLINE_APP;
+
+          //? make delivery address clear & making white btn to 'Enter address' if its in home delivery
+          clearDeliveryAddress();
           AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
           update();
         }
@@ -223,17 +357,7 @@ class BillingScreenController extends GetxController {
   receiveUpdateKotBillingItem() {
     try {
       //? empty KOT order to handle error otherwise will throw error
-      KitchenOrder emptyKotOrder = KitchenOrder(
-        Kot_id: -1,
-        error: true,
-        errorCode: 'SomethingWrong',
-        totalSize: 0,
-        fdOrderStatus: PENDING,
-        fdOrderType: TAKEAWAY,
-        fdOrder: [],
-        totalPrice: 0,
-        orderColor: 111,
-      );
+      KitchenOrder emptyKotOrder = EMPTY_KITCHEN_ORDER;
       //? receiving argument  from orderView page
       //? if its null we make a new args with empty kotItem {'kotItem': emptyKotOrder} to handle error
       var args = Get.arguments ?? {'kotItem': emptyKotOrder};
@@ -288,9 +412,15 @@ class BillingScreenController extends GetxController {
       //? checking _billingItems is not empty and received KOT order id is not -1
       if (_billingItems.isNotEmpty && kotIdReceiveFromKotUpdate != -1) {
         Map<String, dynamic> kotOrderUpdate = {
-          'fdShopId': SHOPE_ID,
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
           'fdOrder': _billingItems,
           'Kot_id': kotIdReceiveFromKotUpdate,
+          //? to change delivery address if any change made by user
+          'fdDelAddress': fdDelAddress,
+          //? to change selected online app
+          'fdOnlineApp': selectedOnlineApp,
+          //? to change selected table
+          'kotTableChairSet': selectedTableChairSet
         };
         final response = await _httpService.updateData(UPDATE_KOT_ORDER, kotOrderUpdate);
 
@@ -329,53 +459,109 @@ class BillingScreenController extends GetxController {
   //?to handle Get.argument from different pages like from hold item or kot update .. etc
   //? OK
   getxArgumentReceiveHandler() {
+    try {
+      //? to handle from orderView page for KOT update
+      KitchenOrder emptyKotOrder = EMPTY_KITCHEN_ORDER;
+      //? receiving argument  from orderView page
+      //? if its null we make a new args with empty kotItem and holdItem  {'holdItem': [], 'kotItem': emptyKotOrder}; to handle error
+      //?
+      var args = Get.arguments ?? {'holdItem': [], 'kotItem': emptyKotOrder, 'billingPage': 'FROM_OTHER'};
+      //? taking kotOrder from args
+      KitchenOrder? kotOrder = args['kotItem'] ?? emptyKotOrder;
+      //? taking OrderBill fro kotOrder
+      List<OrderBill>? orderBill = kotOrder?.fdOrder ?? [];
+      //? taking holdItem from args
+      List<dynamic>? holdItem = args['holdItem'] ?? [];
+      //? to handle the page from dashboard screen or main screen
+      String billingPageType = args['billingPage'] ?? 'FROM_OTHER';
+      //? to handle quick bill , if item from quick bill icon then fdId should not be -2
+      Map<String, dynamic> quickItem = args['quickBill'] ??
+          {
+            'fdIsLoos': 'no',
+            'fdId': -2,
+            'qnt': 0,
+            'price': 0,
+            'ktNote': '',
+          };
 
-    //? to handle from main page
-    var args1 = Get.arguments ?? {'billingPage': TAKEAWAY};
-    String billingPageType = args1['billingPage'];
-    //? to handle from orderView page for KOT update
-    KitchenOrder emptyKotOrder = KitchenOrder(
-      Kot_id: -1,
-      error: true,
-      errorCode: 'SomethingWrong',
-      totalSize: 0,
-      fdOrderStatus: PENDING,
-      fdOrderType: TAKEAWAY,
-      fdOrder: [],
-      totalPrice: 0,
-      orderColor: 111,
-    );
-    //? receiving argument  from orderView page
-    //? if its null we make a new args with empty kotItem and holdItem  {'holdItem': [], 'kotItem': emptyKotOrder}; to handle error
-    var args = Get.arguments ?? {'holdItem': [], 'kotItem': emptyKotOrder};
-    //? taking kotOrder from args
-    KitchenOrder? kotOrder = args['kotItem'] ?? emptyKotOrder;
-    //? taking OrderBill fro kotOrder
-    List<OrderBill>? orderBill = kotOrder?.fdOrder ?? [];
-    //? taking holdItem from args
-    List<dynamic>? holdItem = args['holdItem'] ?? [];
+      if (quickItem['fdId'] != -2) {
+        if (kDebugMode) {
+          print('quick bill called');
+        }
+        //? setting bill type dining or take away , (for  press dining and on long press take away)
+        receivingBillingScreenType(quickItem['typeOfBill']);
+        handleQuickBill(
+          fdIsLoos: quickItem['fdIsLoos'],
+          fdId: quickItem['fdId'],
+          name: quickItem['fdName'],
+          qnt: quickItem['qnt'],
+          fdPrice: quickItem['price'],
+          ktNote: quickItem['ktNote'],
+        );
+      }
 
-    if(billingPageType != ''){
-      receivingBillingScreenType();
-    }
-    //? check orderBill is not empty if its not empty then order is from Overview page for updateKOT
-    if (orderBill.isNotEmpty) {
-      //? calling method to handle this event (update KOT)
-      receiveUpdateKotBillingItem();
-    }
-    //? check holdItem is not empty if its not empty then its from Overview page for to un hold the hold item
-    else if (holdItem!.isNotEmpty) {
-      //? calling method to handle this event (un holding)
-      unHoldBillingItem();
-    } else {
-      _billingItems.clear;
+      if (billingPageType != 'FROM_OTHER') {
+        receivingBillingScreenType(billingPageType);
+      }
+      //? check orderBill is not empty if its not empty then order is from Overview page for updateKOT
+      if (orderBill.isNotEmpty) {
+        //? calling method to handle this event (update KOT)
+        receiveUpdateKotBillingItem();
+        //? setting orderType from kot bill
+        orderType = kotOrder?.fdOrderType ?? TAKEAWAY;
+        settingUpScreenName(orderType);
+        //? setting selectedOnlineApp if its online billingItems
+        selectOnlineApp(kotOrder?.fdOnlineApp ?? NO_ONLINE_APP);
+        //? setting up table if its Dining
+        //? checking array is not empty and order type is Dining
+        if ((kotOrder?.kotTableChairSet?.isNotEmpty ?? [].isNotEmpty) &&
+            (kotOrder?.fdOrderType ?? TAKEAWAY) == DINING) {
+          //? check if its not table selected dining order
+          if (kotOrder?.kotTableChairSet?[1] != -1) {
+            updateSelectedRoom(kotOrder?.kotTableChairSet?[0] ?? MAIN_ROOM);
+            updateSelectedTable(kotOrder?.kotTableChairSet?[1] ?? 1);
+            updateSelectedChair(kotOrder?.kotTableChairSet?[2] ?? 1);
+            updateTableChairSet(
+              room: kotOrder?.kotTableChairSet?[0] ?? MAIN_ROOM,
+              table: kotOrder?.kotTableChairSet?[1] ?? 1,
+              chair: kotOrder?.kotTableChairSet?[2] ?? 1,
+            );
+          }
+        }
+
+        //? setting deliveryAddress if its homeDelivery
+        deliveryAddrNumberCtrl.text = kotOrder?.fdDelAddress?['number'].toString() ?? '0';
+        deliveryAddrNameCtrl.text = kotOrder?.fdDelAddress?['name'].toString() ?? '';
+        deliveryAddrAddressCtrl.text = kotOrder?.fdDelAddress?['address'].toString() ?? '';
+        //? setting white btn in billing screen with address name
+        if (deliveryAddrAddressCtrl.text != '') {
+          selectDeliveryAddrTxt = deliveryAddrNameCtrl.text;
+        }
+      }
+      //? check holdItem is not empty if its not empty then its from Overview page for to un hold the hold item
+      else if (holdItem!.isNotEmpty) {
+        //? calling method to handle this event (un holding)
+        unHoldBillingItem();
+      } else {
+        _billingItems.clear;
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      update();
     }
   }
 
   //? kot printing dialog
   //? OK
   kotDialogBox(context) {
-    showKotBillAlert(type: orderType, billingItems: _billingItems, context: context);
+    showKotBillAlert(
+      type: orderType,
+      billingItems: _billingItems,
+      context: context,
+      //? its requred value thts why sending empty kot , its only needed from orderView page
+      fullKot: EMPTY_KITCHEN_ORDER,
+    );
   }
 
   //? checking int is in text field
@@ -392,16 +578,21 @@ class BillingScreenController extends GetxController {
   calculateNetTotal() {
     try {
       netTotal = !isNumeric(settleNetTotalCtrl.value.text) ? 0 : double.parse(settleNetTotalCtrl.value.text);
-      discountCash = !isNumeric(settleDiscountCashCtrl.value.text) ? 0 : double.parse(settleDiscountCashCtrl.value.text);
-      discountPresent = !isNumeric(settleDiscountPercentageCtrl.value.text) ? 0 : double.parse(settleDiscountPercentageCtrl.value.text);
+      discountCash =
+          !isNumeric(settleDiscountCashCtrl.value.text) ? 0 : double.parse(settleDiscountCashCtrl.value.text);
+      discountPresent = !isNumeric(settleDiscountPercentageCtrl.value.text)
+          ? 0
+          : double.parse(settleDiscountPercentageCtrl.value.text);
       charges = !isNumeric(settleChargesCtrl.value.text) ? 0 : double.parse(settleChargesCtrl.value.text);
-      cashReceived = !isNumeric(settleCashReceivedCtrl.value.text) ? 0 : double.parse(settleCashReceivedCtrl.value.text);
+      cashReceived =
+          !isNumeric(settleCashReceivedCtrl.value.text) ? 0 : double.parse(settleCashReceivedCtrl.value.text);
       //? finding discount value from %
       double discountCashFromPercent = (netTotal / 100) * discountPresent;
 
       grandTotal.value = netTotal - discountCash - discountCashFromPercent - charges;
       grandTotalNew = double.parse(grandTotal.value.toStringAsFixed(3));
-      balanceChange.value = double.parse((settleCashReceivedCtrl.value.text == '' ? 0 : cashReceived - grandTotalNew).toStringAsFixed(3)); //?limit double to 3 pont after decimal
+      balanceChange.value = double.parse((settleCashReceivedCtrl.value.text == '' ? 0 : cashReceived - grandTotalNew)
+          .toStringAsFixed(3)); //?limit double to 3 pont after decimal
       settleGrandTotalCtrl.value.text = '$grandTotalNew';
     } catch (e) {
       rethrow;
@@ -426,16 +617,22 @@ class BillingScreenController extends GetxController {
   insertSettledBill(context) async {
     try {
       //? check bill or grand total is empty
-      if (_billingItems.isEmpty && (settleGrandTotalCtrl.value.text == '0.0' || settleGrandTotalCtrl.value.text == '0' || settleGrandTotalCtrl.value.text == '')) {
+      if (_billingItems.isEmpty &&
+          (settleGrandTotalCtrl.value.text == '0.0' ||
+              settleGrandTotalCtrl.value.text == '0' ||
+              settleGrandTotalCtrl.value.text == '')) {
         btnControllerSettle.error();
         AppSnackBar.errorSnackBar('Error', 'No bill added');
       } else {
         Map<String, dynamic> settledBill = {
-          'fdShopId': SHOPE_ID,
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
           'fdOrder': billingItems,
-          'fdOrderKot': '-1', //? kotId will -1 so order not send as kot if bill settled from billing screen
-          'fdOrderStatus': PENDING,
+          'fdOrderKot': '-1',
+          //? kotId will -1 so order not send as kot if bill settled from billing screen
+          'fdOrderStatus': COMPLETE,
           'fdOrderType': orderType,
+          'fdDelAddress': fdDelAddress,
+          'fdOnlineApp': selectedOnlineApp,
           'netAmount': netTotal,
           'discountPersent': discountPresent,
           'discountCash': discountCash,
@@ -493,7 +690,7 @@ class BillingScreenController extends GetxController {
           print(_foodsData.todayFoods.length);
           print('food data loaded from db');
         }
-        _foodsData.getTodayFoods(fromBilling: true);
+        refreshTodayFood(showSnack: false);
       } else {
         if (kDebugMode) {
           print('food data loaded from food data ${_foodsData.todayFoods.length}');
@@ -530,27 +727,35 @@ class BillingScreenController extends GetxController {
   }
 
   //? this function will call getTodayFood() in FoodData
-  //? ad refresh fresh data from server
-  refreshTodayFood() async {
-    await _foodsData.getTodayFoods(fromBilling: true);
-    AppSnackBar.successSnackBar('Success', 'Foods updated successfully');
-  }
 
-  //? when call getTodayFood() in FoodData this method will call in success
-  //? to update fresh data in FoodData and today food also
-  //? this method only call from FoodData like callback
-  refreshMyTodayFood(List<Foods> todayFoodsFromFoodData) {
+  refreshTodayFood({bool showSnack = true}) async {
     try {
-      _storedTodayFoods.clear();
-      _storedTodayFoods.addAll(todayFoodsFromFoodData);
-      //? to show full food in UI
-      _myTodayFoods.clear();
-      _myTodayFoods.addAll(_storedTodayFoods);
-      update();
+      MyResponse response = await _foodsData.getTodayFoods();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Foods>  foods = response.data;
+          _storedTodayFoods.clear();
+          _storedTodayFoods.addAll(foods);
+          //? to show full food in UI
+          _myTodayFoods.clear();
+          _myTodayFoods.addAll(_storedTodayFoods);
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
     } catch (e) {
-      return;
+      rethrow;
+    } finally {
+      update();
     }
   }
+
+
 
   //////! category section !//////
 
@@ -565,7 +770,7 @@ class BillingScreenController extends GetxController {
           print(_categoryData.category.length);
           print('category data loaded from db');
         }
-        _categoryData.getCategory(fromBilling: true);
+        refreshCategory();
       } else {
         if (kDebugMode) {
           print('category data loaded from category data');
@@ -583,32 +788,31 @@ class BillingScreenController extends GetxController {
     }
   }
 
-  //? this function will call getCategory() in CategoryData
   //? ad refresh fresh data from server
   refreshCategory() async {
     try {
-      await _categoryData.getCategory(fromBilling: true);
-      //? no need to show snack-bar
+      MyResponse response = await _categoryData.getCategory();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Category>  category = response.data;
+          _storedCategory.clear();
+          _storedCategory.addAll(category);
+          //? to show full food in UI
+          _myCategory.clear();
+          _myCategory.addAll(_storedCategory);
+          AppSnackBar.successSnackBar('Success', 'Updated successfully');
+        }
+      }else{
+        AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+      }
     } catch (e) {
       rethrow;
+    } finally {
+      update();
     }
   }
 
-  //? when call getCategory() in CategoryData this method will call in success
-  //? to update fresh data in CategoryData and _myCategory also
-  //? this method only for call getCategory method from CategoryData like callback
-  refreshMyCategory(List<Category> categoryFromCategoryData) {
-    try {
-      _storedCategory.clear();
-      _storedCategory.addAll(categoryFromCategoryData);
-      //? to show full food in UI
-      _myCategory.clear();
-      _myCategory.addAll(_storedCategory);
-      update();
-    } catch (e) {
-      return;
-    }
-  }
+
 
   //? to sort food with sorting btn
   sortFoodBySelectedCategory() {
@@ -643,22 +847,51 @@ class BillingScreenController extends GetxController {
 
   //? add items to billing table
   //? OK
-  addFoodToBill(int? fdId, String? name, int? qnt, double? price, String? ktNote) {
+  addFoodToBill(String fdIsLoos, int? fdId, String? name, int? qnt, double? price, String? ktNote) {
     try {
       //? checking if the food already added
       var values = _billingItems.map((items) => items['fdId']).toList();
 
-      //if added
+      //?if added
       if (values.contains(fdId)) {
-        //? getting the index of food in list of bil
-        var index = values.indexOf(fdId);
-        //? getting the old qnt from bill
-        int currentQnt = _billingItems[index]['qnt'] ?? 0;
-        //? updating quantity with adding old quantity
-        int newQnt = currentQnt + (qnt ?? 0);
-        //? updating food to the billing table with the same index
-        //? price will be the new price , old price will replace
-        updateFodToBill(index, newQnt, price ?? 0, ktNote ?? '');
+        //? checking if multi price food
+        if (fdIsLoos == 'yes') {
+          var values = _billingItems.map((items) => items['name']).toList();
+          //? check if the multiPriceFood with multipart is added or not
+          //? eg : pizza - half is already added
+          if (values.contains(name)) {
+            //? getting the index of food in list of bil
+            var index = values.indexOf(name);
+            //? getting the old qnt from bill
+            int currentQnt = _billingItems[index]['qnt'] ?? 0;
+            //? updating quantity with adding old quantity
+            int newQnt = currentQnt + (qnt ?? 0);
+            //? updating food to the billing table with the same index
+            //? price will be the new price , old price will replace
+            updateFodToBill(index, newQnt, price ?? 0, ktNote ?? '');
+            //? if pizza- half not added , that is user try to add pizza-quarter
+            //? then this portion will add as new item in bill
+          } else {
+            _billingItems.add({
+              'fdId': fdId ?? -1,
+              'name': name ?? '',
+              'qnt': qnt ?? 0,
+              'price': price ?? 0,
+              'ktNote': ktNote ?? '',
+              'ordStatus': PENDING,
+            });
+          }
+        } else {
+          //? getting the index of food in list of bil
+          var index = values.indexOf(fdId);
+          //? getting the old qnt from bill
+          int currentQnt = _billingItems[index]['qnt'] ?? 0;
+          //? updating quantity with adding old quantity
+          int newQnt = currentQnt + (qnt ?? 0);
+          //? updating food to the billing table with the same index
+          //? price will be the new price , old price will replace
+          updateFodToBill(index, newQnt, price ?? 0, ktNote ?? '');
+        }
       }
       //? if food is not in the billing table the add food as new food
       else {
@@ -708,6 +941,42 @@ class BillingScreenController extends GetxController {
     update();
   }
 
+  //? handle multiple price
+  updateSelectedMultiplePrice(int selected, int index) {
+    try {
+      //? checking in this index food is available , else range error will throw
+      if (_myTodayFoods.length >= index) {
+        Foods selectedKot = _myTodayFoods[index];
+        //? updating price as per selected radio index
+        if (selected == 1) {
+          multiSelectedFoodName = '';
+          multiSelectedFoodName = myTodayFoods[index].fdName ?? '';
+          _price = selectedKot.fdFullPrice ?? _price;
+        } else if (selected == 2) {
+          _price = selectedKot.fdThreeBiTwoPrsPrice ?? _price;
+          multiSelectedFoodName = '';
+          multiSelectedFoodName = '${myTodayFoods[index].fdName} - 3 / 4';
+        } else if (selected == 3) {
+          _price = selectedKot.fdHalfPrice ?? _price;
+          multiSelectedFoodName = '';
+          multiSelectedFoodName = '${myTodayFoods[index].fdName} - half';
+        } else if (selected == 4) {
+          _price = selectedKot.fdQtrPrice ?? _price;
+          multiSelectedFoodName = '';
+          multiSelectedFoodName = '${myTodayFoods[index].fdName} - quarter';
+        } else {
+          multiSelectedFoodName = '';
+          multiSelectedFoodName = myTodayFoods[index].fdName ?? '';
+          _price = _price;
+        }
+      }
+      selectedMultiplePrice = selected;
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //?  clear all  bill from hive and local variable
   //? used in clear btn click and after success KOT sending and settledFood btn click
   //? OK
@@ -743,7 +1012,9 @@ class BillingScreenController extends GetxController {
   //? OK
   saveBillInHive() {
     try {
-      _myLocalStorage.setData(HIVE_TAKE_AWAY_BILL, _billingItems);
+      //? to change hiveKey as per order type
+      String hiveKey = getHiveKey();
+      _myLocalStorage.setData(hiveKey, _billingItems);
     } catch (e) {
       rethrow;
     }
@@ -752,8 +1023,10 @@ class BillingScreenController extends GetxController {
   //? to read hold bill from hive db if again come to page
   //? OK
   Future readBillInHive() {
+    //? to change hiveKey as per order type
+    String hiveKey = getHiveKey();
     try {
-      return _myLocalStorage.readData(HIVE_TAKE_AWAY_BILL);
+      return _myLocalStorage.readData(hiveKey);
     } catch (e) {
       rethrow;
     }
@@ -763,10 +1036,29 @@ class BillingScreenController extends GetxController {
   //? OK
   Future? clearBillInHive() {
     try {
-      return _myLocalStorage.removeData(HIVE_TAKE_AWAY_BILL);
+      //? to change hiveKey as per order type
+      String hiveKey = getHiveKey();
+      return _myLocalStorage.removeData(hiveKey);
     } catch (e) {
       rethrow;
     }
+  }
+
+  String getHiveKey() {
+    String hiveKey = HIVE_TAKE_AWAY_BILL;
+    if (orderType == TAKEAWAY) {
+      hiveKey = HIVE_TAKE_AWAY_BILL;
+    }
+    if (orderType == HOME_DELEVERY) {
+      hiveKey = HIVE_HOME_DELEVERY_BILL;
+    }
+    if (orderType == DINING) {
+      hiveKey = HIVE_DINING_BILL;
+    }
+    if (orderType == ONLINE) {
+      hiveKey = HIVE_ONLINE_BOOKING_BILL;
+    }
+    return hiveKey;
   }
 
   //? if costumer save bill when he go back to the other page (eg : save confirmation click YES to hold the bill)
@@ -808,10 +1100,15 @@ class BillingScreenController extends GetxController {
         String time = DateFormat('kk:mm:ss').format(now);
         int timeStamp = DateTime.now().millisecondsSinceEpoch;
         //? should add _billingItems.toList() , if not add.toList() then item not showing without restart
-        HiveHoldItem holdBillingItem = HiveHoldItem(holdItem: _billingItems.toList(), date: date, time: time, id: timeStamp, totel: _totalPrice, orderType: orderType);
+        HiveHoldItem holdBillingItem = HiveHoldItem(
+            holdItem: _billingItems.toList(),
+            date: date,
+            time: time,
+            id: timeStamp,
+            totel: _totalPrice,
+            orderType: orderType);
         await _hiveHoldBillController.createHoldBill(holdBillingItem: holdBillingItem);
         _hiveHoldBillController.getHoldBill();
-        //! this bug should fix
         _billingItems.clear();
         clearBillInHive();
         btnControllerHold.success();
@@ -863,7 +1160,6 @@ class BillingScreenController extends GetxController {
       rethrow;
     }
   }
-
 
   //? to visible and hide edit options in delete popup
   //? its used in deleteItemFromBillAlert() alert when toggle update and edit btn
@@ -932,6 +1228,491 @@ class BillingScreenController extends GetxController {
     update();
   }
 
+  //! ......... for homeDelivery screen only start  ......... !\\
+
+  addDeliveryAddressItem({required BuildContext context}) async {
+    try {
+      //? check fields is not empty
+      if (!checkDeliveryAddressFieldStatus()) {
+        int timeStamp = DateTime.now().millisecondsSinceEpoch;
+        String name = deliveryAddrNameCtrl.text;
+        int number = int.parse(deliveryAddrNumberCtrl.text);
+        String address = deliveryAddrAddressCtrl.text;
+        deliveryAddressItem = HiveDeliveryAddress(id: timeStamp, name: name, number: number, address: address);
+        HiveDeliveryAddress deliveryAddressExistItem =
+            HiveDeliveryAddress(id: timeStamp, name: '', number: 0, address: '');
+        //? if already number in db then update its addrss and name
+        bool isAddressExist = false;
+        List<HiveDeliveryAddress> addressList = _hiveDeliveryAddressController.getDeliveryAddress();
+        for (var element in addressList) {
+          if (element.number == number) {
+            isAddressExist = true;
+            //? if item exist take element to get index for update
+            deliveryAddressExistItem = element;
+          }
+        }
+        //if address exist
+        if (isAddressExist) {
+          await _hiveDeliveryAddressController.updateDeliveryAddress(
+              key: deliveryAddressExistItem.key, deliveryAddressItem: deliveryAddressItem);
+          //? to set selected name in white btn in billing screen
+          updateSelectDeliveryAddressTxt();
+        } else {
+          await _hiveDeliveryAddressController.createDeliveryAddress(deliveryAddressItem: deliveryAddressItem);
+          //? to set selected name in white btn in billing screen
+          updateSelectDeliveryAddressTxt();
+        }
+        if (kDebugMode) {
+          print(_hiveDeliveryAddressController.getDeliveryAddress().length);
+        }
+        fdDelAddress = {
+          //? saving delivery address locally
+          'name': deliveryAddressItem.name,
+          'number': deliveryAddressItem.number,
+          'address': deliveryAddressItem.address,
+        };
+        Navigator.pop(context);
+        //_hiveDeliveryAddressController.clearDeliveryAddress(index: 1);
+        update();
+      } else {
+        AppSnackBar.errorSnackBar('Field is empty !', 'Pleas fill the values !!');
+      }
+    } on FormatException {
+      AppSnackBar.errorSnackBar('Enter valid data !', 'Pleas Enter valid data !');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? if number is already added , then address and name will pick automatically
+  getDeliveryAddressItemForRefillItem(String numberData) {
+    try {
+      int numberType = int.parse(numberData);
+      List<HiveDeliveryAddress> addressList = _hiveDeliveryAddressController.getDeliveryAddress();
+      for (var element in addressList) {
+        if (element.number == numberType) {
+          deliveryAddrNameCtrl.text = element.name ?? '';
+          deliveryAddrAddressCtrl.text = element.address ?? '';
+        }
+      }
+      update();
+    } on FormatException {
+      //? check field is empty , else when user try to clear at last filed will empty then show snack bar
+      if (deliveryAddrNumberCtrl.text != '') {
+        AppSnackBar.errorSnackBar('Enter valid data !', 'Pleas Enter valid data !');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? validation for text field
+  bool checkDeliveryAddressFieldStatus() {
+    String name = deliveryAddrNameCtrl.text;
+    String number = deliveryAddrNumberCtrl.text;
+    String address = deliveryAddrAddressCtrl.text;
+
+    if (name == '' || number == '' || int.parse(number) == 0 || address == '') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //? to set selected name in white btn in billing screen
+  updateSelectDeliveryAddressTxt() {
+    //? not selected address
+    try {
+      if (deliveryAddressItem.name == '') {
+        selectDeliveryAddrTxt;
+      } else {
+        selectDeliveryAddrTxt = deliveryAddressItem.name ?? 'Enter address';
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      update();
+    }
+  }
+
+  clearDeliveryAddress() {
+    if (kDebugMode) {
+      print('delivery called');
+    }
+    deliveryAddressItem = HiveDeliveryAddress(id: -1, name: '', number: 0, address: '');
+    fdDelAddress = {'name': '', 'number': 0, 'address': ''};
+    selectDeliveryAddrTxt = 'Enter address';
+    deliveryAddrNumberCtrl.text = '';
+    deliveryAddrNameCtrl.text = '';
+    deliveryAddrAddressCtrl.text = '';
+    update();
+  }
+
+  //! ......... for homeDelivery screen only end  ......... !\\
+
+  //! ......... for online app screen only start  ......... !\\
+
+  //? to load o first screen loading
+  getInitialOnlineApp() {
+    try {
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedOnlineApp from OnlineAppData controller
+      if (_onlineAppData.allOnlineApp.isEmpty) {
+        if (kDebugMode) {
+          print(_onlineAppData.allOnlineApp.length);
+          print('data loaded from db');
+        }
+        refreshOnlineApp(showSnack: false);
+      } else {
+        if (kDebugMode) {
+          print('data loaded from online app data');
+        }
+        //? load data from variable in todayFood
+        _storedOnlineApp.clear();
+        _storedOnlineApp.addAll(_onlineAppData.allOnlineApp);
+        //? to show online app in UI
+        _myOnlineApp.clear();
+        _myOnlineApp.addAll(_storedOnlineApp);
+      }
+      update();
+    } catch (e) {
+      return;
+    } finally {
+      update();
+    }
+  }
+
+  //? ad refresh fresh data from server
+  refreshOnlineApp({bool showSnack = true}) async {
+    try {
+      MyResponse response = await _onlineAppData.getOnlineApp();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<OnlineApp>  onlineApp = response.data;
+          _storedOnlineApp.clear();
+          _storedOnlineApp.addAll(onlineApp);
+          //? to show online app online app in UI
+          _myOnlineApp.clear();
+          _myOnlineApp.addAll(_storedOnlineApp);
+          //? to hide snack-bar on page starting , because this method is calling page starting
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        //? to hide snack-bar on page starting , because this method is calling page starting
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      update();
+    }
+  }
+
+
+
+  //? validate before insert
+  validateAppDetails(BuildContext context) async {
+    try {
+      var onlineAppNameNew = '';
+      if ((onlineAppNameTD.text != '')) {
+        onlineAppNameNew = onlineAppNameTD.text;
+        await insertOnlineApp(onlineAppNameNew);
+      } else {
+        btnControllerSubmitOnlineApp.error();
+        AppSnackBar.errorSnackBar('Fill the fields!', 'Enter the values in fields!!');
+      }
+    } catch (e) {
+      btnControllerSubmitOnlineApp.error();
+      rethrow;
+    } finally {
+      Navigator.pop(context);
+      onlineAppNameTD.text = '';
+      update();
+    }
+  }
+
+  //?insert category
+  Future insertOnlineApp(String appNameString) async {
+    try {
+      MyResponse response = await _onlineAppRepo.insertOnlineApp(appNameString);
+      if (response.statusCode == 1) {
+        btnControllerSubmitOnlineApp.success();
+        refreshOnlineApp();
+        //! snack bar showing when refresh category no need to show here
+      } else {
+        btnControllerSubmitOnlineApp.error();
+        AppSnackBar.errorSnackBar('Error', response.message);
+        return;
+      }
+    } catch (e) {
+      btnControllerSubmitOnlineApp.error();
+      AppSnackBar.errorSnackBar('Error', 'Something Wrong !!');
+    } finally {
+      Future.delayed(const Duration(seconds: 1), () {
+        btnControllerSubmitOnlineApp.reset();
+      });
+      onlineAppNameTD.text = '';
+      update();
+    }
+  }
+
+  //? to delete the food
+  deleteOnlineApp(int id) async {
+    try {
+      showLoading();
+      MyResponse response = await _onlineAppRepo.deleteOnlineApp(id);
+      if (response.statusCode == 1) {
+        refreshOnlineApp();
+        //! snack bar showing when refreshCategory no need to show here
+      } else {
+        AppSnackBar.errorSnackBar('Error', response.message);
+        return;
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+    } finally {
+      hideLoading();
+      update();
+    }
+  }
+
+  //? to update selectedOnline app in variable
+  selectOnlineApp(String userSelectedOnlineApp) {
+    selectedOnlineApp = userSelectedOnlineApp;
+    //? to update text in white btn in billing screen
+    updateSelectOnlineAppTxt();
+    try {
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? to set selected online app name in white btn in billing screen
+  updateSelectOnlineAppTxt() {
+    //? not selected online app
+    try {
+      if (selectedOnlineApp == NO_ONLINE_APP) {
+        selectedOnlineAppNameTxt;
+      } else {
+        selectedOnlineAppNameTxt = selectedOnlineApp;
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      update();
+    }
+  }
+
+  //? assigning screen name as per billing page
+  settingUpScreenName(String orderTypeName) {
+    //? assigning screen name as per billing page
+    if (orderTypeName == TAKEAWAY) {
+      screenName = TAKEAWAY_SCREEN_NAME;
+    }
+    if (orderTypeName == HOME_DELEVERY) {
+      screenName = HOME_DELEVERY_SCREEN_NAME;
+    }
+    if (orderTypeName == ONLINE) {
+      screenName = ONLINE_SCREEN_NAME;
+    }
+    if (orderTypeName == DINING) {
+      screenName = DINING_SCREEN_NAME;
+    }
+  }
+
+  resetSelectedOnlineApp() {
+    try {
+      selectedOnlineAppNameTxt = 'Select app';
+      selectedOnlineApp = NO_ONLINE_APP;
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //! ......... for online app screen only end  ......... !\\
+
+  //! dining screen !\\
+
+  //? to load o first screen loading
+  getInitialRoom() {
+    try {
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedRoom from RoomData controller
+      if (_roomData.allRoom.isEmpty) {
+        if (kDebugMode) {
+          print(_roomData.allRoom.length);
+          print('data loaded from db');
+        }
+        refreshRoom(showSnack: false);
+      } else {
+        if (kDebugMode) {
+          print('data loaded from room data');
+        }
+        //? load data from variable
+        _storedRoom.clear();
+        _storedRoom.addAll(_roomData.allRoom);
+        //? to show room  in UI
+        _myRoom.clear();
+        _myRoom.addAll(_storedRoom);
+      }
+      update();
+    } catch (e) {
+      return;
+    } finally {
+      update();
+    }
+  }
+
+  //? this function will call getAllRoom() in RoomData
+  refreshRoom({bool showSnack = true}) async {
+    try {
+      MyResponse response = await _roomData.getAllRoom();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Room>  rooms = response.data;
+          _storedRoom.clear();
+          _storedRoom.addAll(rooms);
+          //? to show full room in UI
+          _myRoom.clear();
+          _myRoom.addAll(_storedRoom);
+          //? to hide snack-bar on page starting , because this method is calling page starting
+          if(showSnack){
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        //? to hide snack-bar on page starting , because this method is calling page starting
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      update();
+    }
+  }
+
+
+
+  //? to show table in drop down
+  updateSelectedTable(int tableNumber) {
+    selectedTable = tableNumber;
+    update();
+  }
+
+  //? to show chair in drop down
+  updateSelectedChair(int chairNumber) {
+    selectedChair = chairNumber;
+    update();
+  }
+
+  //? to show room in drop down
+  updateSelectedRoom(String roomName) {
+    selectedRoom = roomName;
+    update();
+  }
+
+  //? to store data in array to send to server
+  updateTableChairSet({required String room, required int table, required int chair}) {
+    try {
+      List<dynamic> tableChairSet = [room, table, chair];
+      selectedTableChairSet = tableChairSet;
+      selectTableTxt = 'T-$table C-$chair';
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  resetTableChairSetValues() {
+    try {
+      //? to set all dropdown initial state
+      selectedRoom = MAIN_ROOM;
+      selectedTable = 1;
+      selectedChair = 1;
+      //? to set array to server
+      selectedTableChairSet = [MAIN_ROOM, -1, -1];
+      //? to set white btn text
+      selectTableTxt = 'Select table';
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  updateShowAddRoom(bool isShowing) {
+    showAddRoom = isShowing;
+    update();
+  }
+
+  //?insert room
+  Future insertRoom() async {
+    try {
+      addRoomLoading = true;
+      update();
+      String roomNameString = '';
+      roomNameString = roomNameTD.text;
+      if (roomNameString.trim() != '') {
+        MyResponse response = await _roomRepo.insertRoom(roomNameString);
+        if (response.statusCode == 1) {
+          refreshRoom();
+          //! snack bar showing when refresh category no need to show here
+        } else {
+          AppSnackBar.errorSnackBar('Error', response.message);
+          return;
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Field is Empty', 'Pleas enter any room name');
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+    } finally {
+      roomNameTD.text = '';
+      addRoomLoading = false;
+      showAddRoom = false;
+      update();
+    }
+  }
+
+  //? to delete the room
+  deleteRoom({required int roomId, required String roomName}) async {
+    try {
+      //? check user try to delete main room
+      if (roomName != MAIN_ROOM) {
+        addRoomLoading = true;
+        update();
+        MyResponse response = await _roomRepo.deleteRoom(roomId);
+        if (response.statusCode == 1) {
+          refreshRoom();
+          //? to close opened drop down after delete
+          Get.back();
+          //! snack bar showing when refreshCategory no need to show here
+        } else {
+          AppSnackBar.errorSnackBar('Error', response.message);
+          return;
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error', 'Cannot delete this category');
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+    } finally {
+      addRoomLoading = false;
+      update();
+    }
+  }
+
+  //! dining screen !\\
+
   //? OK
   showLoading() {
     isLoading = true;
@@ -966,6 +1747,16 @@ class BillingScreenController extends GetxController {
     settleChargesCtrl = TextEditingController().obs;
     settleGrandTotalCtrl = TextEditingController().obs;
     settleCashReceivedCtrl = TextEditingController().obs;
+
+    //? delivery address
+    deliveryAddrNameCtrl = TextEditingController();
+    deliveryAddrNumberCtrl = TextEditingController();
+    deliveryAddrAddressCtrl = TextEditingController();
+
+    //? for add new online app
+    onlineAppNameTD = TextEditingController();
+    //? room name
+    roomNameTD = TextEditingController();
   }
 
   //? dispose all txtControllers
@@ -977,5 +1768,12 @@ class BillingScreenController extends GetxController {
     settleChargesCtrl.value.dispose();
     settleGrandTotalCtrl.value.dispose();
     settleCashReceivedCtrl.value.dispose();
+
+    deliveryAddrNameCtrl.dispose();
+    deliveryAddrNumberCtrl.dispose();
+    deliveryAddrAddressCtrl.dispose();
+
+    onlineAppNameTD.dispose();
+    roomNameTD.dispose();
   }
 }

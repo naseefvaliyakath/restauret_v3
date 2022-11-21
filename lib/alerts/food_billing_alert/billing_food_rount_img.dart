@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 
-class BillingAlertFood extends StatelessWidget {
+class BillingFoodRoundImg extends StatelessWidget {
   final String img;
 
-  const BillingAlertFood(
+  const BillingFoodRoundImg(
       {Key? key, required this.img,})
       : super(key: key);
 

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart' hide Response;
 import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
+import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/my_response.dart';
@@ -14,7 +15,6 @@ import '../../../widget/common_widget/snack_bar.dart';
 class UpdateFoodController extends GetxController {
   //?controllers
   final CategoryData _categoryData = Get.find<CategoryData>();
-  final CategoryRepo _categoryRepo = Get.find<CategoryRepo>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
   final FoodData _foodData = Get.find<FoodData>();
 
@@ -66,6 +66,7 @@ class UpdateFoodController extends GetxController {
   @override
   Future<void> onInit() async {
     initTxtCtrl();
+    checkInternetConnection();
     receiveInitialValue();
     getInitialCategory();
     super.onInit();
@@ -92,7 +93,7 @@ class UpdateFoodController extends GetxController {
           print(_categoryData.category.length);
           print('data loaded from db');
         }
-        _categoryData.getCategory(fromUpdateFood:true);
+        refreshCategory();
       } else {
         if (kDebugMode) {
           print('data loaded from category data');
@@ -130,10 +131,14 @@ class UpdateFoodController extends GetxController {
 
     try {
       _myCategory.asMap().forEach((index, value) {
-        print(value.catName);
+        if (kDebugMode) {
+          print(value.catName);
+        }
             if(value.catName == catName){
               setCategoryTappedIndex(index);
-              print('updateCategoryFirstTime called $catName and index $index');
+              if (kDebugMode) {
+                print('updateCategoryFirstTime called $catName and index $index');
+              }
             }
           });
 
@@ -144,15 +149,26 @@ class UpdateFoodController extends GetxController {
   }
 
 
-  //? this function will call getCategory() in CategoryData
   //? ad refresh fresh data from server
   refreshCategory() async {
     try {
       //? to show shimming loading
       isLoadingCategory = true;
       update();
-      await _categoryData.getCategory(fromUpdateFood: true);
-      AppSnackBar.successSnackBar('Success', 'Updated successfully');
+      MyResponse response = await _categoryData.getCategory();
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<Category>  category = response.data;
+          _storedCategory.clear();
+          _storedCategory.addAll(category);
+          //? to show full food in UI
+          _myCategory.clear();
+          _myCategory.addAll(_storedCategory);
+          AppSnackBar.successSnackBar('Success', 'Updated successfully');
+        }
+      }else{
+        AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+      }
     } catch (e) {
       rethrow;
     } finally {
@@ -161,21 +177,7 @@ class UpdateFoodController extends GetxController {
     }
   }
 
-  //? when call getCategory() in CategoryData this method will call in success
-  //? to update fresh data in CategoryData and _myCategory also
-  //? this method only for call getCategory method from CategoryData like callback
-  refreshMyCategory(List<Category> categoryFromCategoryData) {
-    try {
-      _storedCategory.clear();
-      _storedCategory.addAll(categoryFromCategoryData);
-      //? to show full food in UI
-      _myCategory.clear();
-      _myCategory.addAll(_storedCategory);
-      update();
-    } catch (e) {
-      return;
-    }
-  }
+
 
   //////! category section !//////
 
@@ -328,8 +330,8 @@ class UpdateFoodController extends GetxController {
           id: idNew);
       if (response.statusCode == 1) {
         //? to update all food and todayFood  after update in new food
-        _foodData.getAllFoods(fromAllFood: true);
-        _foodData.getTodayFoods(fromTodayFood: true);
+        _foodData.getAllFoods();
+        _foodData.getTodayFoods();
         AppSnackBar.successSnackBar('Success', response.message);
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);
@@ -342,6 +344,8 @@ class UpdateFoodController extends GetxController {
       update();
     }
   }
+
+
 
   initTxtCtrl() {
     fdNameTD = TextEditingController();

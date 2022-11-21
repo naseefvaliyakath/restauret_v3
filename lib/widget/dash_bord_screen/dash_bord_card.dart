@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../common_widget/common_text/mid_text.dart';
 import '../common_widget/common_text/small_text.dart';
 
