@@ -64,7 +64,10 @@ class SettingsPageScreen extends StatelessWidget {
               ProfileMenu(
                 text: "Change mode",
                 icon: Icons.mode_sharp,
-                press: () {
+                press: () async {
+                  //? to refresh _appModeNumber from hive before show popup
+                  //? because these appModeNumber is used to show and hide password field
+                  await ctrl.getAppModeNumber();
                   changeModeOfAppAlert(context: context);
                 },
               ),

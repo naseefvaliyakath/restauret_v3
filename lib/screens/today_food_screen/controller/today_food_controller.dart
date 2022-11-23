@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/repository/food_repository.dart';
-
 import '../../../api_data_loader/category_data.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../models/category_response/category.dart';

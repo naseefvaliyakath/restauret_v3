@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart' hide Response;
+import 'package:rest_verision_3/screens/all_food_screen/controller/all_food_controller.dart';
 import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
@@ -11,6 +12,7 @@ import '../../../models/my_response.dart';
 import '../../../repository/category_repository.dart';
 import '../../../repository/food_repository.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../today_food_screen/controller/today_food_controller.dart';
 
 class UpdateFoodController extends GetxController {
   //?controllers
@@ -214,15 +216,15 @@ class UpdateFoodController extends GetxController {
   //? to set the vales initially in txt controllers and btn's
   updateInitialValue(fdNameIn, fdPriceIn, fdThreeBiTwoPrsPriceIn, fdHalfPriceIn, fdQtrPriceIn, fdIsLoos,fdCategory) {
     try {
-
+      RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
       //? setting up value in txt controllers
       fdNameTD.text = fdNameIn;
-      fdThreeBiTwoPrsTD.text = fdThreeBiTwoPrsPriceIn.toString();
-      fdHalfPriceTD.text = fdHalfPriceIn.toString();
-      fdQtrPriceTD.text = fdQtrPriceIn.toString();
+      fdThreeBiTwoPrsTD.text = fdThreeBiTwoPrsPriceIn.toString().replaceAll(regex, '');
+      fdHalfPriceTD.text = fdHalfPriceIn.toString().replaceAll(regex, '');
+      fdQtrPriceTD.text = fdQtrPriceIn.toString().replaceAll(regex, '');
       //? to set initial price toggle status from data
       fdIsLoos == 'yes' ? priceToggle = true : priceToggle = false;
-      fdIsLoos == 'yes' ? fdFullPriceTD.text = fdPriceIn.toString() : fdPriceTD.text = fdPriceIn.toString();
+      fdIsLoos == 'yes' ? fdFullPriceTD.text = fdPriceIn.toString().replaceAll(regex, '') : fdPriceTD.text = fdPriceIn.toString().replaceAll(regex, '');
       if (kDebugMode) {
         print('price toggle $priceToggle');
       }
@@ -329,9 +331,13 @@ class UpdateFoodController extends GetxController {
           fdIsToday: fdIsTodayNew,
           id: idNew);
       if (response.statusCode == 1) {
-        //? to update all food and todayFood  after update in new food
+        //? to update all food  in data loader
+        //? inside UI it will call on onInit (all-food controller is lazyPut)
         _foodData.getAllFoods();
+        //? refreshing today food
         _foodData.getTodayFoods();
+        //? today food controller is permanent , refresh myTodayFood by calling this method
+        Get.find<TodayFoodController>().refreshTodayFood(showSnack: false);
         AppSnackBar.successSnackBar('Success', response.message);
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);

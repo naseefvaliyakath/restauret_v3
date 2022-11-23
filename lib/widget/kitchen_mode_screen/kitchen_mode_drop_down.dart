@@ -120,7 +120,6 @@ class MenuItems {
   //? we not using this
   static onChanged(BuildContext context, MenuItem item) {
     switch (item) {
-
     }
   }
 }

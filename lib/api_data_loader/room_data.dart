@@ -19,6 +19,7 @@ class RoomData extends GetxController {
     super.onInit();
   }
 
+
   Future<MyResponse> getAllRoom() async {
     try {
       MyResponse response = await _roomRepo.getRoom();

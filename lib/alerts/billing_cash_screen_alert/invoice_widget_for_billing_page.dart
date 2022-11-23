@@ -118,7 +118,7 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
           3.verticalSpace,
           HorizontalDivider(color: Colors.black, height: 1.sp),
           //? KotBillItemHeading() is same for bill
-          const KotBillItemHeading(),
+          const KotBillItemHeading(showPrice: true,),
           HorizontalDivider(color: Colors.black, height: 1.sp),
           5.verticalSpace,
           Flexible(
@@ -130,8 +130,10 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
                   hideKotNote: true,
                   index: index,
                   slNumber: index + 1,
+                  showPrice: true,
                   itemName:  billingItems[index]['name'] ?? '',
                   qnt: billingItems[index]['qnt'] ?? 0,
+                  price: billingItems[index]['price'] ?? 0,
                   kitchenNote: billingItems[index]['ktNote'] ?? '',
                 );
               },

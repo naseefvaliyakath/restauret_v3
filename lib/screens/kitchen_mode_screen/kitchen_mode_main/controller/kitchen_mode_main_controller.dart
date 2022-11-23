@@ -146,6 +146,7 @@ class KitchenModeMainController extends GetxController {
               .addAll(kitchenOrders!.where((newItem) => _allKotBillingItems.every((oldItem) => newItem.Kot_id != oldItem.Kot_id)));
           //?to update all items items in all tab
           updateKotItemsAsPerTab();
+          AppSnackBar.successSnackBar('Success', 'Updated successfully');
           update();
         } else {
           return;
@@ -245,7 +246,7 @@ class KitchenModeMainController extends GetxController {
         AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
       } else {
         btnControllerUpdateFullKotSts.success();
-        AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
+       //? Snack bar showing in refresh
         //? to refresh and emit new data from db
         refreshDatabaseKot();
         update();
@@ -288,7 +289,7 @@ class KitchenModeMainController extends GetxController {
         AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
       } else {
         btnControllerUpdateSingleKotSts.success();
-        AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'error');
+        //? Snack bar showing in refresh
         refreshDatabaseKot();
         update();
       }
@@ -301,7 +302,6 @@ class KitchenModeMainController extends GetxController {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerUpdateSingleKotSts.reset();
       });
-      // Navigator.pop(context);
       update();
     }
   }

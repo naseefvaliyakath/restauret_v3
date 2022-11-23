@@ -40,4 +40,5 @@ class TableChairSetData extends GetxController {
     }
     update();
   }
+
 }

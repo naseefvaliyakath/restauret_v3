@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
+import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 
 import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
@@ -57,6 +58,9 @@ class AllFoodController extends GetxController {
     searchTD = TextEditingController();
     await checkIsCashier();
     checkInternetConnection();
+    //? refreshing new data _allFood in food data
+    refreshAllFood(showSnack: false);
+    //? load refreshed new data to Ui (myAllFood)
     getInitialFood();
     getInitialCategory();
     super.onInit();
@@ -122,10 +126,10 @@ class AllFoodController extends GetxController {
       MyResponse response = await _foodRepo.updateTodayFood(fdId, isToday);
       if (response.statusCode == 1) {
         refreshAllFood();
-        //? to update today food also after adding in today food
+        //? to update today food also after adding in today food in data loader and UI
         _foodData.getTodayFoods();
+        Get.find<TodayFoodController>().refreshTodayFood(showSnack: false);
         //! success message shown in refreshAllFood() method
-        // AppSnackBar.successSnackBar('Success', response.message);
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);
         return;

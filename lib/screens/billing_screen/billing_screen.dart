@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../../alerts/common_alerts.dart';
 import '../../alerts/delivery_address_alert/delivery_address_alert.dart';
@@ -125,7 +124,6 @@ class BillingScreen extends StatelessWidget {
                       width: double.maxFinite,
                       height: 0.18.sh,
                       padding: EdgeInsets.all(5.sp),
-                      //height: 250,
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,

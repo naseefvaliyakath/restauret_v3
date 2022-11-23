@@ -22,8 +22,6 @@ class SettledOrderRepo extends GetxService {
             status: 'Error',
             message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
       } else {
-        print('object');
-        print(response.statusMessage.toString());
         return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
       }
     } on DioError catch (e) {

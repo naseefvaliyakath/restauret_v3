@@ -39,4 +39,5 @@ class SettledOrderData extends GetxController {
     }
     update();
   }
+
 }

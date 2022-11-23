@@ -32,11 +32,7 @@ class TodayFoodScreen extends StatelessWidget {
               ? const MyLoading()
               : SafeArea(
                   child: CustomScrollView(
-                    //? when no item then pull to  refresh not work , that's why two physics
-                    //? length grater than 5 for 3 row
-                    physics: ctrl.myTodayFoods.length > 5
-                        ? const BouncingScrollPhysics()
-                        : const AlwaysScrollableScrollPhysics(),
+                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                     primary: false,
                     slivers: <Widget>[
                       SliverAppBar(

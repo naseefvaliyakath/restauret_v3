@@ -75,7 +75,7 @@ class InvoiceAlertBodyOrderView extends StatelessWidget {
           ),
           3.verticalSpace,
           HorizontalDivider(color: Colors.black, height: 1.sp),
-          const KotBillItemHeading(),
+          const KotBillItemHeading(showPrice: true,),
           HorizontalDivider(color: Colors.black, height: 1.sp),
           3.verticalSpace,
           Flexible(
@@ -87,7 +87,9 @@ class InvoiceAlertBodyOrderView extends StatelessWidget {
                   hideKotNote: true,
                   index: index,
                   slNumber: index + 1,
+                  showPrice: true,
                   itemName: billingItems[index]['name'] ?? '',
+                  price:  billingItems[index]['price'] ?? 0,
                   qnt: billingItems[index]['qnt'] ?? 0,
                   kitchenNote: billingItems[index]['ktNote'] ?? '',
                 );
