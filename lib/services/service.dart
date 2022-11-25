@@ -267,19 +267,19 @@ class HttpService {
       // Do something before request is sent
       checkInternetConnection();
       if (kDebugMode) {
-        print("${request.method} | ${request.path}");
+        // print("${request.method} | ${request.path}");
       }
       return handler.next(request); //continue
     }, onResponse: (response, handler) {
       // Do something with response data
       if (kDebugMode) {
-        print("response from intercept ${response.statusCode} ${response.statusMessage} ${response.data}");
+        // print("response from intercept ${response.statusCode} ${response.statusMessage} ${response.data}");
       }
       return handler.next(response); // continue
     }, onError: (DioError e, handler) {
       // Do something with response error
       if (kDebugMode) {
-        print('deo error${e.message}');
+        // print('deo error${e.message}');
       }
       // AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
       return handler.next(e);
