@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
 import 'library/iosWinPrint.dart';
 import 'library/iosWinPrintMethods.dart';
 import 'library/print_responce.dart';
@@ -84,11 +87,10 @@ class PrintCTRL extends GetxController {
     bytes += generator.text('________________________________', styles: const PosStyles(align: PosAlign.center));
     // bytes += generator.text('********************************', styles: const PosStyles(align: PosAlign.center));
 
-    PrintResponse test = await iOSWinPrintInstance.printEscPos(bytes, generator);
-    if (test.status) {
-      print('sucees');
+    PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator);
+    if (printerResponse.status) {
     } else {
-      print(test.message);
+      AppSnackBar.myFlutterToast(message: printerResponse.message, bgColor: Colors.red);
     }
   }
 

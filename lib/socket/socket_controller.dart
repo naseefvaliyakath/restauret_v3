@@ -42,6 +42,8 @@ class SocketController extends GetxController {
         IO.OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .disableAutoConnect()
+            .setExtraHeaders({'shopId': '10'})
+            .setQuery({'shopId': '10'})
             .setPath('/socket.io/') // disable auto-connection
             .build());
   }

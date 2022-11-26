@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import '../../constants/app_colors/app_colors.dart';
+import '../../printer/controller/print_controller.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/notification_icon.dart';
@@ -83,8 +84,7 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: const Color(0xff727070),
                     icon: FontAwesomeIcons.bowlFood,
                     onTap: () {
-                      print('app mode ${Get.find<StartupController>().readAppModeInHive()}');
-                      print(Get.find<StartupController>().shopName);
+                      PrintCTRL().printKot(order: [], orderType: "orderType", orderStatus: "orderStatus");
                     },
                   ),
                   DashBordCard(

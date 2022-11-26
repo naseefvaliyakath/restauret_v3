@@ -11,7 +11,6 @@ import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/text_field_widget.dart';
 import 'invoice_alert_for_billing_page.dart';
 
-
 //? this is the popup open when click settled btn click to enter cash details in order view page from kot mange tab
 class OrderSettleScreenInOrderView extends StatelessWidget {
   final ctrl;
@@ -39,7 +38,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: BigText(
-                      text: 'Net Total : ',
+                      text: 'Total : ',
                       size: 20.sp,
                       color: AppColors.titleColor,
                     ),
@@ -47,10 +46,10 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                   Flexible(
                       child: TextFieldWidget(
                     textEditingController: ctrl.settleNetTotalCtrl.value,
-                    hintText: 'Net Amount',
+                    hintText: 'Amount',
                     isDens: true,
                     hintSize: 16,
-                    isNumberOnly:true,
+                    isNumberOnly: true,
                     borderRadius: 10.r,
                     onChange: (value) {
                       ctrl.calculateNetTotal();
@@ -76,7 +75,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                     hintText: 'in %',
                     isDens: true,
                     hintSize: 16,
-                    isNumberOnly:true,
+                    isNumberOnly: true,
                     borderRadius: 10.r,
                     onChange: (value) {
                       ctrl.calculateNetTotal();
@@ -89,7 +88,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                     isDens: true,
                     hintSize: 16,
                     borderRadius: 10.r,
-                    isNumberOnly:true,
+                    isNumberOnly: true,
                     onChange: (_) {
                       ctrl.calculateNetTotal();
                     },
@@ -112,7 +111,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                     hintText: 'Amount',
                     hintSize: 16,
                     isDens: true,
-                    isNumberOnly:true,
+                    isNumberOnly: true,
                     borderRadius: 10.r,
                     onChange: (_) {
                       ctrl.calculateNetTotal();
@@ -126,7 +125,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: BigText(
-                      text: 'Grand Total : ',
+                      text: 'Final Amount : ',
                       size: 20.sp,
                       color: AppColors.titleColor,
                     ),
@@ -134,10 +133,10 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                   Flexible(
                       child: TextFieldWidget(
                     textEditingController: ctrl.settleGrandTotalCtrl.value,
-                    hintText: 'Grand Total',
+                    hintText: 'Final Amount',
                     isDens: true,
                     hintSize: 16,
-                        isNumberOnly:true,
+                    isNumberOnly: true,
                     borderRadius: 10.r,
                     onChange: (_) {},
                   ))
@@ -154,7 +153,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                       color: AppColors.titleColor,
                     ),
                   ),
-                   const Flexible(child: PaymentDropDownForOrderView())
+                  const Flexible(child: PaymentDropDownForOrderView())
                 ],
               ),
               10.verticalSpace,
@@ -174,7 +173,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                     hintText: 'Amount Received',
                     isDens: true,
                     hintSize: 16,
-                    isNumberOnly:true,
+                    isNumberOnly: true,
                     borderRadius: 10.r,
                     onChange: (value) {
                       ctrl.calculateNetTotal();
@@ -213,7 +212,8 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                   children: [
                     Flexible(
                         child: ctrl.isClickedSettle.value
-                            ? AppMiniButton(text: 'Settled', color: Colors.grey, onTap: () {}) //? disable if already click
+                            ? AppMiniButton(
+                                text: 'Settled', color: Colors.grey, onTap: () {}) //? disable if already click
                             : ProgressButton(
                                 btnCtrlName: 'settle',
                                 ctrl: ctrl,
@@ -229,41 +229,48 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                         color: const Color(0xff4caf50),
                         text: 'Print',
                         onTap: () {
-                          Navigator.pop(context);
-                          //? bill page to print invoice
-                          invoiceAlertForBillingViewPage(
+                          if (FocusScope.of(context).isFirstFocus) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          }
+                          //? delay for close keyboard if its open
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            Navigator.pop(context);
+                            //? bill page to print invoice
+                            invoiceAlertForBillingViewPage(
                               context: context,
-                              grandTotal:ctrl.grandTotalNew ?? 0,
+                              grandTotal: ctrl.grandTotalNew ?? 0,
                               discountPercent: ctrl.discountPresent ?? 0,
                               discountCash: ctrl.discountCash ?? 0,
                               charges: ctrl.charges ?? 0,
                               billingItems: ctrl.billingItems ?? [],
                               change: ctrl.balanceChange.value ?? 0,
-                              netAmount:ctrl.netTotal ?? 0,
-                              cashReceived:ctrl.cashReceived ?? 0,
+                              netAmount: ctrl.netTotal ?? 0,
+                              cashReceived: ctrl.cashReceived ?? 0,
                               orderType: ctrl.orderType.toString(),
                               deliveryAddress: ctrl.fdDelAddress,
                               selectedOnlineApp: ctrl.selectedOnlineApp,
-                          );
+                            );
+                          });
                         },
                       ),
                     ),
                     3.horizontalSpace,
                     Flexible(
                       child: ctrl.isClickedSettle.value
-                          ? AppMiniButton(text: 'Settle & print', color: Colors.grey, onTap: () {}) //?disable if already click
+                          ? AppMiniButton(
+                              text: 'Settle & print', color: Colors.grey, onTap: () {}) //?disable if already click
                           : ProgressButton(
-                        btnCtrlName: 'settle_print',
-                        ctrl: ctrl,
-                        textSize: 13.sp,
-                        color: AppColors.mainColor,
-                        text: 'settle & print',
-                        onTap: () async {
-                          //? pass parameter to this method like insertSettledBill(context,print_true);
-                          //? then inside controller after success if print parameter is true then call print method after success
-                          await ctrl.insertSettledBill(context);
-                        },
-                      ),
+                              btnCtrlName: 'settle_print',
+                              ctrl: ctrl,
+                              textSize: 13.sp,
+                              color: AppColors.mainColor,
+                              text: 'settle & print',
+                              onTap: () async {
+                                //? pass parameter to this method like insertSettledBill(context,print_true);
+                                //? then inside controller after success if print parameter is true then call print method after success
+                                await ctrl.insertSettledBill(context);
+                              },
+                            ),
                     ),
                     3.horizontalSpace,
                   ],

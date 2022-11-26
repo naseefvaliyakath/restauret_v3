@@ -107,7 +107,7 @@ class InvoiceAlertBodyOrderView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MidText(text: 'Grand Total      : ',size: 10.sp,),
+                    MidText(text: 'Bill Amount      : ',size: 10.sp,),
                     MidText(text: '${singleOrder.grandTotal ?? 0}',size: 10.sp,),
                   ],
                 ),
@@ -147,7 +147,7 @@ class InvoiceAlertBodyOrderView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MidText(text: 'Net Total            : ',size: 13.sp,),
+                    MidText(text: 'Final Amount            : ',size: 13.sp,),
                     MidText(text: ' ${singleOrder.netAmount ?? 0}',size: 13.sp,),
                   ],
                 ),

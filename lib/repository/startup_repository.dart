@@ -30,4 +30,7 @@ class StartupRepo extends GetxService {
   }
 
 
+
+
+
 }

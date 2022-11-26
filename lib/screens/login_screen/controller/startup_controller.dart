@@ -17,6 +17,7 @@ class StartupController extends GetxController {
 
   final RoundedLoadingButtonController btnControllerLogin = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerPasswordPrompt = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController btnControllerChangePasswordPrompt = RoundedLoadingButtonController();
 
 
   //?application mode number its assigned from shared preferences
@@ -37,6 +38,7 @@ class StartupController extends GetxController {
   //? text-editing controllers
   late TextEditingController subIdTD;
   late TextEditingController passTd;
+  late TextEditingController newPassTd;
 
   //? to get store get ShowDeliveryAddressInBill boll status
   bool setShowDeliveryAddressInBillToggle = true;
@@ -45,6 +47,7 @@ class StartupController extends GetxController {
   void onInit() async {
     subIdTD = TextEditingController();
     passTd = TextEditingController();
+    newPassTd = TextEditingController();
     await checkLoginAndAppMode();
     readShowDeliveryAddressInBillFromHive();
     super.onInit();
@@ -210,7 +213,7 @@ class StartupController extends GetxController {
     update();
   }
 
- Future<bool> checkPassword() async {
+  Future<bool> checkPassword() async {
     try {
     if(passTd.text.trim() != '')
       {
@@ -243,6 +246,53 @@ class StartupController extends GetxController {
       AppSnackBar.errorSnackBar('Error', 'pleas fill the field !!');
       return false;
     }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+      btnControllerPasswordPrompt.error();
+      rethrow;
+    }
+    finally{
+      passTd.text = '';
+      Future.delayed(const Duration(seconds: 1), () {
+        btnControllerPasswordPrompt.reset();
+      });
+      update();
+    }
+  }
+
+  Future<bool> changePassword() async {
+    try {
+      if(passTd.text.trim() != '')
+      {
+        MyResponse response = await _startupRepo.getShopDetails(subcId);
+        if (response.statusCode == 1) {
+          ShopResponse parsedResponse = response.data;
+          if (parsedResponse.data == null) {
+            AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+            return false;
+          } else {
+            Shop shop = parsedResponse.data ?? Shop(-1, 'error', 0000, 'error', '0000', '0000');
+            if(shop.password == passTd.text){
+              btnControllerPasswordPrompt.success();
+              return true;
+            }
+            else{
+              AppSnackBar.errorSnackBar('Error', 'wrong password !!');
+              btnControllerPasswordPrompt.error();
+              return false;
+            }
+
+          }
+        } else {
+          AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+          btnControllerPasswordPrompt.error();
+          return false;
+        }
+      }
+      else{
+        AppSnackBar.errorSnackBar('Error', 'pleas fill the field !!');
+        return false;
+      }
     } catch (e) {
       AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
       btnControllerPasswordPrompt.error();

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:rest_verision_3/models/kitchen_order_response/kitchen_order.dart';
 import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 import 'package:ticket_widget/ticket_widget.dart';
@@ -60,7 +61,7 @@ class KotBillWidget extends StatelessWidget {
                 size: 15.sp,
               ),
               SmallText(
-                text: 'DATE : 01-05-2022',
+                text: 'DATE : ${DateFormat('dd-MM-yyyy  hh:mm aa').format((fullKot.kotTime) ?? DateTime.now())}',
                 color: Colors.black54,
                 size: 10.sp,
               ),

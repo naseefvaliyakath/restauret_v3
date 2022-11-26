@@ -205,6 +205,7 @@ class BillingScreenController extends GetxController {
   //? this will change as per selected billing type Eg : takeAway,homeDelivery,onlineBooking & Dining
   String orderType = TAKEAWAY;
 
+
   //? to set screen heading in header of page
   String screenName = TAKEAWAY_SCREEN_NAME;
 
@@ -252,7 +253,6 @@ class BillingScreenController extends GetxController {
   void onInit() async {
     initTxtController();
     checkInternetConnection();
-    await initialLoadingBillFromHive();
     await getxArgumentReceiveHandler();
     socket = _socketCtrl.socket;
     getInitialFood();
@@ -276,13 +276,15 @@ class BillingScreenController extends GetxController {
 
   //? when click user from home screen to check user clicked in witch billing scrren
   //? eg TakeAway,HomeDelivery,online, or dining
-  receivingBillingScreenType(String orderTypeOfScreen) {
+  receivingBillingScreenType(String orderTypeOfScreen) async {
     orderType = orderTypeOfScreen;
       if (kDebugMode) {
         print('order type is $orderType');
       }
       //? assigning screen name as per billing page
       settingUpScreenName(orderType);
+      getHiveKey();
+
 
   }
 
@@ -458,7 +460,7 @@ class BillingScreenController extends GetxController {
 
   //?to handle Get.argument from different pages like from hold item or kot update .. etc
   //? OK
-  getxArgumentReceiveHandler() {
+  getxArgumentReceiveHandler() async {
     try {
       //? to handle from orderView page for KOT update
       KitchenOrder emptyKotOrder = EMPTY_KITCHEN_ORDER;
@@ -485,6 +487,7 @@ class BillingScreenController extends GetxController {
           };
 
       if (quickItem['fdId'] != -2) {
+        await initialLoadingBillFromHive();
         if (kDebugMode) {
           print('quick bill called');
         }
@@ -502,6 +505,7 @@ class BillingScreenController extends GetxController {
 
       if (billingPageType != 'FROM_OTHER') {
         receivingBillingScreenType(billingPageType);
+        await initialLoadingBillFromHive();
       }
       //? check orderBill is not empty if its not empty then order is from Overview page for updateKOT
       if (orderBill.isNotEmpty) {
@@ -1047,6 +1051,7 @@ class BillingScreenController extends GetxController {
   String getHiveKey() {
     String hiveKey = HIVE_TAKE_AWAY_BILL;
     if (orderType == TAKEAWAY) {
+
       hiveKey = HIVE_TAKE_AWAY_BILL;
     }
     if (orderType == HOME_DELEVERY) {
@@ -1058,6 +1063,7 @@ class BillingScreenController extends GetxController {
     if (orderType == ONLINE) {
       hiveKey = HIVE_ONLINE_BOOKING_BILL;
     }
+    print('hive key $hiveKey and $orderType');
     return hiveKey;
   }
 

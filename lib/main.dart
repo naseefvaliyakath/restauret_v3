@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:rest_verision_3/printer/controller/print_controller.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
-import 'package:rest_verision_3/screens/home_screen/binding/home_screen_binding.dart';
 import 'package:rest_verision_3/screens/home_screen/home_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
 import 'constants/app_colors/app_colors.dart';
 import 'hive_database/hive_init.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -30,7 +29,6 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (BuildContext context, Widget? child) {
-        PrintCTRL().printKot(order: [], orderType: "orderType", orderStatus: "orderStatus");
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Restaurant POS',
@@ -48,5 +46,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+//?  flutter run --release
 
 

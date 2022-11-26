@@ -9,7 +9,6 @@ import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart
 import '../../../alerts/kot_alert/kot_bill_show_alert.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/api_link/api_link.dart';
-import '../../../constants/app_secret_constants/app_secret_constants.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../../hive_database/hive_model/hold_item/hive_hold_item.dart';
@@ -215,7 +214,7 @@ class OrderViewController extends GetxController {
 
   //? this emit will receive in server and emit from server to refresh data
   refreshDatabaseKot() {
-    _socket.emit('refresh-database-order');
+    _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
   }
 
   //? this emit will receive server and emit from server to with kotID to ring order
