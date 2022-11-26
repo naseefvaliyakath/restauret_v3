@@ -30,6 +30,25 @@ class StartupRepo extends GetxService {
   }
 
 
+  //? change password
+  Future<MyResponse> changePassword(String subscId,int fdShopId,String password,String newPassword) async {
+    // TODO: implement getNewsHeadline
+    try {
+      final response = await _httpService.updateData(CHANGE_PASSWORD, {'subcId': subscId, 'fdShopId':fdShopId,'password':password,'newPassword':newPassword});
+      ShopResponse? parsedResponse = ShopResponse.fromJson(response.data);
+      if (parsedResponse.error ?? true) {
+        return MyResponse(statusCode: 0, status: 'Error',  message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message:  response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
+    }
+  }
+
+
 
 
 
