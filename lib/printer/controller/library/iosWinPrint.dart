@@ -7,10 +7,7 @@ import 'package:rest_verision_3/printer/controller/library/printer_config.dart';
 
 class IosWinPrint {
 
-  late  Generator generator ;
-
   IosWinPrint(){
-    // generator = Generator(PaperSize.mm58, await CapabilityProfile.load(name: 'XP-N160I'))
 
     if (Platform.isWindows){
       defaultPrinterType = PrinterType.usb;
@@ -44,10 +41,7 @@ class IosWinPrint {
   BTStatus _currentStatus = BTStatus.none;
   List<int>? pendingTask;
 
-  BluetoothPrinter? _selectedDevice;
-
-
-
+  static BluetoothPrinter? _selectedDevice;
 
   Future<List<BluetoothPrinter>> getDevices() async {
     var devices = <BluetoothPrinter>[];
@@ -110,7 +104,7 @@ class IosWinPrint {
     return _selectedDevice;
   }
 
-  BluetoothPrinter? getSelectedDevice(){
+  static BluetoothPrinter? getSelectedDevice(){
     return _selectedDevice;
   }
 
