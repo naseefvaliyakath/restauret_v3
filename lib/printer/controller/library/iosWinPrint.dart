@@ -7,10 +7,7 @@ import 'package:rest_verision_3/printer/controller/library/printer_config.dart';
 
 class IosWinPrint {
 
-  late  Generator generator ;
-
   IosWinPrint(){
-    // generator = Generator(PaperSize.mm58, await CapabilityProfile.load(name: 'XP-N160I'))
 
     if (Platform.isWindows){
       defaultPrinterType = PrinterType.usb;
