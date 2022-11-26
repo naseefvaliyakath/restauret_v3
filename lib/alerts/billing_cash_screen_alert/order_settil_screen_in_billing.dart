@@ -39,7 +39,7 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: BigText(
-                      text: 'Net Total : ',
+                      text: 'Total : ',
                       size: 20.sp,
                       color: AppColors.titleColor,
                     ),
@@ -47,7 +47,7 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                   Flexible(
                       child: TextFieldWidget(
                     textEditingController: ctrl.settleNetTotalCtrl.value,
-                    hintText: 'Net Amount',
+                    hintText: 'Amount',
                     isDens: true,
                     hintSize: 16,
                     isNumberOnly:true,
@@ -126,7 +126,7 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: BigText(
-                      text: 'Grand Total : ',
+                      text: 'Final Amount : ',
                       size: 20.sp,
                       color: AppColors.titleColor,
                     ),
@@ -134,7 +134,7 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                   Flexible(
                       child: TextFieldWidget(
                     textEditingController: ctrl.settleGrandTotalCtrl.value,
-                    hintText: 'Grand Total',
+                    hintText: 'Final Amount',
                     isDens: true,
                     hintSize: 16,
                         isNumberOnly:true,
@@ -229,9 +229,14 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                         color: const Color(0xff4caf50),
                         text: 'Print',
                         onTap: () {
-                          Navigator.pop(context);
-                          //? bill page to print invoice
-                          invoiceAlertForBillingViewPage(
+                          if(FocusScope.of(context).isFirstFocus) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          }
+                          //? delay for close keyboard if its open
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            Navigator.pop(context);
+                            //? bill page to print invoice
+                            invoiceAlertForBillingViewPage(
                               context: context,
                               grandTotal:ctrl.grandTotalNew ?? 0,
                               discountPercent: ctrl.discountPresent ?? 0,
@@ -244,7 +249,9 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                               orderType: ctrl.orderType.toString(),
                               deliveryAddress: ctrl.fdDelAddress,
                               selectedOnlineApp: ctrl.selectedOnlineApp,
-                          );
+                            );
+                          });
+
                         },
                       ),
                     ),

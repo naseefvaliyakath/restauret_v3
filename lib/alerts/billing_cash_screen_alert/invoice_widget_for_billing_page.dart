@@ -151,11 +151,11 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MidText(
-                      text: 'Grand Total      : ',
+                      text: 'Bill Amount      : ',
                       size: 10.sp,
                     ),
                     MidText(
-                      text: '$grandTotal',
+                      text: '$netAmount',
                       size: 10.sp,
                     ),
                   ],
@@ -215,11 +215,11 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MidText(
-                      text: 'Net Total            : ',
+                      text: 'Final Amount    : ',
                       size: 13.sp,
                     ),
                     MidText(
-                      text: ' $netAmount',
+                      text: ' $grandTotal',
                       size: 13.sp,
                     ),
                   ],

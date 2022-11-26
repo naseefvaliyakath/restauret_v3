@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:rest_verision_3/constants/strings/my_strings.dart';
 
 import '../../constants/app_colors/app_colors.dart';
 
@@ -14,6 +15,7 @@ class OrderStatusCard extends StatelessWidget {
   final String orderType;
   final Color borderColor;
   final Color cardColor;
+  final List<dynamic> tableName;
 
   final Function onTap;
 
@@ -29,6 +31,7 @@ class OrderStatusCard extends StatelessWidget {
     required this.borderColor,
     this.cardColor = Colors.white,
     required this.orderType,
+    required this.tableName,
   }) : super(key: key);
 
   @override
@@ -75,6 +78,20 @@ class OrderStatusCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 21.sp,
                             color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.fade,
+                        ),
+                      ),
+                      5.verticalSpace,
+                      FittedBox(
+                        child: Text(
+                          orderType == DINING ? ( tableName[1] == -1 ? 'NO TABLE SELECTED' : ('T${tableName[1]} - C${tableName[2]} (${tableName[0].toString().toUpperCase()})') ): '.',
+                          softWrap: false,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            //? to hide '.'
+                            color: orderType == DINING ? Colors.black54 :  Colors.white ,
                             fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.fade,

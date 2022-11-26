@@ -37,7 +37,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: BigText(
-                      text: 'Net Total : ',
+                      text: 'Total : ',
                       size: 20.sp,
                       color: AppColors.titleColor,
                     ),
@@ -45,7 +45,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                   Flexible(
                       child: TextFieldWidget(
                     textEditingController: ctrl.settleNetTotalCtrl.value,
-                    hintText: 'Net Amount',
+                    hintText: 'Amount',
                     isDens: true,
                     hintSize: 16,
                     borderRadius: 10.r,
@@ -120,7 +120,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: BigText(
-                      text: 'Grand Total : ',
+                      text: 'Final Amount : ',
                       size: 20.sp,
                       color: AppColors.titleColor,
                     ),
@@ -128,7 +128,7 @@ class OrderUpdateSettleScreen extends StatelessWidget {
                   Flexible(
                       child: TextFieldWidget(
                     textEditingController: ctrl.settleGrandTotalCtrl.value,
-                    hintText: 'Grand Total',
+                    hintText: 'Final Amount',
                     isDens: true,
                     hintSize: 16,
                     borderRadius: 10.r,

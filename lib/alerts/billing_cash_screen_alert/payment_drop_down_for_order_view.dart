@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
+import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../screens/order_view_screen/controller/order_view_controller.dart';
 
@@ -53,7 +54,7 @@ class PaymentDropDownForOrderView extends StatelessWidget {
                             children: <Widget>[
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.r),
-                                child: const Icon(Icons.fastfood_rounded),
+                                child: Icon(Icons.payment_outlined,size: 24.sp,color: AppColors.mainColor),
                               ),
                               10.horizontalSpace,
                               Flexible(

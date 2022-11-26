@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:getwidget/components/toggle/gf_toggle.dart';
 import 'package:getwidget/types/gf_toggle_type.dart';
 import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
+import '../../alerts/change_password_prompt_alert/change_password_prompt_to_cashier_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/settings_page_screen/profile_menu.dart';
 import '../login_screen/controller/startup_controller.dart';
@@ -37,7 +38,9 @@ class GeneralSettingsScreen extends StatelessWidget {
                 ProfileMenu(
                   text: "Change password",
                   icon: Icons.account_circle_rounded,
-                  press: () => {},
+                  press: () => {
+                    changePasswordPromptToCashierMode(context: context)
+                  },
                 ),
                 ProfileMenu(
                   text: "Print KOT with bill",

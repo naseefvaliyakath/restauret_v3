@@ -149,7 +149,7 @@ class IosWinPrint {
       default:
     }
 
-    if(flag==false){
+    if(flag==false && Platform.isAndroid){
       return PrintResponse(status: false,message: "Could not connect");
     }
 
