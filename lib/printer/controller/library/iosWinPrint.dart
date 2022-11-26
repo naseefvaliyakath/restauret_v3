@@ -44,10 +44,7 @@ class IosWinPrint {
   BTStatus _currentStatus = BTStatus.none;
   List<int>? pendingTask;
 
-  BluetoothPrinter? _selectedDevice;
-
-
-
+  static BluetoothPrinter? _selectedDevice;
 
   Future<List<BluetoothPrinter>> getDevices() async {
     var devices = <BluetoothPrinter>[];
@@ -110,7 +107,7 @@ class IosWinPrint {
     return _selectedDevice;
   }
 
-  BluetoothPrinter? getSelectedDevice(){
+  static BluetoothPrinter? getSelectedDevice(){
     return _selectedDevice;
   }
 

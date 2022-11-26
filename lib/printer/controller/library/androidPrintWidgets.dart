@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ScreenShortWidget {
+class AndroidPrintWidgets {
   static TextStyle boldText() {
     return const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.w600);
   }
@@ -21,7 +21,7 @@ class ScreenShortWidget {
             items[index],
             textAlign: index == 0 ? TextAlign.start :index == items.length-1?TextAlign.end: TextAlign.center,
             overflow: index == items.length - 1 ? TextOverflow.ellipsis : TextOverflow.visible,
-            style: isBold?ScreenShortWidget.boldText():ScreenShortWidget.normalText(),
+            style: isBold?AndroidPrintWidgets.boldText():AndroidPrintWidgets.normalText(),
           ),
         ),
       ),
