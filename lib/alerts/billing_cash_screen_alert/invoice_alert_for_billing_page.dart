@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:rest_verision_3/printer/controller/print_controller.dart';
 
 import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'invoice_widget_for_billing_page.dart';
@@ -9,7 +12,7 @@ void invoiceAlertForBillingViewPage({
   required List<dynamic> billingItems,
   required String orderType,
   required String selectedOnlineApp,
-  required Map<String,dynamic> deliveryAddress,
+  required Map<String, dynamic> deliveryAddress,
   required num grandTotal,
   required num change,
   required num cashReceived,
@@ -34,7 +37,21 @@ void invoiceAlertForBillingViewPage({
             AppRoundMiniBtn(
               text: 'Print',
               color: Colors.green,
-              onTap: () {},
+              onTap: () {
+                Get.find<PrintCTRL>().printInVoice(
+                  billingItems: billingItems,
+                  orderType: orderType,
+                  selectedOnlineApp: selectedOnlineApp,
+                  deliveryAddress: deliveryAddress,
+                  grandTotal: grandTotal,
+                  change: change,
+                  cashReceived: cashReceived,
+                  netAmount: netAmount,
+                  discountCash: discountCash,
+                  discountPercent: discountPercent,
+                  charges: charges,
+                );
+              },
             ),
             AppRoundMiniBtn(
                 text: 'Close',
@@ -48,7 +65,7 @@ void invoiceAlertForBillingViewPage({
             children: [
               //? this is the body of billing page
               InvoiceWidgetForBillingPage(
-                billingItems:billingItems,
+                billingItems: billingItems,
                 netAmount: netAmount,
                 cashReceived: cashReceived,
                 orderType: orderType,

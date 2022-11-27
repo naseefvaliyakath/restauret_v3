@@ -31,7 +31,9 @@ class ProgressButton extends StatelessWidget {
         duration: const Duration(milliseconds: 100),
         controller: btnCtrlName == 'settle'
             ? ctrl.btnControllerSettle
-            : btnCtrlName == 'passwordPrompt'
+            : btnCtrlName == 'addUserName'
+            ? ctrl.btnControllerAddUser :
+            btnCtrlName == 'passwordPrompt'
             ? ctrl.btnControllerPasswordPrompt
             :btnCtrlName == 'settle_print'
                 ? ctrl.btnControllerSettle

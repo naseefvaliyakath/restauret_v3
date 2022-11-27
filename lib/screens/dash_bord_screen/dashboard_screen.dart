@@ -79,20 +79,22 @@ class DashBordScreen extends StatelessWidget {
                       onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":DINING})
                   ),
                   DashBordCard(
-                    title: 'Waiter',
-                    subTitle: 'Waiter status',
+                    title: 'Credit Book',
+                    subTitle: 'Costumers Credit status',
                     bgColor: const Color(0xff727070),
-                    icon: FontAwesomeIcons.bowlFood,
+                    icon: FontAwesomeIcons.wallet,
                     onTap: () {
-                      PrintCTRL().printKot(order: [], orderType: "orderType", orderStatus: "orderStatus");
+                     Get.toNamed(RouteHelper.getCreditBookScreen());
                     },
                   ),
                   DashBordCard(
-                    title: 'Food Court',
-                    subTitle: 'Today Foods',
+                    title: 'Purchase Book',
+                    subTitle: 'Purchase details',
                     bgColor: const Color(0xffd838de),
-                    icon: FontAwesomeIcons.burger,
-                    onTap: () {},
+                    icon: FontAwesomeIcons.shop,
+                    onTap: () {
+                      Get.toNamed(RouteHelper.getPurchaseBookScreen());
+                    },
                   ),
                   DashBordCard(
                     title: 'Food Court',

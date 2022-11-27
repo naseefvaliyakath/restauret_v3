@@ -2,6 +2,7 @@ import '../../models/kitchen_order_response/kitchen_order.dart';
 
 const String SCREEN_TODAY = 'todayFoodScreen';
 const String SCREEN_ALLFOOD = 'allFoodScreen';
+const String CREDIT_BOOK_SCREEN = 'creditBookScreen';
 
 
 const String COMMON_CATEGORY = 'COMMON';

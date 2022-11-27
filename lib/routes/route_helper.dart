@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/add_food_screen/add_food_screen.dart';
 import 'package:rest_verision_3/screens/add_food_screen/binding/add_food_binding.dart';
+import 'package:rest_verision_3/screens/credit_book_screen/binding/credit_book_binding.dart';
 import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
 import 'package:rest_verision_3/screens/login_screen/login_screen.dart';
 import 'package:rest_verision_3/screens/update_food_screen/update_food_screen.dart';
@@ -18,6 +19,7 @@ import '../screens/kitchen_mode_screen/kitchen_mode_main/binding/kitchen_mode_ma
 import '../screens/kitchen_mode_screen/kitchen_mode_main/kitchen_mode_main_screen.dart';
 import '../screens/order_view_screen/binding/order_view_binding.dart';
 import '../screens/order_view_screen/order_view _screen.dart';
+import '../screens/purchase_book_screen/binding/purchase_book_binding.dart';
 import '../screens/purchase_book_screen/purchase_book_screen.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
 
@@ -31,6 +33,9 @@ class RouteHelper {
   static const String orderViewScreen = '/order-view-screen';
   static const String kitchenModeMainScreen = '/kitchen-mode-main-screen';
   static const String preferenceScreen = '/preference-Screen';
+  static const String creditBookScreen = '/CreditBookScreen';
+  static const String creditBookUserScreen = '/CreditBookUserScreen';
+  static const String purchaseBookScreen = '/PurchaseBookScreen';
 
   static String getInitial() => initial;
 
@@ -49,6 +54,14 @@ class RouteHelper {
   static String getKitchenModeMainScreen() => kitchenModeMainScreen;
 
   static String getPreferenceScreen() => preferenceScreen;
+
+  static String getCreditBookScreen() => creditBookScreen;
+
+  static String getCreditBookUserScreen() => creditBookUserScreen;
+
+  static String getPurchaseBookScreen() => purchaseBookScreen;
+
+
 
   static List<GetPage> routes = [
     GetPage(
@@ -112,21 +125,21 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
-        name: PurchaseBookScreen.routeName,
+        name: purchaseBookScreen,
         page: () => const PurchaseBookScreen(),
-        // binding: GeneralSettingsBinding(),
+        binding: PurchaseBookBinding(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
-        name: CreditBookScreen.routeName,
+        name: creditBookScreen,
         page: () =>  CreditBookScreen(),
-        // binding: GeneralSettingsBinding(),
+         binding: CreditBookBinding(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
-        name: CreditBookUserScreen.routeName,
+        name: creditBookUserScreen,
         page: () => const CreditBookUserScreen(),
-        // binding: GeneralSettingsBinding(),
+        binding: CreditBookBinding(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 400)),
   ];
