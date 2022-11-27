@@ -27,7 +27,7 @@ class ChangePasswordPromptAlertBody extends StatelessWidget {
             10.verticalSpace,
             TextFieldWidget(
               hintText: 'New password ....',
-              textEditingController: ctrl.passTd,
+              textEditingController: ctrl.newPassTd,
               borderRadius: 15.r,
               onChange: (_) {},
             ),
@@ -47,12 +47,15 @@ class ChangePasswordPromptAlertBody extends StatelessWidget {
                         ctrl: ctrl,
                         color: Colors.green,
                         onTap: () async {
-                       bool result = await ctrl.checkPassword();
-                       if(result){
-                         //? resting app mode to cashier
-                         ctrl.resetAppModeNumberInHive();
-                         Get.offAllNamed(RouteHelper.getHome());
-                       }
+                          ctrl.changePassword(
+                            context: context,
+                              subcId: ctrl.subcId,
+                              fdShopId: ctrl.SHOPE_ID,
+                              password: ctrl.passTd.text,
+                              newPassword: ctrl.newPassTd.text);
+                          if(FocusScope.of(context).isFirstFocus) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          }
                         },
                       ),
                     ),

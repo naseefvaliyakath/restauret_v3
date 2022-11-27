@@ -19,7 +19,6 @@ class StartupController extends GetxController {
   final RoundedLoadingButtonController btnControllerPasswordPrompt = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerChangePasswordPrompt = RoundedLoadingButtonController();
 
-
   //?application mode number its assigned from shared preferences
   int _appModeNumber = 1;
 
@@ -59,17 +58,16 @@ class StartupController extends GetxController {
       await setShopInHive(shop);
 
       if (shop.fdShopId != -1) {
-            btnControllerLogin.success();
-            Future.delayed(const Duration(milliseconds: 500), () {
-              //? setting app mode 1
-              resetAppModeNumberInHive();
-              Get.offAllNamed(RouteHelper.getHome());
-            });
-          } else {
-            btnControllerLogin.error();
-            AppSnackBar.errorSnackBar('Error', 'Cannot login to app !!');
-
-          }
+        btnControllerLogin.success();
+        Future.delayed(const Duration(milliseconds: 500), () {
+          //? setting app mode 1
+          resetAppModeNumberInHive();
+          Get.offAllNamed(RouteHelper.getHome());
+        });
+      } else {
+        btnControllerLogin.error();
+        AppSnackBar.errorSnackBar('Error', 'Cannot login to app !!');
+      }
     } catch (e) {
       btnControllerLogin.error();
       rethrow;
@@ -111,7 +109,6 @@ class StartupController extends GetxController {
       }
       update();
       return appModeNumberGet;
-
     } catch (e) {
       rethrow;
     }
@@ -169,10 +166,9 @@ class StartupController extends GetxController {
         //? user is already log in then check witch mode od user
         if (SHOPE_ID != -1) {
           //? check app mode and redirect
-            if (_appModeNumber == 2) {
+          if (_appModeNumber == 2) {
             Get.offAllNamed(RouteHelper.getKitchenModeMainScreen());
-          }
-          else {
+          } else {
             Get.offAllNamed(RouteHelper.getHome());
           }
         }
@@ -215,8 +211,7 @@ class StartupController extends GetxController {
 
   Future<bool> checkPassword() async {
     try {
-    if(passTd.text.trim() != '')
-      {
+      if (passTd.text.trim() != '' && newPassTd.text.trim() != '') {
         MyResponse response = await _startupRepo.getShopDetails(subcId);
         if (response.statusCode == 1) {
           ShopResponse parsedResponse = response.data;
@@ -225,33 +220,29 @@ class StartupController extends GetxController {
             return false;
           } else {
             Shop shop = parsedResponse.data ?? Shop(-1, 'error', 0000, 'error', '0000', '0000');
-            if(shop.password == passTd.text){
+            if (shop.password == passTd.text) {
               btnControllerPasswordPrompt.success();
               return true;
-            }
-            else{
+            } else {
               AppSnackBar.errorSnackBar('Error', 'wrong password !!');
               btnControllerPasswordPrompt.error();
               return false;
             }
-
           }
         } else {
           AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
           btnControllerPasswordPrompt.error();
           return false;
         }
+      } else {
+        AppSnackBar.errorSnackBar('Error', 'pleas fill the field !!');
+        return false;
       }
-    else{
-      AppSnackBar.errorSnackBar('Error', 'pleas fill the field !!');
-      return false;
-    }
     } catch (e) {
       AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
       btnControllerPasswordPrompt.error();
       rethrow;
-    }
-    finally{
+    } finally {
       passTd.text = '';
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerPasswordPrompt.reset();
@@ -260,46 +251,35 @@ class StartupController extends GetxController {
     }
   }
 
-  Future<bool> changePassword() async {
-    try {
-      if(passTd.text.trim() != '')
-      {
-        MyResponse response = await _startupRepo.getShopDetails(subcId);
-        if (response.statusCode == 1) {
-          ShopResponse parsedResponse = response.data;
-          if (parsedResponse.data == null) {
-            AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
-            return false;
-          } else {
-            Shop shop = parsedResponse.data ?? Shop(-1, 'error', 0000, 'error', '0000', '0000');
-            if(shop.password == passTd.text){
-              btnControllerPasswordPrompt.success();
-              return true;
-            }
-            else{
-              AppSnackBar.errorSnackBar('Error', 'wrong password !!');
-              btnControllerPasswordPrompt.error();
-              return false;
-            }
+  changePassword({
+    required BuildContext context,
+    required String subcId,
+    required int fdShopId,
+    required String password,
+    required String newPassword,
 
-          }
+  }) async {
+    try {
+      if (passTd.text.trim() != '') {
+        MyResponse response = await _startupRepo.changePassword(subcId,fdShopId,password,newPassword);
+        if (response.statusCode == 1) {
+          AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          btnControllerPasswordPrompt.success();
+          Navigator.pop(context);
         } else {
           AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
           btnControllerPasswordPrompt.error();
-          return false;
         }
-      }
-      else{
+      } else {
         AppSnackBar.errorSnackBar('Error', 'pleas fill the field !!');
-        return false;
       }
     } catch (e) {
       AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
       btnControllerPasswordPrompt.error();
       rethrow;
-    }
-    finally{
+    } finally {
       passTd.text = '';
+      newPassTd.text = '';
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerPasswordPrompt.reset();
       });
@@ -310,7 +290,6 @@ class StartupController extends GetxController {
   //? to get store get ShowDeliveryAddressInBill boll status
   Future<bool> readShowDeliveryAddressInBillFromHive() async {
     try {
-
       bool result = await _myLocalStorage.readData(HIVE_SHOW_ADDRESS_IN_BILL) ?? true;
       setShowDeliveryAddressInBillToggle = result;
       update();
@@ -319,5 +298,4 @@ class StartupController extends GetxController {
       rethrow;
     }
   }
-
 }

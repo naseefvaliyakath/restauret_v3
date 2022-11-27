@@ -40,4 +40,5 @@ const String GET_ONLINE_APP = 'online_apps/allOnlineApp/';
 const String DELETE_ONLINE_APP = 'online_apps/deleteOnlineApp/';
 
 const String GET_SHOP = 'shope_details/getShopWithSubId';
+const String CHANGE_PASSWORD = 'shope_details/changePassword';
 
