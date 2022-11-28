@@ -103,7 +103,7 @@ class StartupController extends GetxController {
   Future<int> readAppModeInHive() async {
     try {
       int appModeNumberGet = await _myLocalStorage.readData(HIVE_APP_MODE_NUMBER) ?? 1;
-      _appModeNumber = appModeNumberGet!;
+      _appModeNumber = appModeNumberGet;
       if (kDebugMode) {
         print('application mode $_appModeNumber');
       }

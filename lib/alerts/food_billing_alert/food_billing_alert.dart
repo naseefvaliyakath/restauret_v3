@@ -46,7 +46,7 @@ foodBillingAlert(
           ctrl.addFoodToBill(
             fdIsLoos ?? 'no',
             fdId ?? 0,
-            fdIsLoos == 'no' ?  (name ?? '') : ctrl.multiSelectedFoodName ?? '',
+            fdIsLoos == 'no' ?  (name ?? '') : ctrl.multiSelectedFoodName,
             ctrl.count ,
             ctrl.price ,
             ktNoteController.text,
