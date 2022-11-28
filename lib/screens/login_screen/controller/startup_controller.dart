@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/models/shop_response/shop.dart';
 import 'package:rest_verision_3/models/shop_response/shop_response.dart';
@@ -9,6 +10,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../models/my_response.dart';
+import '../../../printer/controller/library/iosWinPrint.dart';
 import '../../../repository/startup_repository.dart';
 
 class StartupController extends GetxController {
@@ -49,7 +51,26 @@ class StartupController extends GetxController {
     newPassTd = TextEditingController();
     await checkLoginAndAppMode();
     readShowDeliveryAddressInBillFromHive();
+
+
+    _initBtPrinter();
+
     super.onInit();
+  }
+
+  _initBtPrinter() async {
+    //Connect Bt printer
+    IosWinPrint iOSWinPrintInstance = IosWinPrint();
+    await iOSWinPrintInstance.getDevices();
+
+    BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
+    if(bluetoothPrinter!=null){
+      await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
+    }else{
+      print('No device selected');
+    }
+
+
   }
 
   loginToApp() async {

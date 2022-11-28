@@ -108,6 +108,19 @@ class IosWinPrint {
     return _selectedDevice;
   }
 
+  Future<void> connectBtPrinter({required BluetoothPrinter bluetoothPrinter}) async {
+    //This fn only used in app start
+    await printerManager.connect(
+      type: bluetoothPrinter.typePrinter,
+      model: BluetoothPrinterInput(
+        name: bluetoothPrinter.deviceName,
+        address: bluetoothPrinter.address!,
+        isBle: bluetoothPrinter.isBle ?? false,
+        autoConnect: reconnect,
+      ),
+    );
+  }
+
   Future<PrintResponse> printEscPos(List<int> bytes, Generator generator) async {
 
     if (_selectedDevice == null) {
@@ -167,6 +180,8 @@ class IosWinPrint {
     }
 
   }
+
+
 
   void closeSubscription(){
     _subscriptionPrinterDevice?.cancel();
