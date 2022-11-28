@@ -1,31 +1,62 @@
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 
-class IosWinPrintMethods{
-
+class IosWinPrintMethods {
   static Future<Generator> getGenerator() async {
     final profile = await CapabilityProfile.load(name: 'XP-N160I');
     return Generator(PaperSize.mm58, profile);
   }
 
-  static List<int> printRows({required List<List<String>> columns, required List<int> width, required Generator generator, bool bold = false}) {
+  static List<int> printHeading(
+      {required Generator generator,
+      required String heading,
+      bool bold = true,
+      PosTextSize width = PosTextSize.size2,
+      PosTextSize height = PosTextSize.size1}) {
+    return generator.text(heading, styles: PosStyles(bold: bold, align: PosAlign.center, width: width, height: height));
+  }
+
+  static List<int> printRows({required List<List<String>> columns, required List<int> width, required Generator generator, bool bold = false,int lineCutLength=28}) {
     List<int> bytes = [];
     List<List<String>> newColumn = [];
     for (List<String> singleRow in columns) {
 
-      void recFunc(str){
-        if (str.length > 14){
-          newColumn.add([str, ' ', ' ', ' ']);
-          recFunc(str.substring(15));
-        }else{
-          newColumn.add([str, ' ', ' ', ' ']);
-        }
+      //cut lines
+      int offset = 0; // each time you add a new character, string has "shifted"
+      for (int i = lineCutLength; i + offset < singleRow[0].length; i += lineCutLength) {
+        // take first part of string, add a new line, and then add second part
+        singleRow[0] = "${singleRow[0].substring(0, i + offset)}\n${singleRow[0].substring(i + offset)}";
+        offset++;
       }
 
-      newColumn.add(singleRow);
-      if (singleRow[0].length > 14){
-        recFunc(singleRow[0].substring(15));
+      List splittedLines = singleRow[0].split('\n');
+      if (splittedLines.isEmpty) {
+        newColumn.add(singleRow);
+      } else {
+        for (int i = 0; i < splittedLines.length; i++) {
+          if (i == 0) {
+            newColumn.add(["${splittedLines[i]}"] + (List.generate(singleRow.length - 1, (index) => singleRow[index + 1])));
+          } else {
+            newColumn.add(["${splittedLines[i]}"] + List.generate(singleRow.length - 1, (index) => ' '));
+          }
+        }
       }
     }
+
+    // for (List<String> singleRow in columns) {
+    //   void recFunc(str) {
+    //     if (str.length > 14) {
+    //       newColumn.add([str, ' ', ' ', ' ']);
+    //       recFunc(str.substring(15));
+    //     } else {
+    //       newColumn.add([str, ' ', ' ', ' ']);
+    //     }
+    //   }
+    //
+    //   newColumn.add(singleRow);
+    //   if (singleRow[0].length > 14) {
+    //     recFunc(singleRow[0].substring(15));
+    //   }
+    // }
 
     for (List<String> singleRow in newColumn) {
       bytes += generator.row(List.generate(singleRow.length, (index) {
@@ -37,12 +68,11 @@ class IosWinPrintMethods{
               align: index == 0
                   ? PosAlign.left
                   : (index == singleRow.length - 1)
-                  ? PosAlign.right
-                  : PosAlign.center,
+                      ? PosAlign.right
+                      : PosAlign.center,
             ));
       }));
     }
     return bytes;
   }
-
 }

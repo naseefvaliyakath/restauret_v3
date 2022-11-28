@@ -9,6 +9,7 @@ import 'package:rest_verision_3/widget/common_widget/buttons/app_round_mini_btn.
 import '../../alerts/add_new_user_alert/add_new_user_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../widget/credit_book_screen/crdit_user_tile.dart';
+import 'credit_book_user_screen.dart';
 
 class CreditBookScreen extends StatelessWidget {
   CreditBookScreen({Key? key}) : super(key: key);
@@ -53,7 +54,10 @@ class CreditBookScreen extends StatelessWidget {
                       padding: EdgeInsets.only(top: 10.sp, bottom: 40.sp),
                       itemBuilder: (context, index) {
                         return CreditUserTile(
-                            onTap: () {},
+                            onTap: () {
+                              // CreditBookUserScreen();
+                              Get.toNamed(RouteHelper.getCreditBookUserScreen());
+                            },
                             avatarString: 'Wx$index'.length > 2 ? 'W$index'.substring(0, 2) : 'W$index',
                             name: 'Adam John $index',
                             amount: index < 5 ? "-150" : "+250",
