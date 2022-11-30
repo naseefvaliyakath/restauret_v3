@@ -42,3 +42,12 @@ const String DELETE_ONLINE_APP = 'online_apps/deleteOnlineApp/';
 const String GET_SHOP = 'shope_details/getShopWithSubId';
 const String CHANGE_PASSWORD = 'shope_details/changePassword';
 
+const String INSERT_CREDIT_USER = 'credit_users/addCreditUser';
+const String GET_CREDIT_USER = 'credit_users/getAllCreditUser';
+const String DELETE_CREDIT_USER = 'credit_users/deleteCreditUser';
+
+const String GET_CREDIT_DEBIT = 'credit_debit/getCreditDebit';
+const String INSERT_CREDIT_DEBIT = 'credit_debit/addCreditDebit';
+const String DELETE_CREDIT_DEBIT = 'credit_debit/deleteCreditDebit';
+
+

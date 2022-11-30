@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/models/shop_response/shop.dart';
 import 'package:rest_verision_3/models/shop_response/shop_response.dart';
@@ -51,27 +50,26 @@ class StartupController extends GetxController {
     newPassTd = TextEditingController();
     await checkLoginAndAppMode();
     readShowDeliveryAddressInBillFromHive();
-
-
-    _initBtPrinter();
-
+    //_initBtPrinter();
     super.onInit();
   }
 
-  _initBtPrinter() async {
-    //Connect Bt printer
-    IosWinPrint iOSWinPrintInstance = IosWinPrint();
-    await iOSWinPrintInstance.getDevices();
-
-    BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
-    if(bluetoothPrinter!=null){
-      await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
-    }else{
-      print('No device selected');
-    }
-
-
-  }
+  // _initBtPrinter() async {
+  //   //Connect Bt printer
+  //   IosWinPrint iOSWinPrintInstance = IosWinPrint();
+  //   await iOSWinPrintInstance.getDevices();
+  //
+  //   BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
+  //   if(bluetoothPrinter!=null){
+  //     await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
+  //   }else{
+  //     if (kDebugMode) {
+  //       print('No device selected');
+  //     }
+  //   }
+  //
+  //
+  // }
 
   loginToApp() async {
     try {
@@ -232,7 +230,7 @@ class StartupController extends GetxController {
 
   Future<bool> checkPassword() async {
     try {
-      if (passTd.text.trim() != '' && newPassTd.text.trim() != '') {
+      if (passTd.text.trim() != '') {
         MyResponse response = await _startupRepo.getShopDetails(subcId);
         if (response.statusCode == 1) {
           ShopResponse parsedResponse = response.data;

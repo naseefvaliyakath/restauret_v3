@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
 
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../screens/all_food_screen/controller/all_food_controller.dart';
-import '../../screens/credit_book_screen/controller/credit_book_ctrl.dart';
 import '../../screens/today_food_screen/controller/today_food_controller.dart';
 
 class FoodSearchBar extends StatelessWidget {
@@ -45,8 +45,8 @@ class FoodSearchBar extends StatelessWidget {
                 //? if screen SCREEN_TODAY then take controller TodayFoodController else take it AllFoodController
                 controller: screen == SCREEN_TODAY
                     ? Get.find<TodayFoodController>().searchTD
-                    : screen == CREDIT_BOOK_SCREEN
-                        ? Get.find<CreditBookCTRL>().searchTD
+                    : screen == CREDIT_USER_SCREEN
+                        ? Get.find<CreditUserCTRL>().userSearchTD
                         : Get.find<AllFoodController>().searchTD,
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 
@@ -42,8 +43,7 @@ class SocketController extends GetxController {
         IO.OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .disableAutoConnect()
-            .setExtraHeaders({'shopId': '10'})
-            .setQuery({'shopId': '10'})
+            .setQuery({'fdShopId': Get.find<StartupController>().SHOPE_ID})
             .setPath('/socket.io/') // disable auto-connection
             .build());
   }

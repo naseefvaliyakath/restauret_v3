@@ -66,7 +66,7 @@ class RoomRepo extends GetxService {
         String errorCode = parsedResponse.errorCode == 'cant delete this room' ? parsedResponse.errorCode.toString() : 'Something went wrong';
         return MyResponse(statusCode: 0, status: 'Error', message: errorCode.toString());
       } else {
-        return MyResponse(statusCode: 1, status: 'Success', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
       }
     } on DioError catch (e) {
       return MyResponse(statusCode: 0, status: 'Error', message:SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');

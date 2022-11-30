@@ -156,6 +156,7 @@ class OrderViewController extends GetxController {
         //?no error
         bool err = order.error ?? true;
         if (!err) {
+          print('fd shop id ${order.fdShopId}');
           //?check if item is already in list
           bool isExist = true;
           for (var element in _kotBillingItems) {
@@ -283,6 +284,8 @@ class OrderViewController extends GetxController {
 
   //? settle billing kot cash alert showing this method is call on click settle btn
   settleKotBillingCash(context, ctrl, index) {
+    //? to enable settled and settled and print btn if its desabled
+    isClickedSettle.value = false;
     indexFromKotOrder = index;
     try {
       if (indexFromKotOrder != -1) {
@@ -355,6 +358,8 @@ class OrderViewController extends GetxController {
         AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
       } else {
         btnControllerSettle.success();
+        //? to disable settled and settled and pe=rint btn
+        isClickedSettle.value = true;
         AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {

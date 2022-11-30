@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/add_food_screen/add_food_screen.dart';
 import 'package:rest_verision_3/screens/add_food_screen/binding/add_food_binding.dart';
-import 'package:rest_verision_3/screens/credit_book_screen/binding/credit_book_binding.dart';
+import 'package:rest_verision_3/screens/credit_debit_screen/binding/credit_book_binding.dart';
+import 'package:rest_verision_3/screens/credit_debit_screen/credit_debit_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
 import 'package:rest_verision_3/screens/login_screen/login_screen.dart';
 import 'package:rest_verision_3/screens/update_food_screen/update_food_screen.dart';
@@ -9,8 +10,8 @@ import '../screens/all_food_screen/all_food_screen.dart';
 import '../screens/all_food_screen/binding/all_food_binding.dart';
 import '../screens/billing_screen/billing_screen.dart';
 import '../screens/billing_screen/binding/billing_screen_binding.dart';
-import '../screens/credit_book_screen/credit_book_screen.dart';
-import '../screens/credit_book_screen/credit_book_user_screen.dart';
+import '../screens/credit_user_screen/binding/credit_user_binding.dart';
+import '../screens/credit_user_screen/credit_book_user_screen.dart';
 import '../screens/general_settings_page/binding/general_settings_binding.dart';
 import '../screens/general_settings_page/general_settings_page.dart';
 import '../screens/home_screen/binding/home_screen_binding.dart';
@@ -33,8 +34,8 @@ class RouteHelper {
   static const String orderViewScreen = '/order-view-screen';
   static const String kitchenModeMainScreen = '/kitchen-mode-main-screen';
   static const String preferenceScreen = '/preference-Screen';
-  static const String creditBookScreen = '/CreditBookScreen';
-  static const String creditBookUserScreen = '/CreditBookUserScreen';
+  static const String creditBookUserScreen = '/creditBookUserScreen';
+  static const String creditDebitScreen = '/creditDebitScreen';
   static const String purchaseBookScreen = '/PurchaseBookScreen';
 
   static String getInitial() => initial;
@@ -55,7 +56,7 @@ class RouteHelper {
 
   static String getPreferenceScreen() => preferenceScreen;
 
-  static String getCreditBookScreen() => creditBookScreen;
+  static String getCreditDebitScreen() => creditDebitScreen;
 
   static String getCreditBookUserScreen() => creditBookUserScreen;
 
@@ -68,79 +69,79 @@ class RouteHelper {
       name: initial,
       page: () => const LoginScreen(),
       binding: LoginBinding(),
-      transition: Transition.fade,
+      transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
       name: home,
       page: () => const HomeScreen(),
       binding: HomeBinding(),
-      transition: Transition.fade,
+      transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
       name: allFoodScreen,
       page: () => const AllFoodScreen(),
       binding: AllFoodBinding(),
-      transition: Transition.fade,
+      transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
     ),
     GetPage(
       name: addFoodScreen,
       page: () => const AddFoodScreen(),
       binding: AddFoodBinding(),
-      transition: Transition.fade,
+      transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
     ),
     GetPage(
       name: updateFoodScreen,
       page: () => const UpdateFoodScreen(),
       binding: UpdateFoodBinding(),
-      transition: Transition.fade,
+      transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
     ),
     GetPage(
       name: billingScreen,
       page: () => const BillingScreen(),
       binding: BillingScreenBinding(),
-      transition: Transition.fade,
+      transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
     ),
     GetPage(
         name: orderViewScreen,
         page: () => OrderViewScreen(),
         binding: OrderViewBinding(),
-        transition: Transition.fade,
+        transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
         name: kitchenModeMainScreen,
         page: () => KitchenModeMainScreen(),
         binding: KitchenModeMainBinding(),
-        transition: Transition.fade,
+        transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
         name: preferenceScreen,
         page: () => const GeneralSettingsScreen(),
         binding: GeneralSettingsBinding(),
-        transition: Transition.fade,
+        transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
         name: purchaseBookScreen,
         page: () => const PurchaseBookScreen(),
         binding: PurchaseBookBinding(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 400)),
-    GetPage(
-        name: creditBookScreen,
-        page: () =>  CreditBookScreen(),
-         binding: CreditBookBinding(),
-        transition: Transition.fade,
+        transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
         name: creditBookUserScreen,
-        page: () => const CreditBookUserScreen(),
-        binding: CreditBookBinding(),
-        transition: Transition.fade,
+        page: () =>  const CreditBookUserScreen(),
+         binding: CreditUserBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: creditDebitScreen,
+        page: () => const CreditDebitScreen(),
+        binding: CreditDebitBinding(),
+        transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
   ];
 }

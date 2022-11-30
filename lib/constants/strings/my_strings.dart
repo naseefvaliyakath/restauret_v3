@@ -2,7 +2,7 @@ import '../../models/kitchen_order_response/kitchen_order.dart';
 
 const String SCREEN_TODAY = 'todayFoodScreen';
 const String SCREEN_ALLFOOD = 'allFoodScreen';
-const String CREDIT_BOOK_SCREEN = 'creditBookScreen';
+const String CREDIT_USER_SCREEN = 'creditUserScreen';
 
 
 const String COMMON_CATEGORY = 'COMMON';
@@ -43,6 +43,7 @@ KitchenOrder EMPTY_KITCHEN_ORDER = KitchenOrder(
   fdOrderStatus: PENDING,
   fdOrderType: TAKEAWAY,
   fdOrder: [],
+  fdShopId: -1,
   totalPrice: 0,
   orderColor: 111,
   fdDelAddress: {'name': '', 'number': 0, 'address': ''},

@@ -20,6 +20,9 @@ class KitchenOrder {
   @JsonKey(name: "totalSize")
   int? totalSize;
 
+  @JsonKey(name: "fdShopId")
+  int? fdShopId;
+
   @JsonKey(name: "fdOrderStatus")
   String? fdOrderStatus;
 
@@ -55,6 +58,7 @@ class KitchenOrder {
     required this.errorCode,
     required this.totalSize,
     this.fdOrder,
+    required this.fdShopId,
     required this.fdOrderStatus,
     required this.fdOrderType,
     required this.fdDelAddress,

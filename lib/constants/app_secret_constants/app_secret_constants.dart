@@ -1,2 +1,2 @@
 //const  int SHOPE_ID = 10;
-const  bool SHOW_ERR = false;
+const  bool SHOW_ERR = true;

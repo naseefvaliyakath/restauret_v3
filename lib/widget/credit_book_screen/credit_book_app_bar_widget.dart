@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
 
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../screens/all_food_screen/controller/all_food_controller.dart';
-import '../../screens/credit_book_screen/controller/credit_book_ctrl.dart';
 import '../../screens/today_food_screen/controller/today_food_controller.dart';
 import '../common_widget/common_text/heading_rich_text.dart';
 import '../common_widget/notification_icon.dart';
@@ -66,9 +66,7 @@ class CreditBookAppBar extends StatelessWidget {
                         // Added this
                         contentPadding: EdgeInsets.all(3.sp), // Added this
                       ),
-                      //? this widget is used in todayFood and allFood
-                      //? if screen SCREEN_TODAY then take controller TodayFoodController else take it AllFoodController
-                      controller: Get.find<CreditBookCTRL>().searchTD
+                      controller: Get.find<CreditUserCTRL>().userSearchTD
                     ),
                   ),
                 ),

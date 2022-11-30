@@ -84,7 +84,7 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: const Color(0xff727070),
                     icon: FontAwesomeIcons.wallet,
                     onTap: () {
-                     Get.toNamed(RouteHelper.getCreditBookScreen());
+                     Get.toNamed(RouteHelper.getCreditBookUserScreen());
                     },
                   ),
                   DashBordCard(
@@ -101,7 +101,9 @@ class DashBordScreen extends StatelessWidget {
                     subTitle: 'Today Foods',
                     bgColor: const Color(0xffd838de),
                     icon: FontAwesomeIcons.burger,
-                    onTap: () {},
+                    onTap: () {
+
+                    },
                   ),
                   DashBordCard(
                     title: 'Bill',

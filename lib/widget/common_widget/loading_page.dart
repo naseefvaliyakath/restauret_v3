@@ -10,7 +10,7 @@ class MyLoading extends StatelessWidget {
     return Center(
       child: Container(
         child: Lottie.asset(
-          'assets/lottie/loading.json',
+          'assets/lottie/loading_anim.json',
           width: 100.sp,
           height: 100.sp,
 

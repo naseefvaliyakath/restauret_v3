@@ -44,27 +44,27 @@ class PurchaseBookScreen extends StatelessWidget {
               BoxShadow(color: Colors.grey, blurRadius: 8, spreadRadius: 4, offset: Offset(0, 10)),
             ],
           ),
-          height: 80.sp,
+          height: 60.sp,
           child: Row(
             children: [
               Expanded(
                   child: Padding(
-                      padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 20.sp),
+                      padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 5.sp),
                       child: AppMiniButton(
                         text: 'CREDIT',
                         color: AppColors.mainColor_2,
                         onTap: () {
-                          addCreditOrDebit(context);
+                          addCreditOrDebit(context,'CREDIT');
                         },
                       ))),
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 20.sp),
+                padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 5.sp),
                 child: AppMiniButton(
                   text: 'DEBIT',
                   color: AppColors.mainColor,
                   onTap: () {
-                    addCreditOrDebit(context);
+                    addCreditOrDebit(context,'DEBIT');
                   },
                 ),
               )),
@@ -82,7 +82,7 @@ class PurchaseBookScreen extends StatelessWidget {
                       subTitle: 'Date: 12-12-2022',
                       color: (index < 5) ? AppColors.mainColor : AppColors.mainColor_2,
                       trailingText: index < 5 ? "-150" : "+250",
-                      leadingColor: (index < 5) ? AppColors.mainColor : AppColors.mainColor_2,
+                      leadingColor: (index < 5) ? AppColors.mainColor : AppColors.mainColor_2, leadingOnTap: (){},
                     );
                   },
                   separatorBuilder: (context, index) => const Divider(),

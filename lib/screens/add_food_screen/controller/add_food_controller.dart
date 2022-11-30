@@ -41,7 +41,6 @@ class AddFoodController extends GetxController {
 
   //? Category to show in UI
   final List<Category> _myCategory = [];
-
   List<Category> get myCategory => _myCategory;
 
   //? to show and hide multiple price text field on toggle price btn

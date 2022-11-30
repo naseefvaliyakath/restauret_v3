@@ -14,6 +14,7 @@ KitchenOrder _$KitchenOrderFromJson(Map<String, dynamic> json) => KitchenOrder(
       fdOrder: (json['fdOrder'] as List<dynamic>?)
           ?.map((e) => OrderBill.fromJson(e as Map<String, dynamic>))
           .toList(),
+      fdShopId: json['fdShopId'] as int?,
       fdOrderStatus: json['fdOrderStatus'] as String?,
       fdOrderType: json['fdOrderType'] as String?,
       fdDelAddress: json['fdDelAddress'] as Map<String, dynamic>?,
@@ -32,6 +33,7 @@ Map<String, dynamic> _$KitchenOrderToJson(KitchenOrder instance) =>
       'error': instance.error,
       'errorCode': instance.errorCode,
       'totalSize': instance.totalSize,
+      'fdShopId': instance.fdShopId,
       'fdOrderStatus': instance.fdOrderStatus,
       'fdOrderType': instance.fdOrderType,
       'fdDelAddress': instance.fdDelAddress,
