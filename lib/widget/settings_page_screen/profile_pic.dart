@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:get/get.dart';
 import '../../constants/app_colors/app_colors.dart';
+import '../../screens/login_screen/controller/startup_controller.dart';
 
 
 class ProfilePic extends StatelessWidget {
@@ -18,10 +19,10 @@ class ProfilePic extends StatelessWidget {
             border: Border.all(
                 color: AppColors.mainColor_2,
             ),
-          image: const DecorationImage(
-            image: AssetImage(
-                'assets/image/logo_hotel.png'),
-            fit: BoxFit.fill,
+          image:  DecorationImage(
+            image: NetworkImage(
+                Get.find<StartupController>().logoImg),
+            fit: BoxFit.scaleDown,
           ),
           shape: BoxShape.circle,
         ),

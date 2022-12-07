@@ -7,6 +7,7 @@ class AppMiniButton extends StatelessWidget {
   final Color color;
   final double textSize;
   final Function onTap;
+  final Function? onLongTap;
 
   const AppMiniButton({
     Key? key,
@@ -14,6 +15,7 @@ class AppMiniButton extends StatelessWidget {
     required this.color,
     required this.onTap,
     this.textSize = -1,
+    this.onLongTap,
   }) : super(key: key);
 
   @override

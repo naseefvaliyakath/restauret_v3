@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
 import 'package:rest_verision_3/printer/controller/print_controller.dart';
+import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 
+import '../../constants/strings/my_strings.dart';
 import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'invoice_widget_for_billing_page.dart';
 
 //? this is the frame for invoice page
 void invoiceAlertForBillingViewPage({
+  String from = BILLING_SCREEN,
   required List<dynamic> billingItems,
   required String orderType,
   required String selectedOnlineApp,
@@ -52,6 +56,31 @@ void invoiceAlertForBillingViewPage({
                   charges: charges,
                 );
               },
+            ),
+            Visibility(
+              //? bill and kot together printing only from billing screen
+              visible: from == BILLING_SCREEN ? true : false,
+              child: AppRoundMiniBtn(
+                text: 'Bill & KOT',
+                color: Colors.blue,
+                onTap: () async {
+                 await Get.find<PrintCTRL>().printInVoice(
+                    billingItems: billingItems,
+                    orderType: orderType,
+                    selectedOnlineApp: selectedOnlineApp,
+                    deliveryAddress: deliveryAddress,
+                    grandTotal: grandTotal,
+                    change: change,
+                    cashReceived: cashReceived,
+                    netAmount: netAmount,
+                    discountCash: discountCash,
+                    discountPercent: discountPercent,
+                    charges: charges,
+                  );
+                  BillingScreenController ctrl = BillingScreenController();
+                 Get.find<PrintCTRL>().printKot(kotList: billingItems, type: orderType, fullKot: EMPTY_KITCHEN_ORDER);
+                },
+              ),
             ),
             AppRoundMiniBtn(
                 text: 'Close',

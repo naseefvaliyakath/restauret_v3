@@ -1,3 +1,6 @@
+import 'package:rest_verision_3/models/notice_and_update/notice_and_update.dart';
+import 'package:rest_verision_3/models/shop_response/shop.dart';
+
 import '../../models/kitchen_order_response/kitchen_order.dart';
 
 const String SCREEN_TODAY = 'todayFoodScreen';
@@ -19,6 +22,9 @@ const String TAKEAWAY = 'Takeaway';
 const String HOME_DELEVERY = 'Home delivery';
 const String ONLINE = 'online';
 const String DINING = 'Dining';
+
+const String BILLING_SCREEN = 'billing';
+const String ORDER_VIEW_SCREEN = 'orderView';
 
 const String TAKEAWAY_SCREEN_NAME = 'Takeaway billing';
 const String HOME_DELEVERY_SCREEN_NAME = 'Home delivery';
@@ -48,6 +54,10 @@ KitchenOrder EMPTY_KITCHEN_ORDER = KitchenOrder(
   orderColor: 111,
   fdDelAddress: {'name': '', 'number': 0, 'address': ''},
 );
+
+Shop EMPTY_SHOP = Shop(-1, 'error', 0000, 'error', '0000', '0000',DateTime.now(),'https://mobizate.com/uploadsOnlineApp/logo_hotel.png');
+
+NoticeAndUpdate EMPTY_NOTICE_UPDATE = NoticeAndUpdate(-1,'notice', ['0.0.0','0.0.0','0.0.0'], ['ios','android','windows'], [5,10,15,20], DateTime.now(), true, 'error');
 
 List<int> TABLE_NUMBER = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 

@@ -53,8 +53,8 @@ class RoomRepo extends GetxService {
   }
 
 
-  //? delete category
-  deleteRoom(int id) async {
+  //? delete room
+  Future<MyResponse> deleteRoom(int id) async {
     try {
       Map<String, dynamic> roomData = {
         'fdShopId': Get.find<StartupController>().SHOPE_ID,

@@ -130,6 +130,9 @@ class ChangeModeOfAppAlertBody extends StatelessWidget {
                             ctrl: Get.find<StartupController>(),
                             color: AppColors.mainColor_2,
                             onTap: () async {
+                              if(FocusScope.of(context).isFirstFocus) {
+                                FocusScope.of(context).requestFocus(FocusNode());
+                              }
                              bool result = await Get.find<StartupController>().checkPassword();
                              if(result){
                                ctrl.modeChangeSubmit();

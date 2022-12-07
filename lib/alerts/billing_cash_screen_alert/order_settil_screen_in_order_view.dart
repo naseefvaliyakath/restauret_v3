@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_drop_down_for_order_view.dart';
+import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rest_verision_3/widget/common_widget/horizontal_divider.dart';
 
 import '../../constants/app_colors/app_colors.dart';
+import '../../printer/controller/print_controller.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
@@ -220,6 +222,9 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                                 color: Colors.blue,
                                 text: 'settle',
                                 onTap: () async {
+                                  if(FocusScope.of(context).isFirstFocus) {
+                                    FocusScope.of(context).requestFocus(FocusNode());
+                                  }
                                   await ctrl.insertSettledBill(context);
                                 },
                               )),
@@ -237,6 +242,7 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                             Navigator.pop(context);
                             //? bill page to print invoice
                             invoiceAlertForBillingViewPage(
+                              from: ORDER_VIEW_SCREEN,
                               context: context,
                               grandTotal: ctrl.grandTotalNew ?? 0,
                               discountPercent: ctrl.discountPresent ?? 0,
@@ -266,9 +272,26 @@ class OrderSettleScreenInOrderView extends StatelessWidget {
                               color: AppColors.mainColor,
                               text: 'settle & print',
                               onTap: () async {
-                                //? pass parameter to this method like insertSettledBill(context,print_true);
-                                //? then inside controller after success if print parameter is true then call print method after success
-                                await ctrl.insertSettledBill(context);
+                                if(FocusScope.of(context).isFirstFocus) {
+                                  FocusScope.of(context).requestFocus(FocusNode());
+                                }
+                                bool result = await ctrl.insertSettledBill(context);
+                                if(result){
+                                  Get.find<PrintCTRL>().printInVoice(
+                                    billingItems: ctrl.billingItems ?? [],
+                                    orderType: ctrl.orderType.toString(),
+                                    selectedOnlineApp: ctrl.selectedOnlineApp,
+                                    deliveryAddress: ctrl.fdDelAddress,
+                                    grandTotal: ctrl.grandTotalNew ?? 0,
+                                    change: ctrl.balanceChange.value ?? 0,
+                                    cashReceived: ctrl.cashReceived ?? 0,
+                                    netAmount: ctrl.netTotal ?? 0,
+                                    discountCash: ctrl.discountCash ?? 0,
+                                    discountPercent: ctrl.discountPresent ?? 0,
+                                    charges: ctrl.charges ?? 0,
+                                  );
+                                }
+
                               },
                             ),
                     ),

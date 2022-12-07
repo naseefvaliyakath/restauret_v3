@@ -39,8 +39,12 @@ dependencies:
   flutter_native_splash: ^2.2.14
   blue_thermal_printer: ^1.2.3 #For Android (not used)
   screenshot: ^1.2.3 #for widget to image (not used)
-  #flutter_pos_printer_platform: ^1.0.12 #For IOS & Windows
+  flutter_pos_printer_platform: ^1.0.12 #For IOS & Windows
   esc_pos_utils: ^1.1.0 #For IOS & Windows
+  package_info_plus: ^3.0.2
+  store_redirect: ^2.0.1
+  qr_flutter: ^4.0.0
+  share_plus: ^6.3.0
   flutter: 
     sdk: flutter
 

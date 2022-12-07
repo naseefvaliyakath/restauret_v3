@@ -63,7 +63,7 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
               width: 50.sp,
               height: 50.sp,
               child: CachedNetworkImage(
-                imageUrl: 'https://mobizate.com/uploadsOnlineApp/logo_hotel.png',
+                imageUrl: Get.find<StartupController>().logoImg,
                 placeholder: (context, url) => Lottie.asset(
                   'assets/lottie/img_holder.json',
                   width: 50.sp,

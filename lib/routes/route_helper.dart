@@ -5,6 +5,8 @@ import 'package:rest_verision_3/screens/credit_debit_screen/binding/credit_book_
 import 'package:rest_verision_3/screens/credit_debit_screen/credit_debit_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
 import 'package:rest_verision_3/screens/login_screen/login_screen.dart';
+import 'package:rest_verision_3/screens/menu_book_screen/binding/menu_book_binding.dart';
+import 'package:rest_verision_3/screens/menu_book_screen/menu_setup_screen.dart';
 import 'package:rest_verision_3/screens/update_food_screen/update_food_screen.dart';
 import '../screens/all_food_screen/all_food_screen.dart';
 import '../screens/all_food_screen/binding/all_food_binding.dart';
@@ -18,8 +20,10 @@ import '../screens/home_screen/binding/home_screen_binding.dart';
 import '../screens/home_screen/home_screen.dart';
 import '../screens/kitchen_mode_screen/kitchen_mode_main/binding/kitchen_mode_main_binding.dart';
 import '../screens/kitchen_mode_screen/kitchen_mode_main/kitchen_mode_main_screen.dart';
+import '../screens/menu_book_screen/menu_book_screen.dart';
 import '../screens/order_view_screen/binding/order_view_binding.dart';
 import '../screens/order_view_screen/order_view _screen.dart';
+import '../screens/profile_page/profile_screen.dart';
 import '../screens/purchase_book_screen/binding/purchase_book_binding.dart';
 import '../screens/purchase_book_screen/purchase_book_screen.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
@@ -37,6 +41,9 @@ class RouteHelper {
   static const String creditBookUserScreen = '/creditBookUserScreen';
   static const String creditDebitScreen = '/creditDebitScreen';
   static const String purchaseBookScreen = '/PurchaseBookScreen';
+  static const String profileScreen = '/profileScreen';
+  static const String menuBookScreen = '/menuBookScreen';
+  static const String menuSetupScreen = '/menuSetupScreen';
 
   static String getInitial() => initial;
 
@@ -61,6 +68,12 @@ class RouteHelper {
   static String getCreditBookUserScreen() => creditBookUserScreen;
 
   static String getPurchaseBookScreen() => purchaseBookScreen;
+
+  static String getProfileScreen() => profileScreen;
+
+  static String getMenuBookScreen() => menuBookScreen;
+
+  static String getMenuSetupScreen() => menuSetupScreen;
 
 
 
@@ -141,6 +154,23 @@ class RouteHelper {
         name: creditDebitScreen,
         page: () => const CreditDebitScreen(),
         binding: CreditDebitBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: profileScreen,
+        page: () => const ProfilePageScreen(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: menuBookScreen,
+        page: () => const MenuBookScreen(),
+        binding: MenuBookBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: menuSetupScreen,
+        page: () => const MenuSetupScreen(),
+        binding: MenuBookBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
   ];

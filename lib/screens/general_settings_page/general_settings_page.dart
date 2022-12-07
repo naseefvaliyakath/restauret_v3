@@ -43,26 +43,12 @@ class GeneralSettingsScreen extends StatelessWidget {
                   },
                 ),
                 ProfileMenu(
-                  text: "Print KOT with bill",
-                  icon: Icons.print,
-                  press: () {},
-                  actionWidget: FlutterSwitch(
-                    width: 50,
-                    height: 30,
-                    activeColor: AppColors.mainColor,
-                    value: true,
-                    onToggle: (bool value) {
-
-                    },
-                  ),
-                ),
-                ProfileMenu(
                   text: "Show address in bill",
                   icon: Icons.remove_red_eye,
                   press: () {},
                   actionWidget: FlutterSwitch(
-                    width: 50,
-                    height: 30,
+                    width: 50.sp,
+                    height: 30.sp,
                     activeColor: AppColors.mainColor,
                     value: ctrl.setShowDeliveryAddressInBillToggle,
                     onToggle: (bool value) {
@@ -75,10 +61,32 @@ class GeneralSettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ProfileMenu(
-                  text: "Clear app cache",
-                  icon: Icons.clear_all,
+                  text: "Allow credit book to waiter",
+                  icon: Icons.wallet,
                   press: () {},
-
+                  actionWidget: FlutterSwitch(
+                    width: 50.sp,
+                    height: 30.sp,
+                    activeColor: AppColors.mainColor,
+                    value: ctrl.setAllowCreditBookToWaiterToggle,
+                    onToggle: (bool value) {
+                      ctrl.setAllowCreditBookToWaiter(value);
+                    },
+                  ),
+                ),
+                ProfileMenu(
+                  text: "Allow purchase book to waiter",
+                  icon: Icons.shop,
+                  press: () {},
+                  actionWidget: FlutterSwitch(
+                    width: 50.sp,
+                    height: 30.sp,
+                    activeColor: AppColors.mainColor,
+                    value: ctrl.setAllowPurchaseBookToWaiterToggle,
+                    onToggle: (bool value) {
+                      ctrl.setAllowPurchaseBookToWaiter(value);
+                    },
+                  ),
                 ),
               ],
             ),

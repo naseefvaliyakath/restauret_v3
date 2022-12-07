@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
+import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
+import 'package:rest_verision_3/screens/profile_page/profile_screen.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
 import '../../alerts/change_mode_of_alert/change_mode_of_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
@@ -37,24 +39,32 @@ class SettingsPageScreen extends StatelessWidget {
               ),
 
               10.verticalSpace,
-              const ProfilePic(),
+
               20.verticalSpace,
               ProfileMenu(
-                text: "My Account",
+                text: "My Profile",
                 icon: Icons.account_circle_rounded,
-                press: () => {},
-              ),
-              ProfileMenu(
-                text: "Renew plan",
-                icon: Icons.autorenew,
-                press: () {},
-              ),
-              ProfileMenu(
-                text: "General",
-                icon: Icons.settings,
-                press: () {
-                  Get.toNamed(RouteHelper.getPreferenceScreen());
+                press: () => {
+                  Get.toNamed(RouteHelper.getProfileScreen())
                 },
+              ),
+              Visibility(
+                visible: Get.find<StartupController>().appModeNumber == 1 ? true : false,
+                child: ProfileMenu(
+                  text: "Renew plan",
+                  icon: Icons.autorenew,
+                  press: () {},
+                ),
+              ),
+              Visibility(
+                visible: Get.find<StartupController>().appModeNumber == 1 ? true : false,
+                child: ProfileMenu(
+                  text: "General",
+                  icon: Icons.settings,
+                  press: () {
+                    Get.toNamed(RouteHelper.getPreferenceScreen());
+                  },
+                ),
               ),
               ProfileMenu(
                 text: "Help Center",

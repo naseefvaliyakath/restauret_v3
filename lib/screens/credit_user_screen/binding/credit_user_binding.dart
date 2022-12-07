@@ -6,7 +6,7 @@ import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_use
 class CreditUserBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CreditBookRepo());
+    Get.put<CreditBookRepo>(CreditBookRepo(), permanent: true);
     Get.put<CreditUserData>(CreditUserData(), permanent: true);
     Get.lazyPut(() => CreditUserCTRL());
   }

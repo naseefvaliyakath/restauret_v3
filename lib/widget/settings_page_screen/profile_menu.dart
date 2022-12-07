@@ -10,7 +10,8 @@ class ProfileMenu extends StatelessWidget {
     Key? key,
     required this.text,
     required this.icon,
-    required this.press,  this.actionWidget = const Icon(Icons.arrow_forward_ios,size: 16),
+    required this.press,
+    this.actionWidget = const Icon(Icons.arrow_forward_ios,size: 16),
   }) : super(key: key);
 
   final String text;

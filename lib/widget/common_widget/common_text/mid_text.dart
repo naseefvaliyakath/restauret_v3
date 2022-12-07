@@ -7,6 +7,7 @@ import '../../../constants/app_colors/app_colors.dart';
 class MidText extends StatelessWidget {
   final Color? color;
   final String text;
+  final int maxLine;
   final double size;
   final TextOverflow overflow;
 
@@ -15,14 +16,14 @@ class MidText extends StatelessWidget {
     this.color = AppColors.titleColor,
     required this.text,
     this.size = 0,
-    this.overflow = TextOverflow.fade,
+    this.overflow = TextOverflow.fade,  this.maxLine = 1,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      maxLines: 1,
+      maxLines: maxLine,
       style: GoogleFonts.openSans(
           textStyle: TextStyle(
               color: color,

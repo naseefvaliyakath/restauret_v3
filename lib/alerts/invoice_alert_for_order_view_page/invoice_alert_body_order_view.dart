@@ -35,10 +35,10 @@ class InvoiceAlertBodyOrderView extends StatelessWidget {
           Container(
               width: 50.sp,
               height: 50.sp,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: NetworkImage('https://mobizate.com/uploadsOnlineApp/logo_hotel.png'),
+                  image: NetworkImage(Get.find<StartupController>().logoImg),
                 ),
               )),
           BigText(text: 'INVOICE', color: Colors.black,size: 20.sp,),

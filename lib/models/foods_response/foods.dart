@@ -44,6 +44,12 @@ class Foods{
   @JsonKey(name : "fdIsQuick")
   String? fdIsQuick;
 
+  @JsonKey(name : "fdIsAvailable")
+  String? fdIsAvailable;
+
+  @JsonKey(name : "fdIsSpecial")
+  String? fdIsSpecial;
+
   @JsonKey(name : "createdAt")
   String? createdAt;
 
@@ -62,6 +68,8 @@ class Foods{
       this.fdImg,
       this.fdIsToday,
       this.fdIsQuick,
+      this.fdIsAvailable,
+      this.fdIsSpecial,
       this.createdAt); // DateTime get getPublishedAtDate => DateTime.tryParse(publishedAt);
 
   factory Foods.fromJson(Map<String, dynamic> json) => _$FoodsFromJson(json);

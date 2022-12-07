@@ -35,7 +35,7 @@ class CreditBookUserScreen extends StatelessWidget {
                     child: Padding(
                   padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 5.sp),
                   child: AppRoundMiniBtn(
-                    text: 'Add user',
+                    text: 'ADD NEW USER',
                     color: AppColors.mainColor,
                     onTap: () {
                       addNewUserAlert(context: context);
@@ -86,7 +86,7 @@ class CreditBookUserScreen extends StatelessWidget {
                                   },
                                   avatarString: ctrl.myCreditUser[index].crUserName?[0] ?? 'O',
                                   name: ctrl.myCreditUser[index].crUserName ?? 'error',
-                                  amount: 0.toString(),
+                                  amount: '',
                                   color: AppColors.mainColor,
                                 );
                               },

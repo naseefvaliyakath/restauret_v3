@@ -6,6 +6,8 @@ const String ALL_FOOD_URL = 'food/getAllFood/';
 const String TODAY_FOOD_URL = 'food/getTodayFood/';
 const String TODAY_FOOD_UPDATE = 'food/updateTodayFood/';
 const String QUICK_FOOD_UPDATE = 'food/updateQuickBillFood/';
+const String AVAILABLE_FOOD_UPDATE = 'food/updateAvailaleFood/';
+const String SPECIAL_FOOD_UPDATE = 'food/updateSpecialFood/';
 const String SEARCH_TODAY_FOOD = 'food/searchTodayFood/';
 const String SEARCH_ALL_FOOD = 'food/searchAllFood/';
 const String DELETE_FOOD = 'food/deleteFood/';
@@ -41,6 +43,7 @@ const String DELETE_ONLINE_APP = 'online_apps/deleteOnlineApp/';
 
 const String GET_SHOP = 'shope_details/getShopWithSubId';
 const String CHANGE_PASSWORD = 'shope_details/changePassword';
+const String GET_NOTICE_AND_UPDATE = 'notice/getnotice';
 
 const String INSERT_CREDIT_USER = 'credit_users/addCreditUser';
 const String GET_CREDIT_USER = 'credit_users/getAllCreditUser';
@@ -49,5 +52,11 @@ const String DELETE_CREDIT_USER = 'credit_users/deleteCreditUser';
 const String GET_CREDIT_DEBIT = 'credit_debit/getCreditDebit';
 const String INSERT_CREDIT_DEBIT = 'credit_debit/addCreditDebit';
 const String DELETE_CREDIT_DEBIT = 'credit_debit/deleteCreditDebit';
+
+const String GET_PURCHASE = 'purchase_item/getAllPurchase';
+const String INSERT_PURCHASE = 'purchase_item/addPurchase';
+const String DELETE_PURCHASE = 'purchase_item/deletePurchase';
+
+
 
 

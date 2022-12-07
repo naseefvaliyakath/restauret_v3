@@ -233,4 +233,43 @@ class FoodRepo extends GetxService {
 
   }
 
+
+  //? update available food
+  Future<MyResponse> updateAvailableFood(int fdId, String isAvailable) async {
+    try {
+      Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsAvailable': isAvailable, 'fdShopId': Get.find<StartupController>().SHOPE_ID};
+      final response = await _httpService.updateData(AVAILABLE_FOOD_UPDATE, foodData);
+      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+      print('erroor ${parsedResponse.errorCode}');
+      if (parsedResponse.error ?? true) {
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
+    }
+  }
+
+  //? update special food
+  Future<MyResponse> updateSpecialFood(int fdId, String isSpecial) async {
+    try {
+      Map<String, dynamic> foodData = {'fdId': fdId, 'fdIsSpecial': isSpecial, 'fdShopId': Get.find<StartupController>().SHOPE_ID};
+      final response = await _httpService.updateData(SPECIAL_FOOD_UPDATE, foodData);
+      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+      print('erroor ${parsedResponse.errorCode}');
+      if (parsedResponse.error ?? true) {
+        return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? response.statusMessage.toString() : 'Something wrong !!');
+      } else {
+        return MyResponse(statusCode: 1, status: 'Success', message: response.statusMessage.toString());
+      }
+    } on DioError catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
+    } catch (e) {
+      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
+    }
+  }
+
 }

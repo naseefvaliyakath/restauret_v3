@@ -13,6 +13,10 @@ Shop _$ShopFromJson(Map<String, dynamic> json) => Shop(
       json['shopAddr'] as String?,
       json['subcId'] as String?,
       json['password'] as String?,
+      json['expiryDate'] == null
+          ? null
+          : DateTime.parse(json['expiryDate'] as String),
+      json['logoImg'] as String?,
     )
       ..subcIdStatus = json['subcIdStatus'] as String?
       ..createdAt = json['createdAt'] == null
@@ -27,5 +31,7 @@ Map<String, dynamic> _$ShopToJson(Shop instance) => <String, dynamic>{
       'subcId': instance.subcId,
       'subcIdStatus': instance.subcIdStatus,
       'password': instance.password,
+      'expiryDate': instance.expiryDate?.toIso8601String(),
+      'logoImg': instance.logoImg,
       'createdAt': instance.createdAt?.toIso8601String(),
     };

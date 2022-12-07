@@ -265,7 +265,6 @@ class HttpService {
   initializeInterceptors() {
     _dio.interceptors.add(InterceptorsWrapper(onRequest: (request, handler) async {
       // Do something before request is sent
-      checkInternetConnection();
       if (kDebugMode) {
         // print("${request.method} | ${request.path}");
       }

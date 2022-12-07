@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/screens/home_screen/home_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
-import 'package:rest_verision_3/screens/purchase_book_screen/purchase_book_screen.dart';
 import 'constants/app_colors/app_colors.dart';
 import 'hive_database/hive_init.dart';
 

@@ -3,7 +3,7 @@ import 'package:rest_verision_3/api_data_loader/category_data.dart';
 import 'package:rest_verision_3/repository/food_repository.dart';
 import 'package:rest_verision_3/repository/online_app_repository.dart';
 import 'package:rest_verision_3/repository/room_repository.dart';
-import 'package:rest_verision_3/repository/settled_order_response.dart';
+import 'package:rest_verision_3/repository/settled_order_repository.dart';
 import 'package:rest_verision_3/repository/table_chair_set_repository.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 import '../../../api_data_loader/food_data.dart';

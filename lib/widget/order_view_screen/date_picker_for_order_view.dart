@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 class DatePickerForOrderView extends StatelessWidget {
   final DateTimeRange dateTime;
   final Function onTap;
-  const DatePickerForOrderView({Key? key, required this.onTap, required this.dateTime}) : super(key: key);
+  final MainAxisAlignment maninAxisAlignment;
+  const DatePickerForOrderView({Key? key, required this.onTap, required this.dateTime,  this.maninAxisAlignment = MainAxisAlignment.center}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class DatePickerForOrderView extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 8.h),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: maninAxisAlignment,
                   children: [
                     Icon(
                       Icons.calendar_today,

@@ -39,7 +39,7 @@ class OrderViewScreen extends StatelessWidget {
             ? const MyLoading()
             : RefreshIndicator(
                 onRefresh: () async {
-                  ctrl.getAllSettledOrder();
+                  ctrl.refreshSettledOrder(showSnack: true);
                   ctrl.refreshDatabaseKot();
                   AppSnackBar.successSnackBar('Success', 'Data refreshed');
                 },
@@ -94,7 +94,12 @@ class OrderViewScreen extends StatelessWidget {
                                      DatePickerForOrderView(
                                        dateTime: ctrl.selectedDateRangeForSettledOrder,
                                       onTap: () async {
-                                       await ctrl.datePickerForSettledOrder(context);
+                                         if(ctrl.tappedTabName == 'SETTLED'){
+                                           await ctrl.datePickerForSettledOrder(context);
+                                         }else{
+                                           AppSnackBar.myFlutterToast(message: 'Sorting only for settled order', bgColor: Colors.black54);
+                                         }
+
                                       },
                                     ),
                                     const QrScannerIconBtn(),
@@ -206,7 +211,7 @@ class OrderViewScreen extends StatelessWidget {
                                           ctrl.deleteSettledOrder(ctrl.settledBillingItems[index].settled_id ?? -1);
                                           Navigator.pop(context);
                                           //? to refresh after update
-                                          ctrl.getAllSettledOrder();
+                                          ctrl.refreshSettledOrder(showSnack: true);
                                         });
                                   },
                                   //? to show bill of settled order

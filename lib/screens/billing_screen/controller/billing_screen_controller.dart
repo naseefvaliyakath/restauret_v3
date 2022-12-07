@@ -271,6 +271,7 @@ class BillingScreenController extends GetxController {
   @override
   void onClose() {
     disposeTxtController();
+    saveItemInHiveWhenBack();
     super.onClose();
   }
 
@@ -563,7 +564,7 @@ class BillingScreenController extends GetxController {
       type: orderType,
       billingItems: _billingItems,
       context: context,
-      //? its requred value thts why sending empty kot , its only needed from orderView page
+      //? its required value that's why sending empty kot , its only needed from orderView page
       fullKot: EMPTY_KITCHEN_ORDER,
     );
   }
@@ -618,7 +619,7 @@ class BillingScreenController extends GetxController {
 
   //? insert settled bill to dB
   //? OK
-  insertSettledBill(context) async {
+  Future<bool> insertSettledBill(context) async {
     try {
       //? check bill or grand total is empty
       if (_billingItems.isEmpty &&
@@ -626,7 +627,9 @@ class BillingScreenController extends GetxController {
               settleGrandTotalCtrl.value.text == '0' ||
               settleGrandTotalCtrl.value.text == '')) {
         btnControllerSettle.error();
+        Navigator.pop(context);
         AppSnackBar.errorSnackBar('Error', 'No bill added');
+        return false;
       } else {
         Map<String, dynamic> settledBill = {
           'fdShopId': Get.find<StartupController>().SHOPE_ID,
@@ -653,18 +656,22 @@ class BillingScreenController extends GetxController {
         if (parsedResponse.error ?? true) {
           btnControllerSettle.error();
           AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
+          return false;
         } else {
           btnControllerSettle.success();
           //? isClickedSettle will make true to avoid add new items and restrict btn clicks after settled the order
           isClickedSettle.value = true;
           AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
+          return true;
         }
       }
     } on DioError catch (e) {
       btnControllerSettle.error();
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
+      return false;
     } catch (e) {
       btnControllerSettle.error();
+      return false;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerSettle.reset();
@@ -1741,6 +1748,23 @@ class BillingScreenController extends GetxController {
     settleGrandTotalCtrl.value.text = '';
     settleCashReceivedCtrl.value.text = '';
     update();
+  }
+
+
+ Future<bool> saveItemInHiveWhenBack() async {
+    //? if navigated from kot update  tab on back press not ask save in hive
+    if (isNavigateFromKotUpdate == true) {
+      return true;
+    } else {
+      //? checking if any bill added in the list
+      if (billingItems
+          .isNotEmpty) {
+        await saveBillInHive();
+        return true;
+      } else {
+        return true;
+      }
+    }
   }
 
   //? initialize text controller

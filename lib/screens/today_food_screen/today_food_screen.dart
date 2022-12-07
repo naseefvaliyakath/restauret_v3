@@ -20,6 +20,7 @@ class TodayFoodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return GetBuilder<TodayFoodController>(
       builder: (ctrl) {
         return RefreshIndicator(

@@ -26,6 +26,12 @@ class Shop{
   @JsonKey(name : "password")
   String? password;
 
+  @JsonKey(name : "expiryDate")
+  DateTime? expiryDate;
+
+  @JsonKey(name : "logoImg")
+  String? logoImg;
+
   @JsonKey(name : "createdAt")
   DateTime? createdAt;
 
@@ -38,6 +44,8 @@ class Shop{
       this.shopAddr,
       this.subcId,
       this.password,
+      this.expiryDate,
+      this.logoImg,
 ); // DateTime get getPublishedAtDate => DateTime.tryParse(publishedAt);
 
   factory Shop.fromJson(Map<String, dynamic> json) => _$ShopFromJson(json);

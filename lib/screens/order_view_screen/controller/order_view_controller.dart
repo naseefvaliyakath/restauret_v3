@@ -7,6 +7,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart';
 import '../../../alerts/kot_alert/kot_bill_show_alert.dart';
+import '../../../api_data_loader/settled_order_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/api_link/api_link.dart';
 import '../../../constants/strings/my_strings.dart';
@@ -19,7 +20,7 @@ import '../../../models/kitchen_order_response/order_bill.dart';
 import '../../../models/my_response.dart';
 import '../../../models/settled_order_response/settled_order.dart';
 import '../../../models/settled_order_response/settled_order_response.dart';
-import '../../../repository/settled_order_response.dart';
+import '../../../repository/settled_order_repository.dart';
 import '../../../routes/route_helper.dart';
 import '../../../services/dio_error.dart';
 import '../../../services/service.dart';
@@ -29,6 +30,7 @@ import '../../login_screen/controller/startup_controller.dart';
 
 class OrderViewController extends GetxController {
   final SettledOrderRepo _settledOrderRepo = Get.find<SettledOrderRepo>();
+  final SettledOrderData _settledOrderData = Get.find<SettledOrderData>();
   final HttpService _httpService = Get.find<HttpService>();
   final IO.Socket _socket = Get.find<SocketController>().socket;
   final HiveHoldBillController _hiveHoldBillController = Get.find<HiveHoldBillController>();
@@ -76,6 +78,10 @@ class OrderViewController extends GetxController {
   double charges = 0;
   double cashReceived = 0;
   double grandTotalNew = 0;
+
+  //? this will store all SettledOrder from the server
+  //? not showing in UI or change
+  final List<SettledOrder> _storedAllSettledOrder = [];
 
   final List<KitchenOrder> _kotBillingItems = [];
   final List<SettledOrder> _settledBillingItems = [];
@@ -131,7 +137,7 @@ class OrderViewController extends GetxController {
     getAllHoldOrder();
     setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
     setUpKitchenOrderSingleListener(); //? for new kot order
-    getAllSettledOrder(); //? to load settled order first time
+    getInitialSettledOrder(); //? to load settled order first time
     super.onInit();
   }
 
@@ -226,26 +232,62 @@ class OrderViewController extends GetxController {
 
   //? get all settled order
   //? used to refresh settled order on first loading and after update or delete also
-  getAllSettledOrder() async {
+  //? to load o first screen loading
+  getInitialSettledOrder() {
     try {
-      MyResponse response = await _settledOrderRepo.getAllSettledOrder();
-
-      if (response.statusCode == 1) {
-        SettledOrderResponse parsedResponse = response.data;
-        if (parsedResponse.data == null) {
-          _settledBillingItems.addAll([]);
-        } else {
-          _settledBillingItems.clear();
-          _settledBillingItems.addAll(parsedResponse.data ?? []);
+      //?if no data in side data controller
+      //? then load fresh data from db
+      //?else fill _storedAllFoods from foodData controller
+      if (_settledOrderData.allSettledOrder.isEmpty) {
+        if (kDebugMode) {
+          print(_settledOrderData.allSettledOrder.length);
+          print('data loaded from db');
         }
+        refreshSettledOrder(showSnack: false);
       } else {
-        AppSnackBar.errorSnackBar(response.status, response.message);
-        return;
+        if (kDebugMode) {
+          print('data loaded from food data');
+        }
+        //? load data from variable in todayFood
+        _storedAllSettledOrder.clear();
+        _storedAllSettledOrder.addAll(_settledOrderData.allSettledOrder);
+        //? to show full food in UI
+        _settledBillingItems.clear();
+        _settledBillingItems.addAll(_storedAllSettledOrder);
+      }
+      update();
+    } catch (e) {
+      return;
+    }
+  }
+
+  //? ad refresh fresh data from server
+  refreshSettledOrder({DateTime? startDate , DateTime? endTime ,bool showSnack = true}) async {
+    try {
+      MyResponse response = await _settledOrderData.getAllSettledOrder(startDate: startDate,endTime: endTime);
+      if(response.statusCode == 1){
+        if(response.data != null){
+          List<SettledOrder>  settledOrder = response.data;
+          _storedAllSettledOrder.clear();
+          _storedAllSettledOrder.addAll(settledOrder);
+          //? to show full food in UI
+          _settledBillingItems.clear();
+          _settledBillingItems.addAll(_storedAllSettledOrder);
+          if(showSnack) {
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      }else{
+        if(showSnack) {
+          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        }
       }
     } catch (e) {
-      rethrow;
-    } finally {}
-    update();
+      return;
+    }finally{
+      update();
+    }
+
   }
 
   //? checking int is in text field
@@ -330,7 +372,7 @@ class OrderViewController extends GetxController {
 
   //? insert settled to dB bill from kot
   //? this not called here , so there is many progress btn status changing
-  insertSettledBill(BuildContext context) async {
+ Future<bool> insertSettledBill(BuildContext context) async {
     try {
       Map<String, dynamic> settledBill = {
         'fdShopId': Get.find<StartupController>().SHOPE_ID,
@@ -356,17 +398,21 @@ class OrderViewController extends GetxController {
       if (parsedResponse.error ?? true) {
         btnControllerSettle.error();
         AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
+        return false;
       } else {
         btnControllerSettle.success();
         //? to disable settled and settled and pe=rint btn
         isClickedSettle.value = true;
         AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
+        return true;
       }
     } on DioError catch (e) {
       btnControllerSettle.error();
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
+      return false;
     } catch (e) {
       btnControllerSettle.error();
+      return false;
     } finally {
       await Future.delayed(const Duration(seconds: 1), () {
         btnControllerSettle.reset();
@@ -375,7 +421,7 @@ class OrderViewController extends GetxController {
         //? for refresh kot bill , so after settle it will delete from kot bill from dB
         refreshDatabaseKot();
         //? refreshing settled order after settling KOT order
-        getAllSettledOrder();
+        refreshSettledOrder();
         Navigator.pop(context);
       });
     }
@@ -385,22 +431,15 @@ class OrderViewController extends GetxController {
   deleteSettledOrder(int? settledId) async {
     try {
       showLoading();
-      Map<String, dynamic> data = {
-        'fdShopId': Get.find<StartupController>().SHOPE_ID,
-        'settled_id': settledId ?? -1,
-      };
-      final response = await _httpService.delete(DELETE_SETTLED_ORDER, data);
-      FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
-      if (parsedResponse.error ?? true) {
-        AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
-      } else {
+      MyResponse response = await _settledOrderRepo.deleteSettledOrder(settledId);
+
+      if (response.statusCode == 1 ) {
         //? refreshing after delete settled order
-        getAllSettledOrder();
-        AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
+        refreshSettledOrder(startDate: selectedDateRangeForSettledOrder.start,endTime: selectedDateRangeForSettledOrder.end);
+      } else {
+        AppSnackBar.errorSnackBar('Error', response.message);
       }
-    } on DioError catch (e) {
-      AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
-    } catch (e) {
+    }  catch (e) {
       AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
     } finally {
       hideLoading();
@@ -459,7 +498,7 @@ class OrderViewController extends GetxController {
       } else {
         btnControllerSettle.success();
         //? for refresh settled bill ,
-        getAllSettledOrder();
+        refreshSettledOrder();
         AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {
@@ -628,6 +667,7 @@ class OrderViewController extends GetxController {
          );
      if (dateRange != null && dateRange != selectedDateRangeForSettledOrder) {
            selectedDateRangeForSettledOrder = dateRange;
+           refreshSettledOrder(startDate: dateRange.start,endTime: dateRange.end);
          }
    } catch (e) {
      rethrow;
@@ -666,4 +706,6 @@ class OrderViewController extends GetxController {
     isLoading = false;
     update();
   }
+
+
 }

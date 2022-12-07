@@ -6,6 +6,7 @@ import 'package:rest_verision_3/models/credit_user_response/credit_user.dart';
 import 'package:rest_verision_3/models/credit_user_response/credit_user_response.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
+import '../../../check_internet/check_internet.dart';
 import '../../../models/my_response.dart';
 import '../../../models/room_response/room_response.dart';
 import '../../../repository/credit_book_repository.dart';
@@ -37,6 +38,7 @@ class CreditUserCTRL extends GetxController {
 
   @override
   void onInit() async {
+    checkInternetConnection();
     userSearchTD = TextEditingController();
     userNameTD = TextEditingController();
     getInitialCreditUser();
