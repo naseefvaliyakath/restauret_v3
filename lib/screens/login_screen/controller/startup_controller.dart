@@ -87,8 +87,6 @@ class StartupController extends GetxController {
         print('No device selected');
       }
     }
-
-
   }
 
   loginToApp() async {
