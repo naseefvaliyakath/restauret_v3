@@ -91,6 +91,7 @@ class MenuBookController extends GetxController {
         //? to show full food in UI
         _myAllFoods.clear();
         _myAllFoods.addAll(_storedAllFoods);
+        // print(_myAllFoods[0]);
       }
       update();
     } catch (e) {
