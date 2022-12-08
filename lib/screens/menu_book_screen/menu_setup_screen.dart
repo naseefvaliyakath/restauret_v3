@@ -45,7 +45,7 @@ class MenuSetupScreen extends StatelessWidget {
                         pinned: true,
                         snap: true,
                         title: const Text(
-                          'Menu Book ',
+                          'Setup Menu  ',
                           overflow: TextOverflow.fade,
                           softWrap: false,
                         ),
@@ -74,10 +74,30 @@ class MenuSetupScreen extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                ToggleBtnInCard(text: 'Show price', color: Colors.green, value: true,onToggle: (){},),
-                                ToggleBtnInCard(text: 'Show Special', color: AppColors.mainColor_2, value: true,onToggle: (){},),
-                                ToggleBtnInCard(text: 'Available only', color: AppColors.mainColor, value: true,onToggle: (){},),
-
+                                ToggleBtnInCard(
+                                  text: 'Show price',
+                                  color: Colors.green,
+                                  value: ctrl.setShowPriceToggle,
+                                  onToggle: (value) {
+                                    ctrl.setShowPriceToHive(value);
+                                  },
+                                ),
+                                ToggleBtnInCard(
+                                  text: 'Show Special',
+                                  color: AppColors.mainColor_2,
+                                  value: ctrl.setShowSpecialToggle,
+                                  onToggle: (value) {
+                                    ctrl.setShowSpecialToHive(value);
+                                  },
+                                ),
+                                ToggleBtnInCard(
+                                  text: 'Available only',
+                                  color: AppColors.mainColor,
+                                  value: ctrl.setAvailableOnlyToggle,
+                                  onToggle: (value) {
+                                    ctrl.setAvailableOnlyToHive(value);
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -92,7 +112,7 @@ class MenuSetupScreen extends StatelessWidget {
                             maxCrossAxisExtent: 200.0.sp,
                             mainAxisSpacing: 18.sp,
                             crossAxisSpacing: 18.sp,
-                            childAspectRatio: 0.8/0.8 ,
+                            childAspectRatio: 0.8 / 0.8,
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
@@ -100,22 +120,24 @@ class MenuSetupScreen extends StatelessWidget {
                                 onTap: () {
                                   if (ctrl.isCashier) {
                                     TwoBtnBottomSheet.bottomSheet(
-                                        b1Name: (ctrl.myAllFoods[index].fdIsAvailable ?? 'no') == 'no' ? 'Add To Available Food' : 'Remove To Available Food',
-                                        b2Name: (ctrl.myAllFoods[index].fdIsSpecial ?? 'no') == 'no' ? 'Add To special Food' : 'Remove To special Food',
+                                        b1Name: (ctrl.myAllFoods[index].fdIsAvailable ?? 'no') == 'no'
+                                            ? 'Add To Available Food'
+                                            : 'Remove To Available Food',
+                                        b2Name: (ctrl.myAllFoods[index].fdIsSpecial ?? 'no') == 'no'
+                                            ? 'Add To special Food'
+                                            : 'Remove To special Food',
                                         b1Function: () {
-                                          if((ctrl.myAllFoods[index].fdIsAvailable ?? 'no') == 'yes'){
+                                          if ((ctrl.myAllFoods[index].fdIsAvailable ?? 'no') == 'yes') {
                                             ctrl.updateAvailableFood(ctrl.myAllFoods[index].fdId ?? -1, 'no');
-                                          }
-                                          else{
+                                          } else {
                                             ctrl.updateAvailableFood(ctrl.myAllFoods[index].fdId ?? -1, 'yes');
                                           }
                                           Navigator.pop(context);
                                         },
                                         b2Function: () {
-                                          if((ctrl.myAllFoods[index].fdIsSpecial ?? 'no') == 'yes'){
+                                          if ((ctrl.myAllFoods[index].fdIsSpecial ?? 'no') == 'yes') {
                                             ctrl.updateSpecialFood(ctrl.myAllFoods[index].fdId ?? -1, 'no');
-                                          }
-                                          else{
+                                          } else {
                                             ctrl.updateSpecialFood(ctrl.myAllFoods[index].fdId ?? -1, 'yes');
                                           }
                                           Navigator.pop(context);
@@ -130,9 +152,7 @@ class MenuSetupScreen extends StatelessWidget {
                                     cancelBtn: 'Cancel',
                                     context: context,
                                     onCancelTap: () {},
-                                    onTap: () {
-
-                                    },
+                                    onTap: () {},
                                   );
                                 },
                                 child: MenuFoodCard(

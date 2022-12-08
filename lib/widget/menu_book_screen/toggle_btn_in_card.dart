@@ -19,30 +19,27 @@ class ToggleBtnInCard extends StatelessWidget {
     return Flexible(
       child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-          child: InkWell(
-            onTap: () {},
-            child: FittedBox(
-              child: SizedBox(
-                  width: 150.w,
-                  child: Center(
-                      child: Padding(
-                    padding: EdgeInsets.only(left: 5.sp,right: 5.sp, top: 5.sp),
-                    child: Column(
-                      children: [
-                        FlutterSwitch(
-                          width: 50.sp,
-                          height: 30.sp,
-                          activeColor: color,
-                          value: value,
-                          onToggle: (bool value) {
-
-                          },
-                        ),
-                        MidText(text: text)
-                      ],
-                    ),
-                  ))),
-            ),
+          child: FittedBox(
+            child: SizedBox(
+                width: 150.w,
+                child: Center(
+                    child: Padding(
+                  padding: EdgeInsets.only(left: 5.sp,right: 5.sp, top: 5.sp),
+                  child: Column(
+                    children: [
+                      FlutterSwitch(
+                        width: 50.sp,
+                        height: 30.sp,
+                        activeColor: color,
+                        value: value,
+                        onToggle: (bool value) {
+                        onToggle(value);
+                        },
+                      ),
+                      MidText(text: text)
+                    ],
+                  ),
+                ))),
           )),
     );
   }

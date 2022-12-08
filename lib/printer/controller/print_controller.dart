@@ -330,6 +330,27 @@ class PrintCTRL extends GetxController {
     }
   }
 
+  printQrCode(String qrCode) async {
+    List<int> bytes = [];
+    final generator = await IosWinPrintMethods.getGenerator();
+    bytes += generator.setGlobalCodeTable('CP1252');
+    bytes += IosWinPrintMethods.printHeading(generator: generator, heading: 'SCAN FOR MENU');
+    bytes += generator.qrcode(qrCode,size: QRSize.Size8);
+
+    if (IosWinPrint.getSelectedDevice() == null) {
+      await iOSWinPrintInstance.getDevices();
+    }
+    PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator);
+    if (printerResponse.status) {
+    } else {
+      if (!Platform.isWindows) {
+        AppSnackBar.myFlutterToast(message: printerResponse.message, bgColor: Colors.red);
+      } else {
+        print(printerResponse.message);
+      }
+    }
+  }
+
 
 // //?to remove error
 //   printKot({

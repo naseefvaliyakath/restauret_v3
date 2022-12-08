@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:lottie/lottie.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../common_widget/common_text/big_text.dart';
@@ -15,6 +17,8 @@ class MenuFoodCard extends StatelessWidget {
   final String fdIsLoos;
   final String available;
   final String special;
+  final bool showPrice;
+  final bool showSpecial;
 
   const MenuFoodCard({
     Key? key,
@@ -27,6 +31,8 @@ class MenuFoodCard extends StatelessWidget {
     required this.priceQuarter,
     required this.fdIsLoos,
     required this.special,
+    this.showPrice = true,
+    this.showSpecial = true,
   }) : super(key: key);
 
   @override
@@ -92,15 +98,18 @@ class MenuFoodCard extends StatelessWidget {
                     ),
                     overflow: TextOverflow.fade,
                   ),
-                  Text(fdIsLoos == 'yes' ? 'Full      : $price' : 'Rs : $price',
-                      softWrap: false,
-                      style: TextStyle(
-                        fontSize: 1.sh / 49,
-                        color: AppColors.mainColor_2,
-                        fontWeight: FontWeight.bold,
-                      )),
                   Visibility(
-                    visible: fdIsLoos == 'yes' ? true : false,
+                    visible: showPrice,
+                    child: Text(fdIsLoos == 'yes' ? 'Full      : $price' : 'Rs : $price',
+                        softWrap: false,
+                        style: TextStyle(
+                          fontSize: 1.sh / 49,
+                          color: AppColors.mainColor_2,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  Visibility(
+                    visible: (fdIsLoos == 'yes' && showPrice) ? true : false,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +173,7 @@ class MenuFoodCard extends StatelessWidget {
             child: Column(
               children: [
                 Visibility(
-                  visible: special == 'no' ? false : true,
+                  visible: (special == 'yes' && showSpecial) ? true : false,
                   child: Column(
                     children: [
                       Container(

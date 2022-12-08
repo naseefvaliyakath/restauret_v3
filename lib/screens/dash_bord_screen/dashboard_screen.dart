@@ -35,7 +35,7 @@ class DashBordScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // heading my restaurant
-               HeadingRichText(name: Get.find<StartupController>().shopName),
+              HeadingRichText(name: Get.find<StartupController>().shopName),
               //notification icon
               NotificationIcon(
                 onTap: () {},
@@ -50,7 +50,7 @@ class DashBordScreen extends StatelessWidget {
             height: double.maxFinite,
             //?menu cards
             child: GridView.count(
-              physics: const BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 childAspectRatio: 2.7 / 2.2,
                 padding: const EdgeInsets.only(left: 16, right: 16).r,
                 crossAxisCount: 2,
@@ -64,53 +64,49 @@ class DashBordScreen extends StatelessWidget {
                     icon: FontAwesomeIcons.burger,
                     onTap: () {
                       Get.find<StartupController>().checkSubscriptionStatusToLogout();
-                      Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":TAKEAWAY});
-                      },
+                      Get.toNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": TAKEAWAY});
+                    },
                   ),
                   DashBordCard(
                     title: 'Home Delivery',
                     subTitle: 'Home delivery Bills',
                     bgColor: const Color(0xff4db6ac),
                     icon: FontAwesomeIcons.wallet,
-                    onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":HOME_DELEVERY}),
+                    onTap: () =>
+                        Get.toNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": HOME_DELEVERY}),
                   ),
                   DashBordCard(
                     title: 'Online Booking',
                     subTitle: 'Online Booking',
                     bgColor: const Color(0xff62c5ce),
                     icon: FontAwesomeIcons.kitchenSet,
-                      onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":ONLINE}),
+                    onTap: () => Get.toNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": ONLINE}),
                   ),
                   DashBordCard(
-                    title: 'Dining',
-                    subTitle: 'Dining Foods',
-                    bgColor: const Color(0xff4caf50),
-                    icon: FontAwesomeIcons.burger,
-                      onTap: () =>Get.toNamed(RouteHelper.getBillingScreenScreen(),arguments:{"billingPage":DINING})
-                  ),
+                      title: 'Dining',
+                      subTitle: 'Dining Foods',
+                      bgColor: const Color(0xff4caf50),
+                      icon: FontAwesomeIcons.burger,
+                      onTap: () =>
+                          Get.toNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": DINING})),
                   DashBordCard(
                     title: 'Credit Book',
                     subTitle: 'Costumers Credit status',
                     bgColor: const Color(0xff727070),
                     icon: FontAwesomeIcons.wallet,
                     onTap: () async {
-
-
-                     //? checking app mode is cashier then he has direct access
-                     if(Get.find<StartupController>().appModeNumber == 1){
-                       Get.toNamed(RouteHelper.getCreditBookUserScreen());
-                     }
-                     else{
-                       //? if waiter then check its allowed in general settings
-                       await Get.find<StartupController>().readAllowCreditBookToWaiterFromHive();
-                       if(Get.find<StartupController>().setAllowCreditBookToWaiterToggle){
-                         Get.toNamed(RouteHelper.getCreditBookUserScreen());
-                       }
-                       else{
-                         AppSnackBar.myFlutterToast(message: 'You are not authorized !!', bgColor: Colors.redAccent);
-                       }
-                     }
-
+                      //? checking app mode is cashier then he has direct access
+                      if (Get.find<StartupController>().appModeNumber == 1) {
+                        Get.toNamed(RouteHelper.getCreditBookUserScreen());
+                      } else {
+                        //? if waiter then check its allowed in general settings
+                        await Get.find<StartupController>().readAllowCreditBookToWaiterFromHive();
+                        if (Get.find<StartupController>().setAllowCreditBookToWaiterToggle) {
+                          Get.toNamed(RouteHelper.getCreditBookUserScreen());
+                        } else {
+                          AppSnackBar.myFlutterToast(message: 'You are not authorized !!', bgColor: Colors.redAccent);
+                        }
+                      }
                     },
                   ),
                   DashBordCard(
@@ -120,20 +116,17 @@ class DashBordScreen extends StatelessWidget {
                     icon: FontAwesomeIcons.shop,
                     onTap: () async {
                       //? checking app mode is cashier then he has direct access
-                      if(Get.find<StartupController>().appModeNumber == 1){
+                      if (Get.find<StartupController>().appModeNumber == 1) {
                         Get.toNamed(RouteHelper.getPurchaseBookScreen());
-                      }
-                      else{
+                      } else {
                         //? if waiter then check its allowed in general settings
                         await Get.find<StartupController>().readAllowPurchaseBookToWaiterFromHive();
-                        if(Get.find<StartupController>().setAllowPurchaseBookToWaiterToggle){
+                        if (Get.find<StartupController>().setAllowPurchaseBookToWaiterToggle) {
                           Get.toNamed(RouteHelper.getPurchaseBookScreen());
-                        }
-                        else{
+                        } else {
                           AppSnackBar.myFlutterToast(message: 'You are not authorized !!', bgColor: Colors.redAccent);
                         }
                       }
-
                     },
                   ),
                   DashBordCard(
@@ -146,12 +139,12 @@ class DashBordScreen extends StatelessWidget {
                     },
                   ),
                   DashBordCard(
-                    title: 'Bill',
-                    subTitle: 'Costumer Bills',
+                    title: 'Report',
+                    subTitle: 'Sales Report',
                     bgColor: AppColors.mainColor_2,
-                    icon: FontAwesomeIcons.wallet,
+                    icon: Icons.auto_graph,
                     onTap: () async {
-
+                      Get.toNamed(RouteHelper.getReportScreen());
                     },
                   ),
                 ]),

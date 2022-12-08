@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/menu_book_screen/controller/menu_book_controller.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:rest_verision_3/widget/common_widget/buttons/app_min_button.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShowQrAlertBody extends StatelessWidget {
@@ -17,10 +20,13 @@ class ShowQrAlertBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            QrImage(
-              data: ctrl.menuBookUrl,
-              version: QrVersions.auto,
-              size: 200.0,
+            Screenshot(
+              controller: ctrl.screenshotController,
+              child: QrImage(
+                data: ctrl.menuBookUrl,
+                version: QrVersions.auto,
+                size: 200.0,
+              ),
             ),
             Row(
               children: [
@@ -30,7 +36,7 @@ class ShowQrAlertBody extends StatelessWidget {
                         text: 'Share',
                         color: Colors.green,
                         onTap: () async {
-                          await Share.share('scan this qr code to view menus');
+                          ctrl.shareQrCode();
                           Navigator.pop(context);
                         })),
                 10.horizontalSpace,

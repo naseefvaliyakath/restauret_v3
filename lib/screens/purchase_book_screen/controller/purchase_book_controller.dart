@@ -18,7 +18,7 @@ class PurchaseBookCTRL extends GetxController {
 
   //? to sort purchase
   DateTimeRange selectedDateRangeForPurchase = DateTimeRange(
-    start: DateTime.now(),
+    start: DateTime.now().subtract(const Duration(days: 30)),
     end: DateTime.now(),
   );
 
@@ -69,7 +69,7 @@ class PurchaseBookCTRL extends GetxController {
           print(_purchaseItemData.allPurchaseItem.length);
           print('data loaded from db');
         }
-        refreshPurchaseItem(showSnack: false);
+        refreshPurchaseItem(showSnack: false,startDate: DateTime.now().subtract(const Duration(days: 30)),endTime: DateTime.now());
       } else {
         if (kDebugMode) {
           print('data loaded from PurchaseItem data');

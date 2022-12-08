@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
+import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../local_storage/local_storage_controller.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
@@ -17,7 +24,8 @@ class MenuBookController extends GetxController {
   //?controllers
   final FoodData _foodData = Get.find<FoodData>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
-  final CategoryData _categoryData = Get.find<CategoryData>();
+  final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
+
 
   //? this will store all AllFood from the server
   //? not showing in UI or change
@@ -28,14 +36,13 @@ class MenuBookController extends GetxController {
 
   List<Foods> get myAllFoods => _myAllFoods;
 
-  //? this will store all Category from the server
-  //? not showing in UI or change
-  final List<Category> _storedCategory = [];
 
-  //? Category to show in UI
-  final List<Category> _myCategory = [];
 
-  List<Category> get myCategory => _myCategory;
+  //? to sort special food
+  List<Foods> specialFoods = [];
+  //? to store food by category
+  Set keys = {};
+  List<Map<String, dynamic>> foodsByCategory = [];
 
 
   //? for show full screen loading
@@ -51,15 +58,22 @@ class MenuBookController extends GetxController {
   String menuBookUrl = 'https://mobizate.com/';
 
 
+  //? to set toggle btn as per saved data
+  bool setShowPriceToggle = false;
+  bool setShowSpecialToggle = false;
+  bool setAvailableOnlyToggle = false;
+
+  //? to share qr code
+  ScreenshotController screenshotController = ScreenshotController();
+
   @override
   void onInit() async {
     await checkIsCashier();
     checkInternetConnection();
-    //? refreshing new data _allFood in food data
-    refreshAllFood(showSnack: false);
-    //? load refreshed new data to Ui (myAllFood)
+    readShowPriceFromHive();
+    readShowSpecialFromHive();
+    readAvailableOnlyFromHive();
     getInitialFood();
-    getInitialCategory();
     super.onInit();
   }
 
@@ -91,15 +105,14 @@ class MenuBookController extends GetxController {
         //? to show full food in UI
         _myAllFoods.clear();
         _myAllFoods.addAll(_storedAllFoods);
-        // print(_myAllFoods[0]);
+        print('lll ${_myAllFoods.length}');
+        sortingFood(_myAllFoods);
       }
       update();
     } catch (e) {
       return;
     }
   }
-
-
 
 
   //? to add food in available
@@ -155,6 +168,7 @@ class MenuBookController extends GetxController {
          //? to show full food in UI
          _myAllFoods.clear();
          _myAllFoods.addAll(_storedAllFoods);
+         sortingFood(_myAllFoods);
          if(showSnack) {
            AppSnackBar.successSnackBar('Success', 'Updated successfully');
          }
@@ -173,96 +187,6 @@ class MenuBookController extends GetxController {
   }
 
 
-
-
-
-  //////! category section !//////
-
-  //? to load o first screen loading
-  getInitialCategory() {
-    try {
-      //?if no data in side data controller
-      //? then load fresh data from db
-      //?else fill _storedCategory from CategoryData controller
-      if (_categoryData.category.isEmpty) {
-        if (kDebugMode) {
-          print(_categoryData.category.length);
-          print('category data loaded from db');
-        }
-        refreshCategory(showSnack: false);
-      } else {
-        if (kDebugMode) {
-          print('category data loaded from category data');
-        }
-        //? load data from variable in categoryData
-        _storedCategory.clear();
-        _storedCategory.addAll(_categoryData.category);
-        //? to show full food in UI
-        _myCategory.clear();
-        _myCategory.addAll(_storedCategory);
-      }
-      update();
-    } catch (e) {
-      return;
-    }
-  }
-
-  //? ad refresh fresh data from server
-  refreshCategory({bool showSnack = true}) async {
-    try {
-
-      MyResponse response = await _categoryData.getCategory();
-      if(response.statusCode == 1){
-        if(response.data != null){
-          List<Category>  category = response.data;
-          _storedCategory.clear();
-          _storedCategory.addAll(category);
-          //? to show full food in UI
-          _myCategory.clear();
-          _myCategory.addAll(_storedCategory);
-          //? to hide snack-bar on page starting , because this method is calling page starting
-          if(showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
-          }
-        }
-      }else{
-        //? to hide snack-bar on page starting , because this method is calling page starting
-        if(showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
-        }
-      }
-    } catch (e) {
-      rethrow;
-    } finally {
-      update();
-    }
-  }
-
-  //? to sort food with sorting btn
-  sortFoodBySelectedCategory() {
-    try {
-
-      List<Foods> sortedFoodByCategory = [];
-      //? checking if selected category is COMMON or not selected
-      if (selectedCategory.toUpperCase() == COMMON_CATEGORY.toUpperCase()) {
-        _myAllFoods.clear();
-        _myAllFoods.addAll(_storedAllFoods);
-      } else {
-        for (var element in _storedAllFoods) {
-          //? iterating the food by selected category from dropdown list and saving inside sortedFoodByCategory list
-          if (element.fdCategory == selectedCategory) {
-            sortedFoodByCategory.add(element);
-          }
-        }
-        _myAllFoods.clear();
-        _myAllFoods.addAll(sortedFoodByCategory);
-      }
-      update();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   //? to authorize cashier or waiter
   checkIsCashier() async {
     try {
@@ -277,6 +201,133 @@ class MenuBookController extends GetxController {
     } catch (e) {
       rethrow;
     }
+  }
+
+  sortingFood(List<Foods> myAllFoods) async {
+    try {
+      //? selecting available food only if setAvailableOnlyToggle is true
+      List<Foods> availableFoodOnly = [];
+      await readAvailableOnlyFromHive();
+      if(setAvailableOnlyToggle){
+        for (var element in myAllFoods) {
+          if(element.fdIsAvailable == 'yes'){
+            availableFoodOnly.add(element);
+          }
+        }
+        myAllFoods.clear();
+        myAllFoods.addAll(availableFoodOnly);
+      }
+
+      //? sorting special food
+      for (var element in myAllFoods) {
+            if (element.fdIsSpecial == 'yes') {
+              specialFoods.add(element);
+            }
+          }
+
+      //? sorting food by category
+      for (var element in myAllFoods) {
+            if (keys.contains(element.fdCategory)) {
+              int index = keys.toList().indexOf(element.fdCategory);
+              foodsByCategory[index]['products'] = foodsByCategory[index]['products'] + [element];
+            } else {
+              foodsByCategory.add({
+                'title': element.fdCategory,
+                'products': [element]
+              });
+              keys.add(element.fdCategory);
+            }
+          }
+
+
+      //? Moving "common to last"
+      int idOfCOMMON = keys.toList().indexOf('common');
+      if(idOfCOMMON!=-1){
+            Map<String, dynamic> temp = foodsByCategory[idOfCOMMON];
+            foodsByCategory.removeAt(idOfCOMMON);
+            foodsByCategory.add(temp);
+          }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+  //? to set toggle
+  Future setShowPriceToHive(bool showPrice) async {
+    try {
+      await _myLocalStorage.setData(SET_SHOW_PRICE_IN_HIVE, showPrice);
+      setShowPriceToggle = showPrice;
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> readShowPriceFromHive() async {
+    try {
+      bool result = await _myLocalStorage.readData(SET_SHOW_PRICE_IN_HIVE) ?? false;
+      setShowPriceToggle = result;
+      update();
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? to set toggle
+  Future setShowSpecialToHive(bool showSpecial) async {
+    try {
+      await _myLocalStorage.setData(SET_SHOW_SPECIAL_IN_HIVE, showSpecial);
+      setShowSpecialToggle = showSpecial;
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> readShowSpecialFromHive() async {
+    try {
+      bool result = await _myLocalStorage.readData(SET_SHOW_SPECIAL_IN_HIVE) ?? false;
+      setShowSpecialToggle = result;
+      update();
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? to set toggle
+  Future setAvailableOnlyToHive(bool available) async {
+    try {
+      await _myLocalStorage.setData(SET_AVAILABLE_ONLY_IN_HIVE, available);
+      setAvailableOnlyToggle = available;
+      update();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> readAvailableOnlyFromHive() async {
+    try {
+      bool result = await _myLocalStorage.readData(SET_AVAILABLE_ONLY_IN_HIVE) ?? false;
+      setAvailableOnlyToggle = result;
+      update();
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  shareQrCode() async {
+    await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((image) async {
+      if (image != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final imagePath = await File('${directory.path}/image.png').create();
+        await imagePath.writeAsBytes(image);
+        await Share.shareFiles([imagePath.path]);
+      }
+    });
   }
 
   showLoading() {
