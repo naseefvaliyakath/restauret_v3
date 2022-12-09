@@ -59,7 +59,7 @@ class ReportController extends GetxController {
           List<SettledOrder>  settledOrder = response.data;
           _mySettledItem.clear();
           _mySettledItem.addAll(settledOrder);
-          print('settled orders ${_mySettledItem.length}');
+          // print('settled orders ${_mySettledItem.length}');
           if(showSnack) {
             AppSnackBar.successSnackBar('Success', 'Updated successfully');
           }
