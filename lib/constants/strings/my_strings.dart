@@ -64,4 +64,6 @@ List<int> TABLE_NUMBER = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 List<int> CHAIR_NUMBER = [1,2,3,4,5,6,7,8,9,10];
 
 
+List<String> COMPLAINT_TYPE = ['Enquiry','Complaint','Suggestion','Doubt'];
+
 

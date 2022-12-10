@@ -1,18 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/constants/strings/my_strings.dart';
+import 'package:rest_verision_3/repository/complaint_repository.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../local_storage/local_storage_controller.dart';
+import '../../../models/my_response.dart';
 import '../../../routes/route_helper.dart';
+import '../../../widget/common_widget/snack_bar.dart';
 
 
 
 class SettingsController extends GetxController {
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
+  final ComplaintRepo _complaintRepo = Get.find<ComplaintRepo>();
 
+  final RoundedLoadingButtonController btnControllerAddComplaint = RoundedLoadingButtonController();
 
+  //? to store the selected complaint type name and showing selected room in drop down (in help)
+  List<String> complaintType = COMPLAINT_TYPE;
+  String selectedComplaintType = 'Enquiry';
 
   //?for selecting modes of app from radio buttons (kitchen , waiter , cashier..etc)
   int _groupValueForModes = 1;
@@ -23,14 +33,23 @@ class SettingsController extends GetxController {
   int _appModeNumber = 1;
   int get appModeNumber => _appModeNumber;
 
+  //? credit  amount td
+  late TextEditingController complaintTextTD;
+  //?   description
+  late TextEditingController complaintMobTD;
+
   @override
   void onInit() async {
+    complaintTextTD = TextEditingController();
+    complaintMobTD = TextEditingController();
     await getAppModeNumber();
     super.onInit();
   }
 
   @override
   void onClose() {
+    complaintMobTD.dispose();
+    complaintTextTD.dispose();
   }
 
   //? get value from when user select different modes
@@ -116,6 +135,55 @@ class SettingsController extends GetxController {
     }
   }
 
+
+  //? to show complaint category in drop down
+  updateSelectedComplaintType(String complaintType) {
+    selectedComplaintType = complaintType;
+    update();
+  }
+
+
+  //?insert credit debit
+  Future insertComplaint() async {
+    try {
+      String phoneGet = '';
+      String descriptionGet = '';
+      phoneGet = complaintMobTD.text;
+      descriptionGet = complaintTextTD.text;
+      int phone = int.parse(phoneGet);
+
+      if (descriptionGet.trim() != '' && phoneGet.trim() != '') {
+        MyResponse response = await _complaintRepo.insertComplaint(phone,selectedComplaintType,descriptionGet);
+        if (response.statusCode == 1) {
+          AppSnackBar.successSnackBar('Success', response.message);
+          btnControllerAddComplaint.success();
+        } else {
+          btnControllerAddComplaint.error();
+          AppSnackBar.errorSnackBar('Error', response.message);
+          return;
+        }
+      } else {
+        btnControllerAddComplaint.error();
+        AppSnackBar.errorSnackBar('Field is Empty', 'Pleas enter  name');
+      }
+    }
+    on FormatException {
+      AppSnackBar.errorSnackBar('Error', 'Pleas enter a number');
+    }
+
+    catch (e) {
+      btnControllerAddComplaint.error();
+      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+    }
+    finally {
+      complaintMobTD.text = '';
+      complaintTextTD.text = '';
+      Future.delayed(const Duration(seconds: 1), () {
+        btnControllerAddComplaint.reset();
+      });
+      update();
+    }
+  }
 
 
 }

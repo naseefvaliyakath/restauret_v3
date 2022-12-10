@@ -56,6 +56,9 @@ const String DELETE_CREDIT_DEBIT = 'credit_debit/deleteCreditDebit';
 const String GET_PURCHASE = 'purchase_item/getAllPurchase';
 const String INSERT_PURCHASE = 'purchase_item/addPurchase';
 const String DELETE_PURCHASE = 'purchase_item/deletePurchase';
+const String GET_NOTIFICATION = 'notification/getAllNotification';
+
+const String INSERT_COMPLAINT = 'complaints/addComplaint';
 
 
 

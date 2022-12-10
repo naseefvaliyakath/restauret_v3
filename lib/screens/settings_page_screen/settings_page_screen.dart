@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/alerts/message_alert.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/profile_page/profile_screen.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
+import '../../alerts/add_new_complaint_alert/add_new_complaint_alert.dart';
 import '../../alerts/change_mode_of_alert/change_mode_of_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/settings_page_screen/profile_menu.dart';
@@ -53,7 +55,9 @@ class SettingsPageScreen extends StatelessWidget {
                 child: ProfileMenu(
                   text: "Renew plan",
                   icon: Icons.autorenew,
-                  press: () {},
+                  press: () {
+                    messageAlert(context: context,text: 'Pleas contact on 8111866213',title: 'Renew plan');
+                  },
                 ),
               ),
               Visibility(
@@ -69,7 +73,9 @@ class SettingsPageScreen extends StatelessWidget {
               ProfileMenu(
                 text: "Help Center",
                 icon: Icons.help,
-                press: () {},
+                press: () {
+                  addNewComplaintAlert(context: context);
+                },
               ),
               ProfileMenu(
                 text: "Change mode",

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/models/credit_debit_response/credit_debit.dart';
 import 'package:rest_verision_3/models/credit_debit_response/credit_debit_response.dart';
 import 'package:rest_verision_3/models/credit_user_response/credit_user_response.dart';
+import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../models/my_response.dart';
@@ -103,6 +104,12 @@ class CreditDebitCtrl extends GetxController {
         MyResponse response = await _creditBookRepo.insertCreditDebit(crUserId,creditDebitDec,debitAmount,creditAmount);
         if (response.statusCode == 1) {
           btnControllerAddCreditDebit.success();
+          //? registering controller if its not available in memory
+          if(!Get.isRegistered<CreditUserCTRL>()){
+            Get.lazyPut(() => CreditUserCTRL());
+          }
+          //? to refresh total amount in user tile
+          Get.find<CreditUserCTRL>().refreshCreditUser(showSnack: false);
           getAllCreditDebit(crUserId: crUserId);
         } else {
           btnControllerAddCreditDebit.error();

@@ -275,7 +275,7 @@ class OrderSettleScreenInBilling extends StatelessWidget {
                             FocusScope.of(context).requestFocus(FocusNode());
                           }
                         //? result is true if successfully settled
-                        bool result =  await ctrl.insertSettledBill(context);
+                        bool result =  await ctrl.insertSettledBill(context,settleOnly:false);
                         if(result){
                           Get.find<PrintCTRL>().printInVoice(
                             billingItems: ctrl.billingItems ?? [],

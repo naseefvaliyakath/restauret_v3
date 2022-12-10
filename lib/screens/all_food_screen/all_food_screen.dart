@@ -45,15 +45,14 @@ class AllFoodScreen extends StatelessWidget {
                         ),
                         titleTextStyle: TextStyle(fontSize: 26.sp, color: Colors.black, fontWeight: FontWeight.w600),
                         actions: [
-                          Badge(
-                            badgeColor: Colors.red,
-                            child: Container(
-                                margin: EdgeInsets.only(right: 10.w),
-                                child: Icon(
-                                  FontAwesomeIcons.bell,
-                                  size: 24.sp,
-                                )),
-                          ),
+                          IconButton(
+                              onPressed: () {
+                                Get.toNamed(RouteHelper.getNotificationScreen());
+                              },
+                              icon: Icon(
+                                FontAwesomeIcons.bell,
+                                size: 24.sp,
+                              )),
                         ],
                         leading: BackButton(
                           onPressed: () {

@@ -44,10 +44,14 @@ class ProfilePageScreen extends StatelessWidget {
                           const HeadingRichText(name: 'My Account'),
                           Padding(
                             padding:  EdgeInsets.only(right:10.sp),
-                            child: Icon(
-                              FontAwesomeIcons.bell,
-                              size: 24.sp,
-                            ),
+                            child: IconButton(
+                                onPressed: () {
+                                  Get.toNamed(RouteHelper.getNotificationScreen());
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.bell,
+                                  size: 24.sp,
+                                )),
                           ),
                         ],
                       ),

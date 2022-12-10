@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_verision_3/screens/purchase_book_screen/controller/purchase_book_controller.dart';
@@ -9,6 +11,7 @@ import '../../alerts/add_credit_or_debit_alert.dart';
 import '../../alerts/add_new_purchase_alert/add_new_purchase_alert.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
+import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/loading_page.dart';
@@ -38,10 +41,14 @@ class PurchaseBookScreen extends StatelessWidget {
           actions: [
             Container(
                 margin: EdgeInsets.only(right: 10.w),
-                child: Icon(
-                  FontAwesomeIcons.bell,
-                  size: 24.sp,
-                )),
+                child: IconButton(
+                    onPressed: () {
+                      Get.toNamed(RouteHelper.getNotificationScreen());
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.bell,
+                      size: 24.sp,
+                    ))),
             10.horizontalSpace
           ],
         ),

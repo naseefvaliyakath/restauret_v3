@@ -25,8 +25,6 @@ class ReportController extends GetxController {
   bool isLoading = false;
 
 
-
-
   //? all settled order
   final List<SettledOrder> _mySettledItem = [];
 
@@ -36,7 +34,7 @@ class ReportController extends GetxController {
   @override
   void onInit() async {
     checkInternetConnection();
-    refreshSettledOrder();
+    refreshSettledOrder(showSnack: false);
     super.onInit();
   }
 
@@ -44,7 +42,6 @@ class ReportController extends GetxController {
   void onClose() async {
     super.onInit();
   }
-
 
 
   //? ad refresh fresh data from server

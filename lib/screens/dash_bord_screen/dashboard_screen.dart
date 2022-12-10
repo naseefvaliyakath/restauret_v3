@@ -38,7 +38,9 @@ class DashBordScreen extends StatelessWidget {
               HeadingRichText(name: Get.find<StartupController>().shopName),
               //notification icon
               NotificationIcon(
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(RouteHelper.getNotificationScreen());
+                },
               )
             ],
           ),

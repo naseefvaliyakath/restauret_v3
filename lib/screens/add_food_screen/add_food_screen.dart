@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
+import '../../routes/route_helper.dart';
 import '../../widget/common_widget/add_category_card.dart';
 import '../../widget/common_widget/add_catogory_card_text_field.dart';
 import '../../widget/common_widget/buttons/round_border_button.dart';
@@ -86,7 +87,9 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                       ),
                                     ),
                                     //? notification icon
-                                    NotificationIcon(onTap: () {}),
+                                    NotificationIcon(onTap: () {
+                                      Get.toNamed(RouteHelper.getNotificationScreen());
+                                    }),
                                   ],
                                 ),
                               ),

@@ -7,6 +7,8 @@ import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart'
 import 'package:rest_verision_3/screens/login_screen/login_screen.dart';
 import 'package:rest_verision_3/screens/menu_book_screen/binding/menu_book_binding.dart';
 import 'package:rest_verision_3/screens/menu_book_screen/menu_setup_screen.dart';
+import 'package:rest_verision_3/screens/notification_screen/binding/notification_binding.dart';
+import 'package:rest_verision_3/screens/notification_screen/notification_screen.dart';
 import 'package:rest_verision_3/screens/report_screen/binding/report_binding.dart';
 import 'package:rest_verision_3/screens/report_screen/report_screen.dart';
 import 'package:rest_verision_3/screens/update_food_screen/update_food_screen.dart';
@@ -47,6 +49,7 @@ class RouteHelper {
   static const String menuBookScreen = '/menuBookScreen';
   static const String menuSetupScreen = '/menuSetupScreen';
   static const String reportScreen = '/reportScreen';
+  static const String notificationScreen = '/notificationScreen';
 
   static String getInitial() => initial;
 
@@ -79,6 +82,8 @@ class RouteHelper {
   static String getMenuSetupScreen() => menuSetupScreen;
 
   static String getReportScreen() => reportScreen;
+
+  static String getNotificationScreen() => notificationScreen;
 
 
 
@@ -182,6 +187,12 @@ class RouteHelper {
         name: reportScreen,
         page: () => const ReportScreen(),
         binding: ReportBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: notificationScreen,
+        page: () => const NotificationScreen(),
+        binding: NotificationBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
   ];

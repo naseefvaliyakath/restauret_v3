@@ -57,6 +57,7 @@ class BillingScreenController extends GetxController {
   //? button controller
   final RoundedLoadingButtonController btnControllerKot = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerSettle = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController btnControllerSettleAndPrint = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerHold = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerUpdateKot = RoundedLoadingButtonController();
 
@@ -619,14 +620,22 @@ class BillingScreenController extends GetxController {
 
   //? insert settled bill to dB
   //? OK
-  Future<bool> insertSettledBill(context) async {
+  Future<bool> insertSettledBill(context,{bool settleOnly = true}) async {
+    RoundedLoadingButtonController btnCtrl = RoundedLoadingButtonController();
     try {
+
+      if(settleOnly){
+        btnCtrl = btnControllerSettle;
+      }
+      else{
+        btnCtrl = btnControllerSettleAndPrint;
+      }
       //? check bill or grand total is empty
       if (_billingItems.isEmpty &&
           (settleGrandTotalCtrl.value.text == '0.0' ||
               settleGrandTotalCtrl.value.text == '0' ||
               settleGrandTotalCtrl.value.text == '')) {
-        btnControllerSettle.error();
+        btnCtrl.error();
         Navigator.pop(context);
         AppSnackBar.errorSnackBar('Error', 'No bill added');
         return false;
@@ -654,11 +663,11 @@ class BillingScreenController extends GetxController {
 
         FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
         if (parsedResponse.error ?? true) {
-          btnControllerSettle.error();
+          btnCtrl.error();
           AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
           return false;
         } else {
-          btnControllerSettle.success();
+          btnCtrl.success();
           //? isClickedSettle will make true to avoid add new items and restrict btn clicks after settled the order
           isClickedSettle.value = true;
           AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
@@ -666,16 +675,17 @@ class BillingScreenController extends GetxController {
         }
       }
     } on DioError catch (e) {
-      btnControllerSettle.error();
+      btnCtrl.error();
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
       return false;
     } catch (e) {
-      btnControllerSettle.error();
+      btnCtrl.error();
       return false;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
-        btnControllerSettle.reset();
+        btnCtrl.reset();
       });
+
     }
   }
 

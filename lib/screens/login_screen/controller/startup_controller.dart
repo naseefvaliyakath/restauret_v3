@@ -70,24 +70,24 @@ class StartupController extends GetxController {
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
     checkNoticeAndUpdate();
-    _initBtPrinter();
+    //_initBtPrinter();
     super.onInit();
   }
 
-  _initBtPrinter() async {
-    //Connect Bt printer
-    IosWinPrint iOSWinPrintInstance = IosWinPrint();
-    await iOSWinPrintInstance.getDevices();
-
-    BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
-    if(bluetoothPrinter!=null){
-      await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
-    }else{
-      if (kDebugMode) {
-        print('No device selected');
-      }
-    }
-  }
+  // _initBtPrinter() async {
+  //   //Connect Bt printer
+  //   IosWinPrint iOSWinPrintInstance = IosWinPrint();
+  //   await iOSWinPrintInstance.getDevices();
+  //
+  //   BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
+  //   if(bluetoothPrinter!=null){
+  //     await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
+  //   }else{
+  //     if (kDebugMode) {
+  //       print('No device selected');
+  //     }
+  //   }
+  // }
 
   loginToApp() async {
     try {

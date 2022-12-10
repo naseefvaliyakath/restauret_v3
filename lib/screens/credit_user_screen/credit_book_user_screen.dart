@@ -86,8 +86,8 @@ class CreditBookUserScreen extends StatelessWidget {
                                   },
                                   avatarString: ctrl.myCreditUser[index].crUserName?[0] ?? 'O',
                                   name: ctrl.myCreditUser[index].crUserName ?? 'error',
-                                  amount: '',
-                                  color: AppColors.mainColor,
+                                  amount: ctrl.myCreditUser[index].total.toString() ?? '0',
+                                  color: (ctrl.myCreditUser[index].total ?? 0) > 0 ? Colors.green : Colors.red,
                                 );
                               },
                               separatorBuilder: (context, index) => const Divider(),

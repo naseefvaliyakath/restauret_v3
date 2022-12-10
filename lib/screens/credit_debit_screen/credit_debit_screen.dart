@@ -10,9 +10,9 @@ import 'package:rest_verision_3/widget/common_widget/loading_page.dart';
 import '../../alerts/add_credit_or_debit_alert.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
+import '../../routes/route_helper.dart';
 import '../../widget/common_widget/transaction_tile.dart';
 import 'controller/credit_debit_ctrl.dart';
-
 
 class CreditDebitScreen extends StatelessWidget {
   const CreditDebitScreen({Key? key}) : super(key: key);
@@ -36,10 +36,14 @@ class CreditDebitScreen extends StatelessWidget {
             actions: [
               Container(
                   margin: EdgeInsets.only(right: 10.w),
-                  child: Icon(
-                    FontAwesomeIcons.bell,
-                    size: 24.sp,
-                  )),
+                  child: IconButton(
+                      onPressed: () {
+                        Get.toNamed(RouteHelper.getNotificationScreen());
+                      },
+                      icon: Icon(
+                        FontAwesomeIcons.bell,
+                        size: 24.sp,
+                      ))),
               10.horizontalSpace
             ],
           ),
@@ -50,7 +54,6 @@ class CreditDebitScreen extends StatelessWidget {
                 BoxShadow(color: Colors.grey, blurRadius: 8, spreadRadius: 4, offset: Offset(0, 10)),
               ],
             ),
-
             height: 60.sp,
             child: Row(
               children: [
@@ -61,70 +64,77 @@ class CreditDebitScreen extends StatelessWidget {
                           text: 'CREDIT',
                           color: AppColors.mainColor_2,
                           onTap: () {
-                            addCreditOrDebit(context,'CREDIT');
+                            addCreditOrDebit(context, 'CREDIT');
                           },
                         ))),
                 Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 5.sp),
-                      child: AppMiniButton(
-                        text: 'DEBIT',
-                        color: AppColors.mainColor,
-                        onTap: () {
-                          addCreditOrDebit(context,'DEBIT');
-                        },
-                      ),
-                    )),
+                  padding: EdgeInsets.only(left: 25.sp, right: 25.sp, bottom: 5.sp),
+                  child: AppMiniButton(
+                    text: 'DEBIT',
+                    color: AppColors.mainColor,
+                    onTap: () {
+                      addCreditOrDebit(context, 'DEBIT');
+                    },
+                  ),
+                )),
               ],
             ),
           ),
-          body: ctrl.isLoading ? const MyLoading() :  Column(
-            children: [
-              Card(
-                child: Column(
+          body: ctrl.isLoading
+              ? const MyLoading()
+              : Column(
                   children: [
-                    10.verticalSpace,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.currency_rupee, size: 25.sp, color: Colors.deepPurple[200]),
-                        Text(ctrl.calculateTotal().toString(), style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold)),
-                      ],
+                    Card(
+                      child: Column(
+                        children: [
+                          10.verticalSpace,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.currency_rupee, size: 25.sp, color: Colors.deepPurple[200]),
+                              Text(ctrl.calculateTotal().toString(),
+                                  style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          5.verticalSpace,
+                          Text("You will get Rs: ${ctrl.calculateTotal().toString()}",
+                              style: TextStyle(fontSize: 15.sp)),
+                          10.verticalSpace,
+                        ],
+                      ),
                     ),
-                    5.verticalSpace,
-                    Text("You will get Rs: ${ctrl.calculateTotal().toString()}", style: TextStyle(fontSize: 15.sp)),
-                    10.verticalSpace,
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return TransactionTile(
-                        leading: Icons.delete_forever_rounded,
-                        titleText: ctrl.allCreditDebit[index].description ?? '',
-                        subTitle: DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.allCreditDebit[index].createdAt ?? DateTime.now()),
-                        color: ctrl.allCreditDebit[index].debitAmount == 0  ? Colors.green : Colors.redAccent,
-                        trailingText: (ctrl.allCreditDebit[index].debitAmount ?? 0) == 0 ? (ctrl.allCreditDebit[index].creditAmount ?? 0).toString() : (ctrl.allCreditDebit[index].debitAmount ?? 0).toString(),
-                        leadingColor: Colors.redAccent,
-                        leadingOnTap: (){
-                          twoFunctionAlert(
-                              context: context,
-                              onTap: () {
-                                ctrl.deleteCreditDebit(ctrl.allCreditDebit[index].crUserId ?? -1,
-                                    ctrl.allCreditDebit[index].creditDebitId ?? -1);
+                    Expanded(
+                      child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            return TransactionTile(
+                              leading: Icons.delete_forever_rounded,
+                              titleText: ctrl.allCreditDebit[index].description ?? '',
+                              subTitle: DateFormat('dd-MM-yyyy  hh:mm aa')
+                                  .format(ctrl.allCreditDebit[index].createdAt ?? DateTime.now()),
+                              color: ctrl.allCreditDebit[index].debitAmount == 0 ? Colors.green : Colors.redAccent,
+                              trailingText: (ctrl.allCreditDebit[index].debitAmount ?? 0) == 0
+                                  ? (ctrl.allCreditDebit[index].creditAmount ?? 0).toString()
+                                  : (ctrl.allCreditDebit[index].debitAmount ?? 0).toString(),
+                              leadingColor: Colors.redAccent,
+                              leadingOnTap: () {
+                                twoFunctionAlert(
+                                    context: context,
+                                    onTap: () {
+                                      ctrl.deleteCreditDebit(ctrl.allCreditDebit[index].crUserId ?? -1,
+                                          ctrl.allCreditDebit[index].creditDebitId ?? -1);
+                                    },
+                                    onCancelTap: () {},
+                                    title: 'Delete this user?',
+                                    subTitle: 'Do you want to delete this user');
                               },
-                              onCancelTap: () {},
-                              title: 'Delete this user?',
-                              subTitle: 'Do you want to delete this user');
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemCount: ctrl.allCreditDebit.length),
-              ),
-            ],
-          ));
+                            );
+                          },
+                          separatorBuilder: (context, index) => const Divider(),
+                          itemCount: ctrl.allCreditDebit.length),
+                    ),
+                  ],
+                ));
     });
   }
 }

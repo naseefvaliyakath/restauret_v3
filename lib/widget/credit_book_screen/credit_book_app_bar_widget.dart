@@ -7,6 +7,7 @@ import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_use
 
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
+import '../../routes/route_helper.dart';
 import '../../screens/all_food_screen/controller/all_food_controller.dart';
 import '../../screens/today_food_screen/controller/today_food_controller.dart';
 import '../common_widget/common_text/heading_rich_text.dart';
@@ -36,7 +37,9 @@ class CreditBookAppBar extends StatelessWidget {
               ),
               HeadingRichText(name: title),
               NotificationIcon(
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(RouteHelper.getNotificationScreen());
+                },
               ),
             ],
           ),

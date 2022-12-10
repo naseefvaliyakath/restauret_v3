@@ -14,6 +14,9 @@ class CreditUser{
   @JsonKey(name : "fdShopId")
   int? fdShopId;
 
+  @JsonKey(name : "total")
+  num? total;
+
   @JsonKey(name : "createdAt")
   String? createdAt;
 
@@ -24,6 +27,7 @@ class CreditUser{
       this.crUserId,
       this.crUserName,
       this.fdShopId,
+      this.total,
       this.createdAt,
 ); // DateTime get getPublishedAtDate => DateTime.tryParse(publishedAt);
 
