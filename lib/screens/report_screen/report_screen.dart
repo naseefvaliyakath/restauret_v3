@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -36,21 +38,19 @@ class ReportScreen extends StatelessWidget {
         ],
       ),
       body: GetBuilder<ReportController>(builder: (ctrl) {
-
         int totalOrder = 0;
         num totalCash = 0;
-        Map<String, num> ordersByTypeMap = {};
+        Map<String, Map<String, num>> ordersByTypeMap = {};
         List<OrdersByType> ordersByTypeList = [];
 
         Map<String, Map<String, num>> sortByFoodMap = {};
         List<OrdersByFoodName> sortByFoodList = [];
 
-        Map<String, num> ordersByPaymentTypeMap = {};
+        Map<String, Map<String, num>> ordersByPaymentTypeMap = {};
         List<OrdersByPaymentMethod> ordersByPaymentTypeList = [];
 
-        Map<String, num> ordersByOnlineAppMap = {};
+        Map<String, Map<String, num>> ordersByOnlineAppMap = {};
         List<OrdersByOnlineApp> ordersByOnlineAppList = [];
-
 
         for (var element in ctrl.mySettledItem) {
           totalOrder += 1;
@@ -59,25 +59,31 @@ class ReportScreen extends StatelessWidget {
           // ordersByType
           if (element.fdOrderType != null) {
             if (ordersByTypeMap[element.fdOrderType] == null) {
-              ordersByTypeMap[element.fdOrderType!] = 0;
+              ordersByTypeMap[element.fdOrderType!] = {'orderCount': 0, 'total': 0};
             }
-            ordersByTypeMap[element.fdOrderType!] = ordersByTypeMap[element.fdOrderType]! + 1;
+            num orderCount = (ordersByTypeMap[element.fdOrderType!]!['orderCount'])! + 1;
+            num total = (ordersByTypeMap[element.fdOrderType!]!['total'])! + (element.grandTotal!);
+            ordersByTypeMap[element.fdOrderType!] = {'orderCount': orderCount, 'total': total};
           }
 
           //GroupBypayment type
           if (element.paymentType != null) {
             if (ordersByPaymentTypeMap[element.paymentType] == null) {
-              ordersByPaymentTypeMap[element.paymentType!] = 0;
+              ordersByPaymentTypeMap[element.paymentType!] = {'orderCount': 0, 'total': 0};
             }
-            ordersByPaymentTypeMap[element.paymentType!] = ordersByPaymentTypeMap[element.paymentType]! + 1;
+            num orderCount = (ordersByPaymentTypeMap[element.paymentType!]!['orderCount'])! + 1;
+            num total = (ordersByPaymentTypeMap[element.paymentType!]!['total'])! + (element.grandTotal!);
+            ordersByPaymentTypeMap[element.paymentType!] = {'orderCount': orderCount, 'total': total};
           }
 
           //Group by online app
           if (element.fdOnlineApp != null) {
             if (ordersByOnlineAppMap[element.fdOnlineApp] == null) {
-              ordersByOnlineAppMap[element.fdOnlineApp!] = 0;
+              ordersByOnlineAppMap[element.fdOnlineApp!] = {'orderCount': 0, 'total': 0};
             }
-            ordersByOnlineAppMap[element.fdOnlineApp!] = ordersByOnlineAppMap[element.fdOnlineApp]! + 1;
+            num orderCount = (ordersByOnlineAppMap[element.fdOnlineApp!]!['orderCount'])! + 1;
+            num total = (ordersByOnlineAppMap[element.fdOnlineApp!]!['total'])! + (element.grandTotal!);
+            ordersByOnlineAppMap[element.fdOnlineApp!] = {'orderCount': orderCount, 'total': total};
           }
 
           //sort by food name
@@ -87,30 +93,49 @@ class ReportScreen extends StatelessWidget {
                 continue;
               }
               if (sortByFoodMap[element.name] == null) {
-                sortByFoodMap[element.name!] = {'qty': 0, 'total': 0};
+                sortByFoodMap[element.name!] = {'orderCount': 0, 'total': 0};
               }
-              num qty = (sortByFoodMap[element.name!]!['qty'])! + element.qnt!;
+              num orderCount = (sortByFoodMap[element.name!]!['orderCount'])! + element.qnt!;
               num total = (sortByFoodMap[element.name!]!['total'])! + (element.price! * element.qnt!);
-              sortByFoodMap[element.name!] = {'qty': qty, 'total': total};
+              sortByFoodMap[element.name!] = {'orderCount': orderCount, 'total': total};
             }
           }
         }
 
         ordersByTypeMap.forEach((key, value) {
-          ordersByTypeList.add(OrdersByType(type: key, orderCount: value));
+          ordersByTypeList.add(OrdersByType(type: key, orderCount: value['orderCount'] ?? 0, priceTotal: value['total'] ?? 0));
         });
 
         ordersByPaymentTypeMap.forEach((key, value) {
-          ordersByPaymentTypeList.add(OrdersByPaymentMethod(paymentMethod: key, orderCount: value));
+          ordersByPaymentTypeList.add(OrdersByPaymentMethod(paymentMethod: key, orderCount: value['orderCount'] ?? 0, priceTotal: value['total'] ?? 0));
         });
 
         ordersByOnlineAppMap.forEach((key, value) {
-          ordersByOnlineAppList.add(OrdersByOnlineApp(appName: key, orderCount: value));
+          ordersByOnlineAppList.add(OrdersByOnlineApp(appName: key, orderCount: value['orderCount'] ?? 0, priceTotal: value['total'] ?? 0));
         });
 
         sortByFoodMap.forEach((key, value) {
-          sortByFoodList.add(OrdersByFoodName(title: key, qtyTotal: value['qty']??0,priceTotal: value['total']??0));
+          sortByFoodList.add(OrdersByFoodName(title: key, qtyTotal: value['orderCount'] ?? 0, priceTotal: value['total'] ?? 0));
         });
+
+        Color getColorForBarChart({required int index}) {
+          List<Color> color = [
+            Colors.lightBlue,
+            Colors.teal,
+            Colors.deepPurpleAccent,
+            Colors.pinkAccent,
+            Colors.cyan,
+            Colors.amberAccent,
+            Colors.greenAccent,
+            Colors.purpleAccent,
+            Colors.brown,
+            Colors.orange,
+          ];
+          if (index >= color.length) {
+            return Colors.deepPurpleAccent;
+          }
+          return color[index];
+        }
 
         return SafeArea(
           child: ctrl.isLoading
@@ -142,64 +167,159 @@ class ReportScreen extends StatelessWidget {
                         ListTile(
                           title: Text('totalCash : $totalCash'),
                         ),
-                        SfCartesianChart(
-                          primaryXAxis: CategoryAxis(),
-                          title: ChartTitle(text: 'ORDERS BY TYPE'),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: [
-                            StackedColumnSeries(
-                                dataSource: ordersByTypeList,
-                                xValueMapper: (OrdersByType data, _) => data.type,
-                                yValueMapper: (OrdersByType data, _) => data.orderCount),
-                          ],
-                        ),
-                        ListTile(
-                          title: Text('Qty',style: TextStyle(fontWeight: FontWeight.bold),),
-                          leading: Text('Title',style: TextStyle(fontWeight: FontWeight.bold)),
-                          trailing: Text('Total',style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        Column(
-                            children: List.generate(sortByFoodList.length, (index) {
-                          return ListTile(
-                            title: Text(sortByFoodList[index].title),
-                            leading: Text('${sortByFoodList[index].qtyTotal}'),
-                            trailing: Text('${sortByFoodList[index].priceTotal}'),
-                          );
-                        })),
-                        SfCircularChart(
-                          // primaryXAxis: CategoryAxis(),
-                          title: ChartTitle(text: 'ORDERS BY PAYMENT TYPE'),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          legend: Legend(isVisible: true,position: LegendPosition.bottom,overflowMode: LegendItemOverflowMode.wrap),
-                          series: [
-                            PieSeries<OrdersByPaymentMethod, String>(
-                              dataSource: ordersByPaymentTypeList,
-                              xValueMapper: (OrdersByPaymentMethod data, _) => data.paymentMethod,
-                              yValueMapper: (OrdersByPaymentMethod data, _) => data.orderCount,
-                              // radius: '60%',
-                              dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
-                              ),
+                        if(ctrl.mySettledItem.isNotEmpty)...[
+                          Card(
+                            child: Column(
+                              children: [
+                                SfCartesianChart(
+                                  primaryXAxis: CategoryAxis(
+                                    axisLabelFormatter: (axisLabelRenderArgs) {
+                                      return ChartAxisLabel('${axisLabelRenderArgs.text}', TextStyle());
+                                    },
+                                  ),
+                                  title: ChartTitle(text: 'ORDERS BY TYPE'),
+                                  tooltipBehavior: TooltipBehavior(enable: true),
+                                  series: [
+                                    StackedColumnSeries(
+                                        pointColorMapper: (datum, index) {
+                                          return getColorForBarChart(index: index);
+                                        },
+                                        dataSource: ordersByTypeList,
+                                        xValueMapper: (OrdersByType data, _) => data.type,
+                                        yValueMapper: (OrdersByType data, _) => data.orderCount),
+                                  ],
+                                ),
+                                const ListTile(
+                                  dense: true,
+                                  title: Text('Order count', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  leading: Text('Order Type', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  trailing: Text('Revenue', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                Column(
+                                  children: List.generate(ordersByTypeList.length, (index) {
+                                    return ListTile(
+                                      dense: true,
+                                      leading: Text(ordersByTypeList[index].type),
+                                      title: Text('    ${ordersByTypeList[index].orderCount}'),
+                                      trailing: Text('${ordersByTypeList[index].priceTotal}'),
+                                    );
+                                  }),
+                                )
+                              ],
                             ),
-                          ],
-                        ),
-                        SfCircularChart(
-                          // primaryXAxis: CategoryAxis(),
-                          title: ChartTitle(text: 'ORDERS BY ONLINE APP'),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          legend: Legend(isVisible: true,position: LegendPosition.bottom,overflowMode: LegendItemOverflowMode.wrap),
-                          series: [
-                            PieSeries<OrdersByOnlineApp, String>(
-                              dataSource: ordersByOnlineAppList,
-                              xValueMapper: (OrdersByOnlineApp data, _) => data.appName,
-                              yValueMapper: (OrdersByOnlineApp data, _) => data.orderCount,
-                              // radius: '60%',
-                              dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
-                              ),
+                          ),
+                          Card(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10),
+                                SfCircularChart(
+                                  title: ChartTitle(text: 'Orders by payment method'),
+                                  // backgroundColor: Colors.red,
+                                  // margin: EdgeInsets.zero,
+                                  tooltipBehavior: TooltipBehavior(enable: true),
+                                  legend: Legend(
+                                    isVisible: true,
+                                    position: LegendPosition.bottom,
+                                    overflowMode: LegendItemOverflowMode.wrap,
+                                  ),
+                                  series: [
+                                    PieSeries<OrdersByPaymentMethod, String>(
+                                      dataSource: ordersByPaymentTypeList,
+                                      xValueMapper: (OrdersByPaymentMethod data, _) => data.paymentMethod,
+                                      yValueMapper: (OrdersByPaymentMethod data, _) => data.orderCount,
+                                      // radius: '70%',
+                                      dataLabelSettings: const DataLabelSettings(
+                                        isVisible: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const ListTile(
+                                  dense: true,
+                                  title: Text('Order count', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  leading: Text('Payment', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  trailing: Text('Revenue', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                Column(
+                                  children: List.generate(ordersByPaymentTypeList.length, (index) {
+                                    return ListTile(
+                                      dense: true,
+                                      leading: Text(ordersByPaymentTypeList[index].paymentMethod),
+                                      title: Text(
+                                        '    ${ordersByPaymentTypeList[index].orderCount}',
+                                      ),
+                                      trailing: Text('${ordersByPaymentTypeList[index].priceTotal}'),
+                                    );
+                                  }),
+                                )
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          Card(
+                            child: Column(
+                              children: [
+                                SfCircularChart(
+                                  // primaryXAxis: CategoryAxis(),
+                                  title: ChartTitle(text: 'ORDERS BY ONLINE APP'),
+                                  tooltipBehavior: TooltipBehavior(enable: true),
+                                  legend: Legend(isVisible: true, position: LegendPosition.bottom, overflowMode: LegendItemOverflowMode.wrap),
+                                  series: [
+                                    PieSeries<OrdersByOnlineApp, String>(
+                                      dataSource: ordersByOnlineAppList,
+                                      xValueMapper: (OrdersByOnlineApp data, _) => data.appName,
+                                      yValueMapper: (OrdersByOnlineApp data, _) => data.orderCount,
+                                      // radius: '60%',
+                                      dataLabelSettings: DataLabelSettings(
+                                        isVisible: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const ListTile(
+                                  dense: true,
+                                  title: Text('Order count', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  leading: Text('App Name', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  trailing: Text('Revenue', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                Column(
+                                  children: List.generate(ordersByOnlineAppList.length, (index) {
+                                    return ListTile(
+                                      dense: true,
+                                      leading: Text(ordersByOnlineAppList[index].appName),
+                                      title: Text(
+                                        '    ${ordersByOnlineAppList[index].orderCount}',
+                                      ),
+                                      trailing: Text('${ordersByOnlineAppList[index].priceTotal}'),
+                                    );
+                                  }),
+                                )
+                              ],
+                            ),
+                          ),
+                          Card(
+                            child: Column(
+                              children: [
+                                Text('Orders By product'),
+                                ListTile(
+                                  title: Text(
+                                    'Qty',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  leading: Text('Title', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  trailing: Text('Revenue', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                Column(
+                                    children: List.generate(sortByFoodList.length, (index) {
+                                      return ListTile(
+                                        title: Text(sortByFoodList[index].title),
+                                        leading: Text('${sortByFoodList[index].qtyTotal}'),
+                                        trailing: Text('${sortByFoodList[index].priceTotal}'),
+                                      );
+                                    })),
+                              ],
+                            ),
+                          ),
+                        ],
                         SizedBox(height: 250)
                       ],
                     ),
@@ -212,24 +332,27 @@ class ReportScreen extends StatelessWidget {
 }
 
 class OrdersByType {
-  OrdersByType({required this.type, required this.orderCount});
+  OrdersByType({required this.type, required this.orderCount, required this.priceTotal});
 
   final String type;
   final num orderCount;
+  final num priceTotal;
 }
 
 class OrdersByPaymentMethod {
-  OrdersByPaymentMethod({required this.paymentMethod, required this.orderCount});
+  OrdersByPaymentMethod({required this.priceTotal, required this.paymentMethod, required this.orderCount});
 
   final String paymentMethod;
   final num orderCount;
+  final num priceTotal;
 }
 
 class OrdersByOnlineApp {
-  OrdersByOnlineApp({required this.appName, required this.orderCount});
+  OrdersByOnlineApp({required this.appName, required this.orderCount, required this.priceTotal});
 
   final String appName;
   final num orderCount;
+  final num priceTotal;
 }
 
 class OrdersByFoodName {
