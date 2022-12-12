@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
@@ -54,8 +53,9 @@ class MenuBookController extends GetxController {
 
   //? to authorize cashier and waiter
   bool isCashier = false;
-
-  String menuBookUrl = 'https://mobizate.com/';
+  int shopId = Get.find<StartupController>().SHOPE_ID;
+  String shopName = Get.find<StartupController>().shopName;
+  String menuBookUrl = 'https://mobizate.com/restaurentmenu/';
 
 
   //? to set toggle btn as per saved data
@@ -328,6 +328,13 @@ class MenuBookController extends GetxController {
         await Share.shareFiles([imagePath.path]);
       }
     });
+  }
+
+  String menuBookUrlGenerated(){
+    String shopNameNoSpace = shopName.replaceAll(' ', '');
+    String url = '$menuBookUrl?para1=$shopId&para2=$setShowSpecialToggle&para3=$setShowSpecialToggle&para4=$setAvailableOnlyToggle&para5=$shopNameNoSpace';
+    print(url);
+    return url;
   }
 
   showLoading() {

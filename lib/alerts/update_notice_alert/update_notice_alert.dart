@@ -1,19 +1,12 @@
-
-
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
-import 'package:rest_verision_3/widget/common_widget/common_text/mid_text.dart';
-import 'package:store_redirect/store_redirect.dart';
 import '../../models/notice_and_update/notice_and_update.dart';
 import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
+import 'package:open_store/open_store.dart';
+
 
 void showKNoticeUpdateAlert({
   required String message,
@@ -50,8 +43,12 @@ void showKNoticeUpdateAlert({
                   if(Platform.isWindows){
                     //? give exe download link
                   }
-                  StoreRedirect.redirect(androidAppId: "com.iyaffle.rangoli",
-                      iOSAppId: "585027354");
+                  OpenStore.instance.open(
+                      appStoreId: '284815942', // AppStore id of your app for iOS
+                      appStoreIdMacOS: '284815942', // AppStore id of your app for MacOS (appStoreId used as default)
+                      androidAppBundleId: 'com.google.android.googlequicksearchbox', // Android app bundle package name
+                      windowsProductId: '9NZTWSQNTD0S' // Microsoft store id for Widnows apps
+                  );
                 }
                 else{
                   Navigator.pop(context);

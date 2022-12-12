@@ -4,6 +4,8 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
+  flutter_pos_printer_platform
+  network_info_plus_windows
   share_plus
   url_launcher_windows
 )
