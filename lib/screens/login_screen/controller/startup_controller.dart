@@ -33,6 +33,11 @@ class StartupController extends GetxController {
 
   int get appModeNumber => _appModeNumber;
 
+  //? application type for Rs 300 and Rs 380
+  //? 1 full feature app
+  //? 2 no waiter and kitchen mode
+  int applicationPlan = 2;
+
   int SHOPE_ID = -1;
   String shopName = 'Restaurant';
   int shopNumber = 0000;
@@ -70,24 +75,24 @@ class StartupController extends GetxController {
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
     checkNoticeAndUpdate();
-    _initBtPrinter();
+   // _initBtPrinter();
     super.onInit();
   }
 
-  _initBtPrinter() async {
-    //Connect Bt printer
-    IosWinPrint iOSWinPrintInstance = IosWinPrint();
-    await iOSWinPrintInstance.getDevices();
-
-    BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
-    if(bluetoothPrinter!=null){
-      await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
-    }else{
-      if (kDebugMode) {
-        print('No device selected');
-      }
-    }
-  }
+  // _initBtPrinter() async {
+  //   //Connect Bt printer
+  //   IosWinPrint iOSWinPrintInstance = IosWinPrint();
+  //   await iOSWinPrintInstance.getDevices();
+  //
+  //   BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
+  //   if(bluetoothPrinter!=null){
+  //     await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
+  //   }else{
+  //     if (kDebugMode) {
+  //       print('No device selected');
+  //     }
+  //   }
+  // }
 
   loginToApp() async {
     try {
@@ -163,6 +168,7 @@ class StartupController extends GetxController {
       String shopName_ = shop.shopName ?? 'Restaurant';
       int shopNumber_ = shop.shopNumber ?? 0000;
       String shopAddr_ = shop.shopAddr ?? 'error';
+      int applicationPlan_ = shop.applicationPlan ?? 2;
       String subcId_ = shop.subcId ?? '0000';
       String subcIdStatus_ = shop.subcIdStatus ?? 'Deactivate';
       DateTime expiryDate_ = shop.expiryDate ?? DateTime.now();
@@ -173,6 +179,7 @@ class StartupController extends GetxController {
         'shopName': shopName_,
         'shopNumber': shopNumber_,
         'shopAddr': shopAddr_,
+        'applicationPlan': applicationPlan_,
         'subcId': subcId_,
         'subcIdStatus': subcIdStatus_,
         'expiryDate': expiryDate_,
@@ -186,6 +193,7 @@ class StartupController extends GetxController {
         shopName = shopDetails['shopName'] ?? 'Restaurant';
         shopNumber = shopDetails['shopNumber'] ?? 0000;
         shopAddr = shopDetails['shopAddr'] ?? 'error';
+        applicationPlan = shopDetails['applicationPlan'] ?? 2;
         subcId = shopDetails['subcId'] ?? '0000';
         subcIdStatus = shopDetails['subcIdStatus'] ?? 'Deactivate';
         expiryDate = shopDetails['expiryDate'] ?? DateTime.now();
@@ -210,6 +218,7 @@ class StartupController extends GetxController {
         shopName = shopDetails['shopName'] ?? 'error';
         shopNumber = shopDetails['shopNumber'] ?? 0000;
         shopAddr = shopDetails['shopAddr'] ?? 'error';
+        applicationPlan = shopDetails['applicationPlan'] ?? 2;
         subcId = shopDetails['subcId'] ?? 0000;
         expiryDate = shopDetails['expiryDate'] ?? DateTime.now();
         logoImg = shopDetails['logoImg'] ?? 'https://mobizate.com/uploadsOnlineApp/logo_hotel.png';
@@ -422,7 +431,6 @@ class StartupController extends GetxController {
 
   checkNoticeAndUpdate() async {
     NoticeAndUpdate newNotice = await getNotice();
-    print('object ${newNotice.type}');
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
     getExtendedVersionNumber(version);

@@ -193,7 +193,7 @@ class BillingScreen extends StatelessWidget {
                       10.horizontalSpace,
                       //? this will change if homeDelivery it will select address
                       //? if its dining it will select table
-                      WhiteButtonWithIcon(
+                      ctrl.orderType == TAKEAWAY ? const SizedBox() : WhiteButtonWithIcon(
                         text: ctrl.orderType == HOME_DELEVERY
                             ? (ctrl.selectDeliveryAddrTxt.length > 12 ? ctrl.selectDeliveryAddrTxt.substring(0, 13) : ctrl.selectDeliveryAddrTxt)
                             : ctrl.orderType == DINING

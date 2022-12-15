@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/api_data_loader/online_app_data.dart';
 import 'package:rest_verision_3/api_data_loader/room_data.dart';
+import 'package:rest_verision_3/hive_database/controller/hive_frequnt_food_controller.dart';
+import 'package:rest_verision_3/hive_database/hive_model/frequent_food/frequent_food.dart';
 import 'package:rest_verision_3/models/online_app_response/online_app.dart';
 import 'package:rest_verision_3/models/room_response/room.dart';
 import 'package:rest_verision_3/repository/online_app_repository.dart';
@@ -52,6 +54,7 @@ class BillingScreenController extends GetxController {
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
   final HttpService _httpService = Get.find<HttpService>();
   final HiveHoldBillController _hiveHoldBillController = Get.find<HiveHoldBillController>();
+  final HiveFrequentFoodController _hiveFrequentFoodController = Get.find<HiveFrequentFoodController>();
   final HiveDeliveryAddressController _hiveDeliveryAddressController = Get.find<HiveDeliveryAddressController>();
 
   //? button controller
@@ -206,7 +209,6 @@ class BillingScreenController extends GetxController {
   //? this will change as per selected billing type Eg : takeAway,homeDelivery,onlineBooking & Dining
   String orderType = TAKEAWAY;
 
-
   //? to set screen heading in header of page
   String screenName = TAKEAWAY_SCREEN_NAME;
 
@@ -280,14 +282,12 @@ class BillingScreenController extends GetxController {
   //? eg TakeAway,HomeDelivery,online, or dining
   receivingBillingScreenType(String orderTypeOfScreen) async {
     orderType = orderTypeOfScreen;
-      if (kDebugMode) {
-        print('order type is $orderType');
-      }
-      //? assigning screen name as per billing page
-      settingUpScreenName(orderType);
-      getHiveKey();
-
-
+    if (kDebugMode) {
+      print('order type is $orderType');
+    }
+    //? assigning screen name as per billing page
+    settingUpScreenName(orderType);
+    getHiveKey();
   }
 
   //? to handle quickBill
@@ -296,7 +296,7 @@ class BillingScreenController extends GetxController {
     clearAllBillItems();
     clearAllBillItems();
     addFoodToBill(fdIsLoos, fdId, name, qnt, fdPrice, ktNote);
-    settleBillingCashAlertShowing(Get.context!,this);
+    settleBillingCashAlertShowing(Get.context!, this);
   }
 
   //? sending kot (this api calling method is directly called in controlled  not in repo)
@@ -620,14 +620,12 @@ class BillingScreenController extends GetxController {
 
   //? insert settled bill to dB
   //? OK
-  Future<bool> insertSettledBill(context,{bool settleOnly = true}) async {
+  Future<bool> insertSettledBill(context, {bool settleOnly = true}) async {
     RoundedLoadingButtonController btnCtrl = RoundedLoadingButtonController();
     try {
-
-      if(settleOnly){
+      if (settleOnly) {
         btnCtrl = btnControllerSettle;
-      }
-      else{
+      } else {
         btnCtrl = btnControllerSettleAndPrint;
       }
       //? check bill or grand total is empty
@@ -685,7 +683,6 @@ class BillingScreenController extends GetxController {
       Future.delayed(const Duration(seconds: 1), () {
         btnCtrl.reset();
       });
-
     }
   }
 
@@ -721,7 +718,8 @@ class BillingScreenController extends GetxController {
         _storedTodayFoods.addAll(_foodsData.todayFoods);
         //? to show full food in UI
         _myTodayFoods.clear();
-        _myTodayFoods.addAll(_storedTodayFoods);
+        // //? sorting my food by frequently used food
+        _myTodayFoods.addAll(finalSortedFood(_storedTodayFoods));
       }
       update();
     } catch (e) {
@@ -734,13 +732,18 @@ class BillingScreenController extends GetxController {
   //? searchKey get from onChange event in today foodScreen
   searchTodayFood() {
     try {
-      final suggestion = _storedTodayFoods.where((food) {
-        final fdName = food.fdName!.toLowerCase();
-        final input = searchTD.text.toLowerCase();
-        return fdName.contains(input);
-      });
-      _myTodayFoods.clear();
-      _myTodayFoods.addAll(suggestion);
+      if (searchTD.text != '') {
+        final suggestion = _storedTodayFoods.where((food) {
+          final fdName = food.fdName!.toLowerCase();
+          final input = searchTD.text.toLowerCase();
+          return fdName.contains(input);
+        });
+        _myTodayFoods.clear();
+        _myTodayFoods.addAll(suggestion);
+      } else {
+        _myTodayFoods.clear();
+        _myTodayFoods.addAll(finalSortedFood(_storedTodayFoods));
+      }
       update();
     } catch (e) {
       return;
@@ -752,20 +755,21 @@ class BillingScreenController extends GetxController {
   refreshTodayFood({bool showSnack = true}) async {
     try {
       MyResponse response = await _foodsData.getTodayFoods();
-      if(response.statusCode == 1){
-        if(response.data != null){
-          List<Foods>  foods = response.data;
+      if (response.statusCode == 1) {
+        if (response.data != null) {
+          List<Foods> foods = response.data;
           _storedTodayFoods.clear();
           _storedTodayFoods.addAll(foods);
           //? to show full food in UI
           _myTodayFoods.clear();
-          _myTodayFoods.addAll(_storedTodayFoods);
-          if(showSnack) {
+          //? sorting my food by frequently used food
+          _myTodayFoods.addAll(finalSortedFood(_storedTodayFoods));
+          if (showSnack) {
             AppSnackBar.successSnackBar('Success', 'Updated successfully');
           }
         }
-      }else{
-        if(showSnack) {
+      } else {
+        if (showSnack) {
           AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
         }
       }
@@ -775,8 +779,6 @@ class BillingScreenController extends GetxController {
       update();
     }
   }
-
-
 
   //////! category section !//////
 
@@ -813,9 +815,9 @@ class BillingScreenController extends GetxController {
   refreshCategory() async {
     try {
       MyResponse response = await _categoryData.getCategory();
-      if(response.statusCode == 1){
-        if(response.data != null){
-          List<Category>  category = response.data;
+      if (response.statusCode == 1) {
+        if (response.data != null) {
+          List<Category> category = response.data;
           _storedCategory.clear();
           _storedCategory.addAll(category);
           //? to show full food in UI
@@ -823,7 +825,7 @@ class BillingScreenController extends GetxController {
           _myCategory.addAll(_storedCategory);
           AppSnackBar.successSnackBar('Success', 'Updated successfully');
         }
-      }else{
+      } else {
         AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
       }
     } catch (e) {
@@ -832,8 +834,6 @@ class BillingScreenController extends GetxController {
       update();
     }
   }
-
-
 
   //? to sort food with sorting btn
   sortFoodBySelectedCategory() {
@@ -924,6 +924,9 @@ class BillingScreenController extends GetxController {
           'ktNote': ktNote ?? '',
           'ordStatus': PENDING,
         });
+
+        //?add food id to hive to use in frequent food
+        addFoodToFrequent(fdId ?? -1);
       }
       //? calculating totalPrice
       findTotalPrice();
@@ -932,6 +935,76 @@ class BillingScreenController extends GetxController {
     }
 
     update();
+  }
+
+  //? add food id to hive to use frequent food
+  addFoodToFrequent(int foodId) async {
+    try {
+      int timeStamp = DateTime.now().millisecondsSinceEpoch;
+      List<FrequentFood> frequentFoods = _hiveFrequentFoodController.getFrequentFood().toList();
+      //? make a new list with food id only for easy checking
+      List<int> frequentFoodsFoodId = [];
+      for (var element in frequentFoods) {
+        if (!frequentFoodsFoodId.contains(element.fdId)) {
+          frequentFoodsFoodId.add(element.fdId ?? -1);
+        }
+      }
+      if (!frequentFoodsFoodId.contains(foodId)) {
+        FrequentFood food = FrequentFood(id: timeStamp, fdId: foodId, count: 1);
+        _hiveFrequentFoodController.createFrequentFood(frequentFood: food);
+      } else {
+        FrequentFood currentFood = frequentFoods.firstWhere((element) => element.fdId == foodId);
+        FrequentFood food =
+            FrequentFood(id: currentFood.id, fdId: currentFood.fdId, count: (currentFood.count ?? 0) + 1);
+        _hiveFrequentFoodController.updateFrequentFood(frequentFood: food, key: currentFood.key);
+      }
+      //_hiveFrequentFoodController.clearFrequentFood(index: 1);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //? sorting my food by frequently used food
+  List<Foods> finalSortedFood(List<Foods> myFood) {
+    try {
+      List<Foods> frequentFood = [];
+      List<Foods> frequentFoodSorted = [];
+      List<Foods> nonFrequentFood = [];
+      List<Foods> finalSortedFood = [];
+      List<int> frequentFoodId = [];
+      //? taking frequent used food from hive
+      List<FrequentFood> assentingSorted = _hiveFrequentFoodController.getFrequentFood();
+      //? make it sorted by its count
+      assentingSorted.sort((a, b) => b.count!.compareTo(num.parse(a.count.toString())));
+      //? making food id list
+      for (var element in assentingSorted) {
+        if (!frequentFoodId.contains(element.fdId)) {
+          frequentFoodId.add(element.fdId ?? -1);
+        }
+      }
+
+      //? separating frequently used food and normal food
+      for (var element in myFood) {
+        if (frequentFoodId.contains(element.fdId)) {
+          frequentFood.add(element);
+        } else {
+          nonFrequentFood.add(element);
+        }
+      }
+
+      //? sorting frequent food by its count
+      for (var e in frequentFoodId) {
+        var containFood = frequentFood.where((element) => element.fdId == e).toList();
+        frequentFoodSorted.addAll(containFood);
+      }
+
+      //?adding frequentFood first and nonFrequentFood second to final list
+      finalSortedFood.addAll(frequentFoodSorted);
+      finalSortedFood.addAll(nonFrequentFood);
+      return finalSortedFood;
+    } catch (e) {
+      return myFood;
+    }
   }
 
   //? update bill qnt and price
@@ -1068,7 +1141,6 @@ class BillingScreenController extends GetxController {
   String getHiveKey() {
     String hiveKey = HIVE_TAKE_AWAY_BILL;
     if (orderType == TAKEAWAY) {
-
       hiveKey = HIVE_TAKE_AWAY_BILL;
     }
     if (orderType == HOME_DELEVERY) {
@@ -1410,22 +1482,22 @@ class BillingScreenController extends GetxController {
   refreshOnlineApp({bool showSnack = true}) async {
     try {
       MyResponse response = await _onlineAppData.getOnlineApp();
-      if(response.statusCode == 1){
-        if(response.data != null){
-          List<OnlineApp>  onlineApp = response.data;
+      if (response.statusCode == 1) {
+        if (response.data != null) {
+          List<OnlineApp> onlineApp = response.data;
           _storedOnlineApp.clear();
           _storedOnlineApp.addAll(onlineApp);
           //? to show online app online app in UI
           _myOnlineApp.clear();
           _myOnlineApp.addAll(_storedOnlineApp);
           //? to hide snack-bar on page starting , because this method is calling page starting
-          if(showSnack) {
+          if (showSnack) {
             AppSnackBar.successSnackBar('Success', 'Updated successfully');
           }
         }
-      }else{
+      } else {
         //? to hide snack-bar on page starting , because this method is calling page starting
-        if(showSnack) {
+        if (showSnack) {
           AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
         }
       }
@@ -1435,8 +1507,6 @@ class BillingScreenController extends GetxController {
       update();
     }
   }
-
-
 
   //? validate before insert
   validateAppDetails(BuildContext context) async {
@@ -1598,22 +1668,22 @@ class BillingScreenController extends GetxController {
   refreshRoom({bool showSnack = true}) async {
     try {
       MyResponse response = await _roomData.getAllRoom();
-      if(response.statusCode == 1){
-        if(response.data != null){
-          List<Room>  rooms = response.data;
+      if (response.statusCode == 1) {
+        if (response.data != null) {
+          List<Room> rooms = response.data;
           _storedRoom.clear();
           _storedRoom.addAll(rooms);
           //? to show full room in UI
           _myRoom.clear();
           _myRoom.addAll(_storedRoom);
           //? to hide snack-bar on page starting , because this method is calling page starting
-          if(showSnack){
+          if (showSnack) {
             AppSnackBar.successSnackBar('Success', 'Updated successfully');
           }
         }
-      }else{
+      } else {
         //? to hide snack-bar on page starting , because this method is calling page starting
-        if(showSnack) {
+        if (showSnack) {
           AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
         }
       }
@@ -1623,8 +1693,6 @@ class BillingScreenController extends GetxController {
       update();
     }
   }
-
-
 
   //? to show table in drop down
   updateSelectedTable(int tableNumber) {
@@ -1760,15 +1828,13 @@ class BillingScreenController extends GetxController {
     update();
   }
 
-
- Future<bool> saveItemInHiveWhenBack() async {
+  Future<bool> saveItemInHiveWhenBack() async {
     //? if navigated from kot update  tab on back press not ask save in hive
     if (isNavigateFromKotUpdate == true) {
       return true;
     } else {
       //? checking if any bill added in the list
-      if (billingItems
-          .isNotEmpty) {
+      if (billingItems.isNotEmpty) {
         await saveBillInHive();
         return true;
       } else {

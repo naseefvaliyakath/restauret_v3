@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/repository/kot_repository.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart';
@@ -30,6 +31,7 @@ import '../../login_screen/controller/startup_controller.dart';
 
 class OrderViewController extends GetxController {
   final SettledOrderRepo _settledOrderRepo = Get.find<SettledOrderRepo>();
+  final KotRepo _kotRepo = Get.find<KotRepo>();
   final SettledOrderData _settledOrderData = Get.find<SettledOrderData>();
   final HttpService _httpService = Get.find<HttpService>();
   final IO.Socket _socket = Get.find<SocketController>().socket;
@@ -133,10 +135,15 @@ class OrderViewController extends GetxController {
   void onInit() async {
     initTxtController();
     checkInternetConnection();
-    _socket.connect();
+    //? for full feature application
+    if(Get.find<StartupController>().applicationPlan == 1){
+      _socket.connect();
+      setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
+      setUpKitchenOrderSingleListener(); //? for new kot order
+    }else{
+      getAllKot();
+    }
     getAllHoldOrder();
-    setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
-    setUpKitchenOrderSingleListener(); //? for new kot order
     getInitialSettledOrder(); //? to load settled order first time
     super.onInit();
   }
@@ -147,6 +154,33 @@ class OrderViewController extends GetxController {
     _socket.dispose();
     disposeTxtController();
     super.onClose();
+  }
+
+
+  getAllKot({bool showSnack = false}) async {
+    try {
+      MyResponse response = await _kotRepo.getAllKot();
+      if (response.statusCode == 1) {
+        KitchenOrderArray parsedResponse = response.data;
+        if (parsedResponse.kitchenOrder == null) {
+          _kotBillingItems;
+        } else {
+          _kotBillingItems.clear();
+          _kotBillingItems.addAll(parsedResponse.kitchenOrder?.toList() ?? []);
+          if(showSnack){
+            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          }
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+    }
+    finally{
+      update();
+    }
+
   }
 
   //? for single order adding live
@@ -221,7 +255,13 @@ class OrderViewController extends GetxController {
 
   //? this emit will receive in server and emit from server to refresh data
   refreshDatabaseKot() {
-    _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
+    if(Get.find<StartupController>().applicationPlan == 1){
+      _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
+    }
+    else{
+      getAllKot();
+    }
+
   }
 
   //? this emit will receive server and emit from server to with kotID to ring order

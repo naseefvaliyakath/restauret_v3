@@ -55,7 +55,7 @@ KitchenOrder EMPTY_KITCHEN_ORDER = KitchenOrder(
   fdDelAddress: {'name': '', 'number': 0, 'address': ''},
 );
 
-Shop EMPTY_SHOP = Shop(-1, 'error', 0000, 'error', '0000', '0000',DateTime.now(),'https://mobizate.com/uploadsOnlineApp/logo_hotel.png');
+Shop EMPTY_SHOP = Shop(-1, 'error', 0000, 'error', 2,'0000', '0000',DateTime.now(),'https://mobizate.com/uploadsOnlineApp/logo_hotel.png');
 
 NoticeAndUpdate EMPTY_NOTICE_UPDATE = NoticeAndUpdate(-1,'notice', ['0.0.0','0.0.0','0.0.0'], ['ios','android','windows'], [5,10,15,20], DateTime.now(), true, 'error');
 
@@ -65,5 +65,9 @@ List<int> CHAIR_NUMBER = [1,2,3,4,5,6,7,8,9,10];
 
 
 List<String> COMPLAINT_TYPE = ['Enquiry','Complaint','Suggestion','Doubt'];
+
+//? used in password prompt as reason
+const String EXIT_TO_CASHIER = 'EXIT_TO_CASHIER';
+const String ENTER_TO_REPORT = 'ENTER_TO_REPORT';
 
 

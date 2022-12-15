@@ -35,12 +35,15 @@ class GeneralSettingsScreen extends StatelessWidget {
                   ],
                 ),
                 20.verticalSpace,
-                ProfileMenu(
-                  text: "Change password",
-                  icon: Icons.account_circle_rounded,
-                  press: () => {
-                    changePasswordPromptToCashierMode(context: context)
-                  },
+                Visibility(
+                  visible: Get.find<StartupController>().applicationPlan == 1 ? true : false,
+                  child: ProfileMenu(
+                    text: "Change password",
+                    icon: Icons.account_circle_rounded,
+                    press: () => {
+                      changePasswordPromptToCashierMode(context: context)
+                    },
+                  ),
                 ),
                 ProfileMenu(
                   text: "Show address in bill",

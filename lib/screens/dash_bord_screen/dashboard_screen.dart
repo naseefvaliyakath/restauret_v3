@@ -10,6 +10,7 @@ import 'package:rest_verision_3/models/notice_and_update/notice_and_update.dart'
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
+import '../../alerts/password_prompt_alert/password_prompt_to_cashier_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/hive_constants/hive_costants.dart';
 import '../../local_storage/local_storage_controller.dart';
@@ -137,7 +138,12 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: const Color(0xffd838de),
                     icon: Icons.menu_book,
                     onTap: () async {
-                      Get.toNamed(RouteHelper.getMenuBookScreen());
+                      if (Get.find<StartupController>().applicationPlan == 1) {
+                        Get.toNamed(RouteHelper.getMenuBookScreen());
+                      }
+                      else{
+                        AppSnackBar.myFlutterToast(message: 'This feature is not available in this package', bgColor: Colors.red);
+                      }
                     },
                   ),
                   DashBordCard(
@@ -146,7 +152,12 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: AppColors.mainColor_2,
                     icon: Icons.auto_graph,
                     onTap: () async {
-                      Get.toNamed(RouteHelper.getReportScreen());
+                      if(Get.find<StartupController>().appModeNumber == 1){
+                        passwordPromptToCashierMode(context: context,reason: ENTER_TO_REPORT);
+                      }else{
+                        AppSnackBar.myFlutterToast(message: 'You are not authorized', bgColor: Colors.red);
+                      }
+
                     },
                   ),
                 ]),

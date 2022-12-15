@@ -302,6 +302,7 @@ class MenuBookController extends GetxController {
     try {
       await _myLocalStorage.setData(SET_AVAILABLE_ONLY_IN_HIVE, available);
       setAvailableOnlyToggle = available;
+      refreshAllFood(showSnack: false);
       update();
     } catch (e) {
       rethrow;

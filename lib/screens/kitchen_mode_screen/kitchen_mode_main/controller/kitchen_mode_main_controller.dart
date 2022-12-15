@@ -137,6 +137,7 @@ class KitchenModeMainController extends GetxController {
         //? this is not single KOT order , its list of orders
         order = KitchenOrderArray.fromJson(data);
         List<KitchenOrder>? kitchenOrders = order.kitchenOrder;
+        print(kitchenOrders!.length);
         //? no error
         bool err = order.error;
         if (!err) {
@@ -160,7 +161,7 @@ class KitchenModeMainController extends GetxController {
   //? this emit will receive and emit from server to refresh data
   //? used to refresh data
   refreshDatabaseKot() {
-    _socket.emit('refresh-database-order');
+    _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
   }
 
   //? te get witch tab is selected

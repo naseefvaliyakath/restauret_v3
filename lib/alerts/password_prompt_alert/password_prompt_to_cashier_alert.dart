@@ -5,7 +5,7 @@ import 'package:rest_verision_3/alerts/password_prompt_alert/password_prompt_to_
 import '../../widget/common_widget/common_text/big_text.dart';
 
 //? password prompt alert to exit to cashier
-void passwordPromptToCashierMode({required BuildContext context}) {
+void passwordPromptToCashierMode({required BuildContext context ,required String reason }) {
   try {
     showAnimatedDialog(
       context: context,
@@ -18,7 +18,7 @@ void passwordPromptToCashierMode({required BuildContext context}) {
           contentPadding: EdgeInsets.all(10.sp),
           actionsAlignment: MainAxisAlignment.center,
           title: const Center(child: BigText(text: 'Enter password')),
-          content: const SingleChildScrollView(child: PasswordPromptAlertBody()),
+          content:  SingleChildScrollView(child: PasswordPromptAlertBody(reason: reason,)),
         );
       },
       animationType: DialogTransitionType.scale,

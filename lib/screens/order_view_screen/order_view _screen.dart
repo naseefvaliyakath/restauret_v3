@@ -10,6 +10,7 @@ import '../../alerts/my_dialog_body.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../models/kitchen_order_response/order_bill.dart';
+import '../../routes/route_helper.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/common_widget/snack_bar.dart';
@@ -70,10 +71,14 @@ class OrderViewScreen extends StatelessWidget {
                             badgeColor: Colors.red,
                             child: Container(
                                 margin: EdgeInsets.only(right: 10.w),
-                                child: Icon(
-                                  FontAwesomeIcons.bell,
-                                  size: 24.sp,
-                                )),
+                                child: IconButton(
+                                    onPressed: () {
+                                      Get.toNamed(RouteHelper.getNotificationScreen());
+                                    },
+                                    icon: Icon(
+                                      FontAwesomeIcons.bell,
+                                      size: 24.sp,
+                                    ))),
                           ),
                         ],
                         bottom: PreferredSize(
