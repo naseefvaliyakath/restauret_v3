@@ -8,16 +8,16 @@ import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'package:open_store/open_store.dart';
 
 
-void showKNoticeUpdateAlert({
+void showNoticeUpdateAlert({
   required String message,
   required BuildContext context,
-  required NoticeAndUpdate noticeAndUpdate,
   required String type,
+  required bool dismissible,
 }) {
   try {
     showAnimatedDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: dismissible,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -55,13 +55,16 @@ void showKNoticeUpdateAlert({
                 }
               },
             ),
-            20.horizontalSpace,
-            AppRoundMiniBtn(
-                text: 'Close',
-                color: Colors.redAccent,
-                onTap: () {
-                  Navigator.pop(context);
-                })
+            dismissible ? 20.horizontalSpace : 0.horizontalSpace,
+            Visibility(
+              visible: dismissible,
+              child: AppRoundMiniBtn(
+                  text: 'Close',
+                  color: Colors.redAccent,
+                  onTap: () {
+                    Navigator.pop(context);
+                  }),
+            )
           ],
           content: SizedBox(
               height: 60.sp,

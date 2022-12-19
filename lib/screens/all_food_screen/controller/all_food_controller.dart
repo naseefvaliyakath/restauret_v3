@@ -6,6 +6,7 @@ import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
@@ -18,6 +19,8 @@ class AllFoodController extends GetxController {
   final FoodData _foodData = Get.find<FoodData>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
   final CategoryData _categoryData = Get.find<CategoryData>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? this will store all AllFood from the server
   //? not showing in UI or change
@@ -113,6 +116,7 @@ class AllFoodController extends GetxController {
       _myAllFoods.addAll(suggestion);
       update();
     } catch (e) {
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'searchFood()');
       return;
     }
   }
@@ -134,7 +138,9 @@ class AllFoodController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'addToToday()');
     } finally {
       hideLoading();
       update();
@@ -155,15 +161,18 @@ class AllFoodController extends GetxController {
          _myAllFoods.clear();
          _myAllFoods.addAll(_storedAllFoods);
          if(showSnack) {
-           AppSnackBar.successSnackBar('Success', 'Updated successfully');
+           AppSnackBar.successSnackBar('Success', response.message);
          }
        }
      }else{
        if(showSnack) {
-         AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+         AppSnackBar.errorSnackBar('Error', response.message);
        }
      }
    } catch (e) {
+     String myMessage = showErr ? e.toString() : 'Something wrong !!';
+     AppSnackBar.errorSnackBar('Error', myMessage);
+     errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'refreshAllFood()');
      return;
    }finally{
      update();
@@ -189,7 +198,9 @@ class AllFoodController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'deleteFood()');
     } finally {
       hideLoading();
       update();
@@ -224,6 +235,9 @@ class AllFoodController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'getInitialCategory()');
       return;
     }
   }
@@ -243,17 +257,19 @@ class AllFoodController extends GetxController {
           _myCategory.addAll(_storedCategory);
           //? to hide snack-bar on page starting , because this method is calling page starting
           if(showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       }else{
         //? to hide snack-bar on page starting , because this method is calling page starting
         if(showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'refreshCategory()');
     } finally {
       update();
     }
@@ -280,6 +296,9 @@ class AllFoodController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'sortFoodBySelectedCategory()');
       rethrow;
     }
   }
@@ -296,7 +315,9 @@ class AllFoodController extends GetxController {
       }
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'all_food_controller',methodName: 'checkIsCashier()');
     }
   }
 

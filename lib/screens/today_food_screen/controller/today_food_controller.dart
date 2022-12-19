@@ -5,6 +5,7 @@ import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/repository/food_repository.dart';
 import '../../../api_data_loader/category_data.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
@@ -16,6 +17,8 @@ class TodayFoodController extends GetxController {
   final FoodData _foodData = Get.find<FoodData>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
   final CategoryData _categoryData = Get.find<CategoryData>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? this will store all today food from the server
   //? not showing in UI or change
@@ -76,6 +79,7 @@ class TodayFoodController extends GetxController {
       _myTodayFoods.addAll(suggestion);
       update();
     } catch (e) {
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'searchTodayFood()');
       return;
     }
   }
@@ -95,7 +99,10 @@ class TodayFoodController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'removeFromToday()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -123,7 +130,10 @@ class TodayFoodController extends GetxController {
         }
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'updateToQuickBill()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -157,6 +167,9 @@ class TodayFoodController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'getInitialTodayFood()');
       return;
     } finally {
       hideLoading();
@@ -176,16 +189,19 @@ class TodayFoodController extends GetxController {
           _myTodayFoods.clear();
           _myTodayFoods.addAll(_storedTodayFoods);
           if(showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       }else{
         if(showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'refreshTodayFood()');
+      return;
     } finally {
       update();
     }
@@ -219,6 +235,9 @@ class TodayFoodController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'getInitialCategory()');
       return;
     }
   }
@@ -236,16 +255,19 @@ class TodayFoodController extends GetxController {
           _myCategory.clear();
           _myCategory.addAll(_storedCategory);
           if(showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       }else{
         if(showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'refreshCategory()');
+      return;
     } finally {
       update();
     }
@@ -274,7 +296,10 @@ class TodayFoodController extends GetxController {
       }
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'sortFoodBySelectedCategory()');
+      return;
     }
   }
 
@@ -290,7 +315,10 @@ class TodayFoodController extends GetxController {
           }
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'today_food_controller',methodName: 'checkIsCashier()');
+      return;
     }
   }
 

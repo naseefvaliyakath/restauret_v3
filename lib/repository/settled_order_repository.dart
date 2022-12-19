@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-
 import '../constants/api_link/api_link.dart';
-import '../constants/app_secret_constants/app_secret_constants.dart';
+import '../error_handler/error_handler.dart';
 import '../models/foods_response/food_response.dart';
 import '../models/my_response.dart';
 import '../models/settled_order_response/settled_order_response.dart';
@@ -12,33 +11,35 @@ import '../services/service.dart';
 
 class SettledOrderRepo extends GetxService {
   final HttpService _httpService = Get.find<HttpService>();
+  final ErrorHandler _errHandler = Get.find<ErrorHandler>();
+  bool showErr = Get.find<StartupController>().showErr;
 
   Future<MyResponse> getAllSettledOrder({DateTime? startDate, DateTime? endDate}) async {
     try {
-
       startDate ??= DateTime.now();
       endDate ??= DateTime.now();
 
       final response = await _httpService.getRequestWithBody(ALL_SETTLED_ORDER, {
         'fdShopId': Get.find<StartupController>().SHOPE_ID,
-        'startDate':startDate,
-        'endDate':endDate,
+        'startDate': startDate,
+        'endDate': endDate,
       });
       SettledOrderResponse? parsedResponse = SettledOrderResponse.fromJson(response.data);
+
       if (parsedResponse.error ?? true) {
-        return MyResponse(
-            statusCode: 0,
-            status: 'Error',
-            message: SHOW_ERR ? parsedResponse.errorCode ?? 'error' : 'Something wrong !!');
+        String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+        return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
       } else {
-        return MyResponse(
-            statusCode: 1, status: 'Success', data: parsedResponse, message: response.statusMessage.toString());
+        String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+        return MyResponse(statusCode: 1, status: 'Success', data: parsedResponse, message: myMessage);
       }
     } on DioError catch (e) {
-      return MyResponse(
-          statusCode: 0, status: 'Error', message: SHOW_ERR ? MyDioError.dioError(e) : 'Something wrong !!');
+      String myMessage = showErr ? MyDioError.dioError(e) : MyDioError.dioError(e);
+      return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
     } catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: SHOW_ERR ? e.toString() : 'Something wrong !!');
+      _errHandler.myResponseHandler(error: e.toString(), pageName: 'settledRepo', methodName: 'getAllSettledOrder()');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
     } finally {}
   }
 
@@ -51,17 +52,21 @@ class SettledOrderRepo extends GetxService {
       };
       final response = await _httpService.delete(DELETE_SETTLED_ORDER, data);
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+
       if (parsedResponse.error ?? true) {
-        return MyResponse(statusCode: 0, status: 'Error', message: parsedResponse.errorCode.toString());
+        String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+        return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
       } else {
-        return MyResponse(statusCode: 1, status: 'Success', message: parsedResponse.errorCode.toString());
+        String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+        return MyResponse(statusCode: 1, status: 'Success', message: myMessage);
       }
     } on DioError catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: MyDioError.dioError(e));
-
+      String myMessage = showErr ? MyDioError.dioError(e) : MyDioError.dioError(e);
+      return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
     } catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: e.toString());
+      _errHandler.myResponseHandler(error: e.toString(), pageName: 'settledRepo', methodName: 'deleteSettledOrder()');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
     }
   }
-
 }

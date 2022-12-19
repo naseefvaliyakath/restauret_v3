@@ -1,13 +1,14 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rest_verision_3/hive_database/hive_model/frequent_food/frequent_food.dart';
-
+import '../../error_handler/error_handler.dart';
 import '../box_repository.dart';
-import '../hive_model/hold_item/hive_hold_item.dart';
+
 
 
 
 class HiveFrequentFoodController extends GetxController {
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
   ///?FrequentFood
   final Box _frequentBox = BoxRepository.getFrequentFoodBox();
   Box get frequentBox => _frequentBox;
@@ -21,7 +22,8 @@ class HiveFrequentFoodController extends GetxController {
      await  _frequentBox.add(frequentFood);
      update();
    } catch (e) {
-     rethrow;
+     errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_frequent_food_ctrl',methodName: 'createFrequentFood()');
+     return;
    }
   }
 
@@ -30,7 +32,8 @@ class HiveFrequentFoodController extends GetxController {
       await _frequentBox.put(key, frequentFood);
       update();
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_frequent_food_ctrl',methodName: 'updateFrequentFood()');
+      return;
     }
   }
 
@@ -44,7 +47,8 @@ class HiveFrequentFoodController extends GetxController {
       update();
       return frequentFoods;
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_frequent_food_ctrl',methodName: 'getFrequentFood()');
+      return [];
     }
     finally{
       update();
@@ -57,7 +61,8 @@ class HiveFrequentFoodController extends GetxController {
       await  _frequentBox.deleteAt(index);
       update();
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_frequent_food_ctrl',methodName: 'deleteFrequentFood()');
+      return;
     }
   }
 
@@ -67,7 +72,8 @@ class HiveFrequentFoodController extends GetxController {
       await _frequentBox.clear();
       update();
     } catch (e) {
-     rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_frequent_food_ctrl',methodName: 'clearFrequentFood()');
+      return;
     }
   }
 

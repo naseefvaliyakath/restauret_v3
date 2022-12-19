@@ -51,6 +51,9 @@ class LoginScreen extends StatelessWidget {
                     duration: const Duration(milliseconds: 100),
                     controller: ctrl.btnControllerLogin,
                     onPressed: () async {
+                      if(FocusScope.of(context).isFirstFocus) {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      }
                       await ctrl.loginToApp();
                     },
                     child: const BigText(text: 'Login',color: Colors.white,),

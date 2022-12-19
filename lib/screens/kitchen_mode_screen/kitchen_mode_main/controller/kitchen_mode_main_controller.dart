@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rest_verision_3/constants/app_secret_constants/app_secret_constants.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -11,6 +10,7 @@ import '../../../../alerts/kitchen_ring_popup_alert/kitchen_popup_ring_alert.dar
 import '../../../../check_internet/check_internet.dart';
 import '../../../../constants/api_link/api_link.dart';
 import '../../../../constants/hive_constants/hive_costants.dart';
+import '../../../../error_handler/error_handler.dart';
 import '../../../../local_storage/local_storage_controller.dart';
 import '../../../../models/foods_response/food_response.dart';
 import '../../../../models/kitchen_order_response/kitchen_order.dart';
@@ -27,6 +27,9 @@ class KitchenModeMainController extends GetxController {
   final IO.Socket _socket = Get.find<SocketController>().socket;
   final HttpService _httpService = Get.find<HttpService>();
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
+
   bool isLoading = false;
 
   //? to chane tapped color of order status tab
@@ -73,7 +76,9 @@ class KitchenModeMainController extends GetxController {
     await readNewKotRingSound();
     //? to set  remember alert sound silent or general
     await readRingRememberAlert();
-    print('sound $ringRememberAlertSound');
+    if (kDebugMode) {
+      print('sound $ringRememberAlertSound');
+    }
     super.onInit();
   }
 
@@ -121,7 +126,10 @@ class KitchenModeMainController extends GetxController {
         }
       });
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'setUpKitchenOrderSingleListener()');
+      return;
     }
   }
 
@@ -137,7 +145,6 @@ class KitchenModeMainController extends GetxController {
         //? this is not single KOT order , its list of orders
         order = KitchenOrderArray.fromJson(data);
         List<KitchenOrder>? kitchenOrders = order.kitchenOrder;
-        print(kitchenOrders!.length);
         //? no error
         bool err = order.error;
         if (!err) {
@@ -154,7 +161,10 @@ class KitchenModeMainController extends GetxController {
         }
       });
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'setUpKitchenOrderFromDbListener()');
+      return;
     }
   }
 
@@ -180,45 +190,52 @@ class KitchenModeMainController extends GetxController {
   }
 
   updateKotItemsAsPerTab() {
-    if (kDebugMode) {
-      print('tappedTabName $tappedTabName');
-    }
-    if (tappedTabName == PENDING) {
-      _kotBillingItems.clear();
-      for (var element in _allKotBillingItems) {
-        if(element.fdOrderStatus == PENDING){
-          _kotBillingItems.add(element);
-        }
-      }
-      update();
-    } else if (tappedTabName == PROGRESS) {
-      _kotBillingItems.clear();
-      for (var element in _allKotBillingItems) {
-        if(element.fdOrderStatus == PROGRESS){
-          _kotBillingItems.add(element);
-        }
-      }
-      update();
-    } else if (tappedTabName == READY) {
-      _kotBillingItems.clear();
-      for (var element in _allKotBillingItems) {
-        if (element.fdOrderStatus == READY) {
-          _kotBillingItems.add(element);
-        }
-      }
-      update();
-    } else if (tappedTabName == REJECT) {
-      _kotBillingItems.clear();
-      for (var element in _allKotBillingItems) {
-        if (element.fdOrderStatus == REJECT) {
-          _kotBillingItems.add(element);
-        }
-      }
-      update();
-    } else {
-      _kotBillingItems.clear();
-      _kotBillingItems.addAll(_allKotBillingItems);
-      update();
+    try {
+      if (kDebugMode) {
+            print('tappedTabName $tappedTabName');
+          }
+      if (tappedTabName == PENDING) {
+            _kotBillingItems.clear();
+            for (var element in _allKotBillingItems) {
+              if(element.fdOrderStatus == PENDING){
+                _kotBillingItems.add(element);
+              }
+            }
+            update();
+          } else if (tappedTabName == PROGRESS) {
+            _kotBillingItems.clear();
+            for (var element in _allKotBillingItems) {
+              if(element.fdOrderStatus == PROGRESS){
+                _kotBillingItems.add(element);
+              }
+            }
+            update();
+          } else if (tappedTabName == READY) {
+            _kotBillingItems.clear();
+            for (var element in _allKotBillingItems) {
+              if (element.fdOrderStatus == READY) {
+                _kotBillingItems.add(element);
+              }
+            }
+            update();
+          } else if (tappedTabName == REJECT) {
+            _kotBillingItems.clear();
+            for (var element in _allKotBillingItems) {
+              if (element.fdOrderStatus == REJECT) {
+                _kotBillingItems.add(element);
+              }
+            }
+            update();
+          } else {
+            _kotBillingItems.clear();
+            _kotBillingItems.addAll(_allKotBillingItems);
+            update();
+          }
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'updateKotItemsAsPerTab()');
+      return;
     }
   }
 
@@ -257,6 +274,10 @@ class KitchenModeMainController extends GetxController {
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
     } catch (e) {
       btnControllerUpdateFullKotSts.error();
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'updateFullOrderStatus()');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerUpdateFullKotSts.reset();
@@ -296,7 +317,10 @@ class KitchenModeMainController extends GetxController {
       }
     } on DioError catch (e) {
       btnControllerUpdateSingleKotSts.error();
-      AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'updateSingleOrderStatus()');
+      return;
     } catch (e) {
       btnControllerUpdateSingleKotSts.error();
     } finally {
@@ -360,7 +384,10 @@ class KitchenModeMainController extends GetxController {
         ringRememberAlert();
       });
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'setNewKotRingRemember()');
+      return;
     }
   }
 
@@ -375,7 +402,10 @@ class KitchenModeMainController extends GetxController {
       Get.find<StartupController>().showLoginScreen();
       Get.offAllNamed(RouteHelper.getInitial());
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'logOutFromApp()');
+      return;
     }
   }
 
@@ -385,7 +415,10 @@ class KitchenModeMainController extends GetxController {
     try {
       _myLocalStorage.setData(HIVE_APP_MODE_NUMBER, 1);
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'resetAppModeNumberInHive()');
+      return;
     }
   }
 
@@ -397,7 +430,10 @@ class KitchenModeMainController extends GetxController {
       kotRingSound = sound;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'setNewKotRingSound()');
+      return;
     }
   }
 
@@ -409,7 +445,10 @@ class KitchenModeMainController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'readNewKotRingSound()');
+      return true;
     }
   }
 
@@ -420,7 +459,10 @@ class KitchenModeMainController extends GetxController {
       ringRememberAlertSound = sound;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'setRingRememberAlert()');
+      return true;
     }
   }
 
@@ -432,7 +474,10 @@ class KitchenModeMainController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'readRingRememberAlert()');
+      return true;
     }
   }
 

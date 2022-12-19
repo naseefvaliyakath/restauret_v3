@@ -2,18 +2,26 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
-import '../check_internet/check_internet.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart' hide Response,FormData,MultipartFile;
 import '../constants/api_link/api_link.dart';
+import '../constants/app_secret_constants/app_secret_constants.dart';
+import '../error_handler/error_handler.dart';
 
 
-class HttpService {
+class HttpService extends GetxService{
+  //? secure storage for saving token
+  FlutterSecureStorage storage =  const FlutterSecureStorage();
   Dio _dio = Dio();
+  String token = STARTUP_TOKEN;
 
-  HttpService() {
-    _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $API_KEY"}));
+  @override
+  void onInit() async {
+    initializeSecureStorage();
+    token = await storage.read(key: 'token') ?? STARTUP_TOKEN;
+    _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
     initializeInterceptors();
+    super.onInit();
   }
 
   Future<Response> getRequest(String url) async {
@@ -283,5 +291,21 @@ class HttpService {
       // AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
       return handler.next(e);
     }));
+  }
+
+  updatingToken(tokenFromLogin){
+    token = tokenFromLogin;
+  }
+  initializeSecureStorage(){
+    try {
+      if(Platform.isAndroid){
+            AndroidOptions getAndroidOptions() => const AndroidOptions(
+              encryptedSharedPreferences: true,
+            );
+            storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+          }
+    } catch (e) {
+      return;
+    }
   }
 }

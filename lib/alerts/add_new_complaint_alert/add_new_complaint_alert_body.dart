@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
-import '../../screens/purchase_book_screen/controller/purchase_book_controller.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/text_field_widget.dart';

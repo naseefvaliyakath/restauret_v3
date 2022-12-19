@@ -15,6 +15,7 @@ NoticeAndUpdate _$NoticeAndUpdateFromJson(Map<String, dynamic> json) =>
       (json['nextShowingDate'] as List<dynamic>?)
           ?.map((e) => e as int)
           .toList(),
+      json['timeInterval'] as int?,
       json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -31,5 +32,6 @@ Map<String, dynamic> _$NoticeAndUpdateToJson(NoticeAndUpdate instance) =>
       'message': instance.message,
       'dismissable': instance.dismissable,
       'nextShowingDate': instance.nextShowingDate,
+      'timeInterval': instance.timeInterval,
       'createdAt': instance.createdAt?.toIso8601String(),
     };

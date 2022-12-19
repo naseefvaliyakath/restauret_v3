@@ -23,6 +23,9 @@ class Shop{
   @JsonKey(name : "subcId")
   String? subcId;
 
+  @JsonKey(name : "token")
+  String? token;
+
   @JsonKey(name : "subcIdStatus")
   String? subcIdStatus;
 
@@ -46,6 +49,7 @@ class Shop{
       this.shopNumber,
       this.shopAddr,
       this.applicationPlan,
+      this.token,
       this.subcId,
       this.password,
       this.expiryDate,

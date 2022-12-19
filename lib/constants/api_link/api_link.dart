@@ -61,6 +61,8 @@ const String GET_NOTIFICATION = 'notification/getAllNotification';
 
 const String INSERT_COMPLAINT = 'complaints/addComplaint';
 
+const String INSERT_FLUTTER_LOG = 'flutterLogs/addLog';
+
 
 
 

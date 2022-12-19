@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/api_data_loader/credit_user_data.dart';
 import 'package:rest_verision_3/models/credit_user_response/credit_user.dart';
-import 'package:rest_verision_3/models/credit_user_response/credit_user_response.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-
 import '../../../check_internet/check_internet.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/my_response.dart';
-import '../../../models/room_response/room_response.dart';
 import '../../../repository/credit_book_repository.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class CreditUserCTRL extends GetxController {
   final CreditBookRepo _creditBookRepo = Get.find<CreditBookRepo>();
   final CreditUserData _creditUserData = Get.find<CreditUserData>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? for show full screen loading
   bool isLoading = false;
@@ -73,7 +74,10 @@ class CreditUserCTRL extends GetxController {
       }
     } catch (e) {
       btnControllerAddUser.error();
-      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_user_ctrl',methodName: 'insertCreditUser()');
+      return;
     } finally {
       userNameTD.text = '';
       Future.delayed(const Duration(seconds: 1), () {
@@ -109,6 +113,9 @@ class CreditUserCTRL extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_user_ctrl',methodName: 'getInitialCreditUser()');
       return;
     }
     finally{
@@ -133,16 +140,19 @@ class CreditUserCTRL extends GetxController {
           _myCreditUser.clear();
           _myCreditUser.addAll(_storedCreditUser);
           if (showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       } else {
         if (showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_user_ctrl',methodName: 'refreshCreditUser()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -175,7 +185,10 @@ class CreditUserCTRL extends GetxController {
         AppSnackBar.errorSnackBar('Error', response.message);
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wrong !!');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_user_ctrl',methodName: 'deleteCreditUser()');
+      return;
     } finally {
       update();
     }

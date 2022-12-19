@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,12 +6,16 @@ import 'package:rest_verision_3/models/purchase_items/purchase_item.dart';
 import 'package:rest_verision_3/repository/purchase_item_repository.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../check_internet/check_internet.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/my_response.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class PurchaseBookCTRL extends GetxController {
   final PurchaseItemsData _purchaseItemData = Get.find<PurchaseItemsData>();
   final PurchaseItemRepo _purchaseRepo = Get.find<PurchaseItemRepo>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   final RoundedLoadingButtonController btnControllerAddPurchase = RoundedLoadingButtonController();
 
@@ -83,6 +86,9 @@ class PurchaseBookCTRL extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'purchase_book_controller',methodName: 'getInitialPurchaseItem()');
       return;
     }
     finally{
@@ -107,16 +113,19 @@ class PurchaseBookCTRL extends GetxController {
           _myPurchaseItem.clear();
           _myPurchaseItem.addAll(_storedPurchaseItem);
           if (showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       } else {
         if (showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'purchase_book_controller',methodName: 'refreshPurchaseItem()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -153,7 +162,10 @@ class PurchaseBookCTRL extends GetxController {
     }
     catch (e) {
       btnControllerAddPurchase.error();
-      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'purchase_book_controller',methodName: 'insertPurchaseItem()');
+      return;
     }
     finally {
       priceTD.text = '';
@@ -175,7 +187,10 @@ class PurchaseBookCTRL extends GetxController {
         AppSnackBar.errorSnackBar('Error', response.message);
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wrong !!');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'purchase_book_controller',methodName: 'deletePurchase()');
+      return;
     } finally {
       update();
     }
@@ -198,7 +213,10 @@ class PurchaseBookCTRL extends GetxController {
         refreshPurchaseItem(startDate: dateRange.start,endTime: dateRange.end,showLoad: false);
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'purchase_book_controller',methodName: 'datePickerForPurchaseItem()');
+      return;
     }
     finally{
       update();

@@ -2,16 +2,16 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart' hide Response;
-import 'package:rest_verision_3/screens/all_food_screen/controller/all_food_controller.dart';
 import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/category_response/category.dart';
 import '../../../models/my_response.dart';
-import '../../../repository/category_repository.dart';
 import '../../../repository/food_repository.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 import '../../today_food_screen/controller/today_food_controller.dart';
 
 class UpdateFoodController extends GetxController {
@@ -19,6 +19,8 @@ class UpdateFoodController extends GetxController {
   final CategoryData _categoryData = Get.find<CategoryData>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
   final FoodData _foodData = Get.find<FoodData>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? to store image file
   File? file;
@@ -114,6 +116,9 @@ class UpdateFoodController extends GetxController {
 
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'getInitialCategory()');
       return;
     }
     finally{
@@ -146,7 +151,10 @@ class UpdateFoodController extends GetxController {
 
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'updateCategoryFirstTime()');
+      return;
     }
   }
 
@@ -166,13 +174,16 @@ class UpdateFoodController extends GetxController {
           //? to show full food in UI
           _myCategory.clear();
           _myCategory.addAll(_storedCategory);
-          AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          AppSnackBar.successSnackBar('Success', response.message);
         }
       }else{
-        AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        AppSnackBar.errorSnackBar('Error', response.message);
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'refreshCategory()');
+      return;
     } finally {
       isLoadingCategory = false;
       update();
@@ -184,31 +195,38 @@ class UpdateFoodController extends GetxController {
   //////! category section !//////
 
   receiveInitialValue(){
-    int id = Get.arguments['id'] ?? -1;
-    String fdName = Get.arguments['fdName'] ?? '';
-    String fdCategory = Get.arguments['fdCategory'] ?? COMMON_CATEGORY;
-    double fdFullPrice = Get.arguments['fdFullPrice'] ?? 0;
-    double fdThreeBiTwoPrsPrice = Get.arguments['fdThreeBiTwoPrsPrice'] ?? 0;
-    double fdHalfPrice = Get.arguments['fdHalfPrice'] ?? 0;
-    double fdQtrPrice = Get.arguments['fdQtrPrice'] ?? 0;
-    String fdIsLoos = Get.arguments['fdIsLoos'] ?? 'no';
-    int cookTime = Get.arguments['cookTime'] ?? 0;
-    String fdImg = Get.arguments['fdImg'] ?? IMG_LINK;
-    String fdIsToday = Get.arguments['fdIsToday'] ?? 'no';
-    if (kDebugMode) {
-      print('$fdName -- $fdCategory --  $fdFullPrice');
+    try {
+      int id = Get.arguments['id'] ?? -1;
+      String fdName = Get.arguments['fdName'] ?? '';
+      String fdCategory = Get.arguments['fdCategory'] ?? COMMON_CATEGORY;
+      double fdFullPrice = Get.arguments['fdFullPrice'] ?? 0;
+      double fdThreeBiTwoPrsPrice = Get.arguments['fdThreeBiTwoPrsPrice'] ?? 0;
+      double fdHalfPrice = Get.arguments['fdHalfPrice'] ?? 0;
+      double fdQtrPrice = Get.arguments['fdQtrPrice'] ?? 0;
+      String fdIsLoos = Get.arguments['fdIsLoos'] ?? 'no';
+      int cookTime = Get.arguments['cookTime'] ?? 0;
+      String fdImg = Get.arguments['fdImg'] ?? IMG_LINK;
+      String fdIsToday = Get.arguments['fdIsToday'] ?? 'no';
+      if (kDebugMode) {
+            print('$fdName -- $fdCategory --  $fdFullPrice');
+          }
+
+      //? make the received values global
+      initialId = id;
+      initialFdName = fdName;
+      initialFdIsToday = fdIsToday;
+      initialFdImg = fdImg;
+      initialCookTime = cookTime;
+      initialFdCategory =fdCategory;
+
+      //? to set the values in controllers and btn's
+      updateInitialValue(fdName, fdFullPrice, fdThreeBiTwoPrsPrice, fdHalfPrice, fdQtrPrice, fdIsLoos, fdCategory);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'receiveInitialValue()');
+      return;
     }
-
-    //? make the received values global
-    initialId = id;
-    initialFdName = fdName;
-    initialFdIsToday = fdIsToday;
-    initialFdImg = fdImg;
-    initialCookTime = cookTime;
-    initialFdCategory =fdCategory;
-
-    //? to set the values in controllers and btn's
-    updateInitialValue(fdName, fdFullPrice, fdThreeBiTwoPrsPrice, fdHalfPrice, fdQtrPrice, fdIsLoos, fdCategory);
   }
 
 
@@ -229,7 +247,10 @@ class UpdateFoodController extends GetxController {
         print('price toggle $priceToggle');
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'updateInitialValue()');
+      return;
     }
     update();
   }
@@ -296,7 +317,10 @@ class UpdateFoodController extends GetxController {
         AppSnackBar.errorSnackBar('Fill the fields!', 'Enter the values in fields!!');
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'validateFoodDetails()');
+      return;
     }
   }
 
@@ -344,7 +368,10 @@ class UpdateFoodController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'update_food_controller',methodName: 'updateFood()');
+      return;
     } finally {
       hideLoading();
       update();

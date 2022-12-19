@@ -1,17 +1,16 @@
 import 'package:get/get.dart';
-import 'package:rest_verision_3/screens/add_food_screen/controller/add_food_controller.dart';
-import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
-import 'package:rest_verision_3/screens/update_food_screen/controller/update_food_controller.dart';
-
+import '../error_handler/error_handler.dart';
 import '../models/category_response/category.dart';
 import '../models/category_response/category_response.dart';
 import '../models/my_response.dart';
 import '../repository/category_repository.dart';
-import '../screens/all_food_screen/controller/all_food_controller.dart';
-import '../screens/billing_screen/controller/billing_screen_controller.dart';
+import '../screens/login_screen/controller/startup_controller.dart';
+
 
 class CategoryData extends GetxController {
   final CategoryRepo _categoryRepo = Get.find<CategoryRepo>();
+  final ErrorHandler _errHandler = Get.find<ErrorHandler>();
+  bool showErr  = Get.find<StartupController>().showErr;
 
   //?in this array get all category data from api through out the app working
   //? to save all category
@@ -33,17 +32,19 @@ class CategoryData extends GetxController {
         CategoryResponse parsedResponse = response.data;
         if (parsedResponse.data == null) {
           _category;
-          return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
+          return MyResponse(statusCode: 0, status: 'Error', message: response.message);
         } else {
           _category.clear();
           _category.addAll(parsedResponse.data?.toList() ?? []);
-          return MyResponse(statusCode: 1,data: _category, status: 'Success', message:  'Updated successfully');
+          return MyResponse(statusCode: 1,data: _category, status: 'Success', message:  response.message);
         }
       } else {
-        return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
+        return MyResponse(statusCode: 0, status: 'Error', message: response.message);
       }
     } catch (e) {
-      return MyResponse(statusCode: 0, status: 'Error', message: 'Something wrong !!');
+      _errHandler.myResponseHandler(error: e.toString(),pageName: 'categoryData',methodName: 'getCategory()');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      return MyResponse(statusCode: 0, status: 'Error', message: myMessage);
     }finally{
       update();
     }

@@ -3,18 +3,22 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/models/credit_debit_response/credit_debit.dart';
 import 'package:rest_verision_3/models/credit_debit_response/credit_debit_response.dart';
-import 'package:rest_verision_3/models/credit_user_response/credit_user_response.dart';
 import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../check_internet/check_internet.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/my_response.dart';
 import '../../../repository/credit_book_repository.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 
 
 class CreditDebitCtrl extends GetxController {
   final CreditBookRepo _creditBookRepo = Get.find<CreditBookRepo>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
+
   final RoundedLoadingButtonController btnControllerAddCreditDebit = RoundedLoadingButtonController();
   //? for show full screen loading
   bool isLoading = false;
@@ -75,15 +79,17 @@ class CreditDebitCtrl extends GetxController {
           _allCreditDebit.clear();
           _allCreditDebit.addAll(parsedResponse.data?.toList() ?? []);
           if(showSnack){
-            AppSnackBar.successSnackBar('Success', 'Data updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
 
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+        AppSnackBar.errorSnackBar('Error', response.message);
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went wrong !!');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_debit_ctrl',methodName: 'getAllCreditDebit()');
     }finally{
       hideLoading();
       update();
@@ -126,7 +132,9 @@ class CreditDebitCtrl extends GetxController {
     }
     catch (e) {
       btnControllerAddCreditDebit.error();
-      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_debit_ctrl',methodName: 'insertCreditDebit()');
     }
     finally {
       creditDebitTD.text = '';
@@ -148,7 +156,9 @@ class CreditDebitCtrl extends GetxController {
         AppSnackBar.errorSnackBar('Error', response.message);
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wrong !!');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'credit_debit_ctrl',methodName: 'deleteCreditDebit()');
     } finally {
       update();
     }
