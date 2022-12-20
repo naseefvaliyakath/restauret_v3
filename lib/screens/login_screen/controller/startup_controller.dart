@@ -36,7 +36,7 @@ class StartupController extends GetxController {
 
 
   //?showError or not in toast
-  bool showErr = true;
+  bool showErr = false;
 
   //? secure storage for saving token
   FlutterSecureStorage storage =  const FlutterSecureStorage();
@@ -88,6 +88,7 @@ class StartupController extends GetxController {
     await readShowDeliveryAddressInBillFromHive();
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
+    await readShowErrorFromHive();
     checkNoticeAndUpdate();
    // _initBtPrinter();
     super.onInit();
@@ -475,6 +476,20 @@ class StartupController extends GetxController {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
       errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readAllowCreditBookToWaiterFromHive()');
+      return false;
+    }
+  }
+
+  Future<bool> readShowErrorFromHive() async {
+    try {
+      bool result = await _myLocalStorage.readData(SHOW_ERROR) ?? false;
+      showErr = result;
+      update();
+      return result;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readShowErrorFromHive()');
       return false;
     }
   }

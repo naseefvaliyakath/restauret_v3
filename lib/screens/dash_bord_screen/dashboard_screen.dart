@@ -37,7 +37,7 @@ class DashBordScreen extends StatelessWidget {
               //notification icon
               NotificationIcon(
                 onTap: () async {
-                  print(Get.find<FlutterLogRepo>().SHOP_ID_FOR_HANDLE);
+                  print(Get.find<StartupController>().showErr);
                  // Get.toNamed(RouteHelper.getNotificationScreen());
                 },
               )

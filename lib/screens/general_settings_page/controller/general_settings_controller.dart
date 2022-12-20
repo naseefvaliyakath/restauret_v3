@@ -19,11 +19,15 @@ class GeneralSettingsController extends GetxController {
   //? to set toggle btn as per saved data
   bool setAllowPurchaseBookToWaiterToggle = false;
 
+  //? to set toggle btn as per saved data
+  bool setShowErrorToggle = false;
+
   @override
   void onInit() async {
     await readShowDeliveryAddressInBillFromHive();
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
+    await readShowError();
     super.onInit();
   }
 
@@ -113,5 +117,33 @@ class GeneralSettingsController extends GetxController {
     }
   }
 
+
+  //? to set show error in hive
+  Future setShowError(bool showError) async {
+    try {
+      await _myLocalStorage.setData(SHOW_ERROR, showError);
+      setShowErrorToggle = showError;
+      update();
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setShowError()');
+      return;
+    }
+  }
+
+  Future<bool> readShowError() async {
+    try {
+      bool result = await _myLocalStorage.readData(SHOW_ERROR) ?? false;
+      setShowErrorToggle = result;
+      update();
+      return result;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'readShowError()');
+      return false;
+    }
+  }
 
 }

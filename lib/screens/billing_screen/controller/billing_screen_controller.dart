@@ -21,9 +21,9 @@ import '../../../alerts/kot_alert/kot_bill_show_alert.dart';
 import '../../../api_data_loader/category_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/api_link/api_link.dart';
-import '../../../constants/app_secret_constants/app_secret_constants.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../hive_database/controller/hive_delivery_address_controller.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../../hive_database/hive_model/delivery_address/hive_delivery_address_item.dart';
@@ -44,6 +44,8 @@ import '../../../widget/common_widget/snack_bar.dart';
 class BillingScreenController extends GetxController {
   final FoodData _foodsData = Get.find<FoodData>();
   late IO.Socket socket;
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   final CategoryData _categoryData = Get.find<CategoryData>();
   final OnlineAppData _onlineAppData = Get.find<OnlineAppData>();
@@ -292,11 +294,17 @@ class BillingScreenController extends GetxController {
 
   //? to handle quickBill
   handleQuickBill({required fdIsLoos, required fdId, required name, required qnt, required fdPrice, required ktNote}) {
-    _billingItems.clear();
-    clearAllBillItems();
-    clearAllBillItems();
-    addFoodToBill(fdIsLoos, fdId, name, qnt, fdPrice, ktNote);
-    settleBillingCashAlertShowing(Get.context!, this);
+    try {
+      _billingItems.clear();
+      clearAllBillItems();
+      clearAllBillItems();
+      addFoodToBill(fdIsLoos, fdId, name, qnt, fdPrice, ktNote);
+      settleBillingCashAlertShowing(Get.context!, this);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'handleQuickBill()');
+    }
   }
 
   //? sending kot (this api calling method is directly called in controlled  not in repo)
@@ -348,6 +356,9 @@ class BillingScreenController extends GetxController {
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
     } catch (e) {
       btnControllerKot.error();
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'sendKotOrder()');
     } finally {
       update();
       Future.delayed(const Duration(seconds: 1), () {
@@ -405,7 +416,9 @@ class BillingScreenController extends GetxController {
       }
     } catch (e) {
       _billingItems.clear();
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'receiveUpdateKotBillingItem()');
     }
   }
 
@@ -452,6 +465,10 @@ class BillingScreenController extends GetxController {
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
     } catch (e) {
       btnControllerUpdateKot.error();
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'updateKotOrder()');
+
     } finally {
       update();
       Future.delayed(const Duration(seconds: 1), () {
@@ -552,7 +569,10 @@ class BillingScreenController extends GetxController {
         _billingItems.clear;
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getxArgumentReceiveHandler()');
+
     } finally {
       update();
     }
@@ -573,10 +593,18 @@ class BillingScreenController extends GetxController {
   //? checking int is in text field
   //? OK
   bool isNumeric(String? s) {
-    if (s == null) {
+    try {
+      if (s == null) {
+            return false;
+          }
+      return double.tryParse(s) != null;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'isNumeric()');
       return false;
+
     }
-    return double.tryParse(s) != null;
   }
 
   //? calculation to get total bill and balance cash
@@ -601,7 +629,10 @@ class BillingScreenController extends GetxController {
           .toStringAsFixed(3)); //?limit double to 3 pont after decimal
       settleGrandTotalCtrl.value.text = '$grandTotalNew';
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'calculateNetTotal()');
+      return;
     }
   }
 
@@ -614,7 +645,10 @@ class BillingScreenController extends GetxController {
       //? to show billing screen alert directly from billing screen
       billingCashScreenAlert(context: context, ctrl: ctrl, from: 'billing');
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'settleBillingCashAlertShowing()');
+
     }
   }
 
@@ -678,6 +712,9 @@ class BillingScreenController extends GetxController {
       return false;
     } catch (e) {
       btnCtrl.error();
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'insertSettledBill()');
       return false;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
@@ -723,7 +760,10 @@ class BillingScreenController extends GetxController {
       }
       update();
     } catch (e) {
-      return;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getInitialFood()');
+
     } finally {
       hideLoading();
     }
@@ -746,6 +786,7 @@ class BillingScreenController extends GetxController {
       }
       update();
     } catch (e) {
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'searchTodayFood()');
       return;
     }
   }
@@ -765,16 +806,18 @@ class BillingScreenController extends GetxController {
           //? sorting my food by frequently used food
           _myTodayFoods.addAll(finalSortedFood(_storedTodayFoods));
           if (showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       } else {
         if (showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'refreshTodayFood()');
     } finally {
       update();
     }
@@ -807,6 +850,9 @@ class BillingScreenController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getInitialCategory()');
       return;
     }
   }
@@ -823,13 +869,16 @@ class BillingScreenController extends GetxController {
           //? to show full food in UI
           _myCategory.clear();
           _myCategory.addAll(_storedCategory);
-          AppSnackBar.successSnackBar('Success', 'Updated successfully');
+          AppSnackBar.successSnackBar('Success', response.message);
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+        AppSnackBar.errorSnackBar('Error', response.message);
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'refreshCategory()');
+      return;
     } finally {
       update();
     }
@@ -855,7 +904,10 @@ class BillingScreenController extends GetxController {
       }
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'sortFoodBySelectedCategory()');
+      return;
     }
   }
 
@@ -931,7 +983,10 @@ class BillingScreenController extends GetxController {
       //? calculating totalPrice
       findTotalPrice();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'addFoodToBill()');
+      return;
     }
 
     update();
@@ -960,7 +1015,11 @@ class BillingScreenController extends GetxController {
       }
       //_hiveFrequentFoodController.clearFrequentFood(index: 1);
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'addFoodToFrequent()');
+      return;
+
     }
   }
 
@@ -1003,6 +1062,9 @@ class BillingScreenController extends GetxController {
       finalSortedFood.addAll(nonFrequentFood);
       return finalSortedFood;
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'finalSortedFood()');
       return myFood;
     }
   }
@@ -1017,7 +1079,10 @@ class BillingScreenController extends GetxController {
       _billingItems[index]['ktNote'] = ktNote ?? '';
       findTotalPrice();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'updateFodToBill()');
+      return;
     }
 
     update();
@@ -1030,7 +1095,10 @@ class BillingScreenController extends GetxController {
       _billingItems.removeAt(index);
       findTotalPrice();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'removeFoodFromBill()');
+      return;
     }
     update();
   }
@@ -1067,7 +1135,10 @@ class BillingScreenController extends GetxController {
       selectedMultiplePrice = selected;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'updateSelectedMultiplePrice()');
+      return;
     }
   }
 
@@ -1081,7 +1152,10 @@ class BillingScreenController extends GetxController {
       //? to make total zero
       findTotalPrice();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'clearAllBillItems()');
+      return;
     }
     update();
   }
@@ -1098,7 +1172,10 @@ class BillingScreenController extends GetxController {
       _totalPrice = totalScores;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'findTotalPrice()');
+      return;
     }
   }
 
@@ -1110,7 +1187,10 @@ class BillingScreenController extends GetxController {
       String hiveKey = getHiveKey();
       _myLocalStorage.setData(hiveKey, _billingItems);
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'saveBillInHive()');
+      return;
     }
   }
 
@@ -1128,32 +1208,41 @@ class BillingScreenController extends GetxController {
 
   //? to clear bill in hive in several conditions
   //? OK
-  Future? clearBillInHive() {
+   clearBillInHive() {
     try {
       //? to change hiveKey as per order type
       String hiveKey = getHiveKey();
       return _myLocalStorage.removeData(hiveKey);
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'clearBillInHive()');
+      return;
     }
   }
 
   String getHiveKey() {
-    String hiveKey = HIVE_TAKE_AWAY_BILL;
-    if (orderType == TAKEAWAY) {
-      hiveKey = HIVE_TAKE_AWAY_BILL;
+    try {
+      String hiveKey = HIVE_TAKE_AWAY_BILL;
+      if (orderType == TAKEAWAY) {
+            hiveKey = HIVE_TAKE_AWAY_BILL;
+          }
+      if (orderType == HOME_DELEVERY) {
+            hiveKey = HIVE_HOME_DELEVERY_BILL;
+          }
+      if (orderType == DINING) {
+            hiveKey = HIVE_DINING_BILL;
+          }
+      if (orderType == ONLINE) {
+            hiveKey = HIVE_ONLINE_BOOKING_BILL;
+          }
+      return hiveKey;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getHiveKey()');
+      return HIVE_TAKE_AWAY_BILL;
     }
-    if (orderType == HOME_DELEVERY) {
-      hiveKey = HIVE_HOME_DELEVERY_BILL;
-    }
-    if (orderType == DINING) {
-      hiveKey = HIVE_DINING_BILL;
-    }
-    if (orderType == ONLINE) {
-      hiveKey = HIVE_ONLINE_BOOKING_BILL;
-    }
-    print('hive key $hiveKey and $orderType');
-    return hiveKey;
   }
 
   //? if costumer save bill when he go back to the other page (eg : save confirmation click YES to hold the bill)
@@ -1176,7 +1265,10 @@ class BillingScreenController extends GetxController {
         return;
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'initialLoadingBillFromHive()');
+      return;
     }
   }
 
@@ -1214,7 +1306,10 @@ class BillingScreenController extends GetxController {
       }
     } catch (e) {
       btnControllerHold.error();
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'addHoldBillItem()');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerHold.reset();
@@ -1252,7 +1347,10 @@ class BillingScreenController extends GetxController {
       }
     } catch (e) {
       _billingItems.clear();
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'unHoldBillingItem()');
+      return;
     }
   }
 
@@ -1375,7 +1473,10 @@ class BillingScreenController extends GetxController {
     } on FormatException {
       AppSnackBar.errorSnackBar('Enter valid data !', 'Pleas Enter valid data !');
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'addDeliveryAddressItem()');
+      return;
     }
   }
 
@@ -1397,7 +1498,10 @@ class BillingScreenController extends GetxController {
         AppSnackBar.errorSnackBar('Enter valid data !', 'Pleas Enter valid data !');
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getDeliveryAddressItemForRefillItem()');
+      return;
     }
   }
 
@@ -1424,7 +1528,10 @@ class BillingScreenController extends GetxController {
         selectDeliveryAddrTxt = deliveryAddressItem.name ?? 'Enter address';
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'updateSelectDeliveryAddressTxt()');
+      return;
     } finally {
       update();
     }
@@ -1472,6 +1579,9 @@ class BillingScreenController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getInitialOnlineApp()');
       return;
     } finally {
       update();
@@ -1492,17 +1602,20 @@ class BillingScreenController extends GetxController {
           _myOnlineApp.addAll(_storedOnlineApp);
           //? to hide snack-bar on page starting , because this method is calling page starting
           if (showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       } else {
         //? to hide snack-bar on page starting , because this method is calling page starting
         if (showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error',response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'refreshOnlineApp()');
+      return;
     } finally {
       update();
     }
@@ -1521,7 +1634,10 @@ class BillingScreenController extends GetxController {
       }
     } catch (e) {
       btnControllerSubmitOnlineApp.error();
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'validateAppDetails()');
+      return;
     } finally {
       Navigator.pop(context);
       onlineAppNameTD.text = '';
@@ -1544,7 +1660,10 @@ class BillingScreenController extends GetxController {
       }
     } catch (e) {
       btnControllerSubmitOnlineApp.error();
-      AppSnackBar.errorSnackBar('Error', 'Something Wrong !!');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'insertOnlineApp()');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerSubmitOnlineApp.reset();
@@ -1567,7 +1686,10 @@ class BillingScreenController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'deleteOnlineApp()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -1582,7 +1704,10 @@ class BillingScreenController extends GetxController {
     try {
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'selectOnlineApp()');
+      return;
     }
   }
 
@@ -1596,7 +1721,10 @@ class BillingScreenController extends GetxController {
         selectedOnlineAppNameTxt = selectedOnlineApp;
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'updateSelectOnlineAppTxt()');
+      return;
     } finally {
       update();
     }
@@ -1625,7 +1753,10 @@ class BillingScreenController extends GetxController {
       selectedOnlineApp = NO_ONLINE_APP;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'resetSelectedOnlineApp()');
+      return;
     }
   }
 
@@ -1658,6 +1789,9 @@ class BillingScreenController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'getInitialRoom()');
       return;
     } finally {
       update();
@@ -1678,17 +1812,20 @@ class BillingScreenController extends GetxController {
           _myRoom.addAll(_storedRoom);
           //? to hide snack-bar on page starting , because this method is calling page starting
           if (showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       } else {
         //? to hide snack-bar on page starting , because this method is calling page starting
         if (showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'refreshRoom()');
+      return;
     } finally {
       update();
     }
@@ -1720,7 +1857,10 @@ class BillingScreenController extends GetxController {
       selectTableTxt = 'T-$table C-$chair';
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'updateTableChairSet()');
+      return;
     }
   }
 
@@ -1736,7 +1876,10 @@ class BillingScreenController extends GetxController {
       selectTableTxt = 'Select table';
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'resetTableChairSetValues()');
+      return;
     }
   }
 
@@ -1765,7 +1908,10 @@ class BillingScreenController extends GetxController {
         AppSnackBar.errorSnackBar('Field is Empty', 'Pleas enter any room name');
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'insertRoom()');
+      return;
     } finally {
       roomNameTD.text = '';
       addRoomLoading = false;
@@ -1795,7 +1941,10 @@ class BillingScreenController extends GetxController {
         AppSnackBar.errorSnackBar('Error', 'Cannot delete this category');
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'billing_screen_controller',methodName: 'deleteRoom()');
+      return;
     } finally {
       addRoomLoading = false;
       update();
