@@ -1,9 +1,14 @@
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/hive_constants/hive_costants.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../local_storage/local_storage_controller.dart';
+import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class GeneralSettingsController extends GetxController {
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? to set toggle btn as per saved data
   bool setShowDeliveryAddressInBillToggle = true;
@@ -14,11 +19,15 @@ class GeneralSettingsController extends GetxController {
   //? to set toggle btn as per saved data
   bool setAllowPurchaseBookToWaiterToggle = false;
 
+  //? to set toggle btn as per saved data
+  bool setShowErrorToggle = false;
+
   @override
   void onInit() async {
     await readShowDeliveryAddressInBillFromHive();
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
+    await readShowError();
     super.onInit();
   }
 
@@ -30,7 +39,10 @@ class GeneralSettingsController extends GetxController {
       setShowDeliveryAddressInBillToggle = showOrHide;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setShowDeliveryAddressInBillInHive()');
+      return;
     }
   }
 
@@ -42,7 +54,10 @@ class GeneralSettingsController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'readShowDeliveryAddressInBillFromHive()');
+      return true;
     }
   }
 
@@ -53,7 +68,10 @@ class GeneralSettingsController extends GetxController {
       setAllowCreditBookToWaiterToggle = allowCreditBook;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setAllowCreditBookToWaiter()');
+      return;
     }
   }
 
@@ -64,7 +82,10 @@ class GeneralSettingsController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'readAllowCreditBookToWaiterFromHive()');
+      return false;
     }
   }
 
@@ -75,7 +96,10 @@ class GeneralSettingsController extends GetxController {
       setAllowPurchaseBookToWaiterToggle = allowPurchaseBook;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setAllowPurchaseBookToWaiter()');
+      return;
     }
   }
 
@@ -86,9 +110,40 @@ class GeneralSettingsController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setShowDeliveryAddressInBillInHive()');
+      return false;
     }
   }
 
+
+  //? to set show error in hive
+  Future setShowError(bool showError) async {
+    try {
+      await _myLocalStorage.setData(SHOW_ERROR, showError);
+      setShowErrorToggle = showError;
+      update();
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setShowError()');
+      return;
+    }
+  }
+
+  Future<bool> readShowError() async {
+    try {
+      bool result = await _myLocalStorage.readData(SHOW_ERROR) ?? false;
+      setShowErrorToggle = result;
+      update();
+      return result;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'readShowError()');
+      return false;
+    }
+  }
 
 }

@@ -102,7 +102,7 @@ class ProfilePageScreen extends StatelessWidget {
                   },
                 ),
                 ProfileMenu(
-                  text: "TYPE : ONLINE",
+                  text: Get.find<StartupController>().applicationPlan == 1 ? "PLAN : ONLINE GOLD PLAN" : "PLAN : ONLINE SILVER PLAN",
                   icon: Icons.category,
                   actionWidget: const SizedBox(),
                   press: () {

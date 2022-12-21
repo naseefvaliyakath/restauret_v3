@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/api_data_loader/category_data.dart';
 import 'package:rest_verision_3/repository/complaint_repository.dart';
 import 'package:rest_verision_3/repository/food_repository.dart';
+import 'package:rest_verision_3/repository/kot_repository.dart';
 import 'package:rest_verision_3/repository/notification_repository.dart';
 import 'package:rest_verision_3/repository/online_app_repository.dart';
 import 'package:rest_verision_3/repository/room_repository.dart';
@@ -27,6 +28,7 @@ class HomeBinding implements Bindings {
     Get.put<RoomRepo>(RoomRepo(), permanent: true);
     Get.put<OnlineAppRepo>(OnlineAppRepo(), permanent: true);
     Get.put<SettledOrderRepo>(SettledOrderRepo(), permanent: true);
+    Get.put<KotRepo>(KotRepo(), permanent: true);
     Get.put<TableChairSetRepo>(TableChairSetRepo(), permanent: true);
     Get.put<NotificationRepo>(NotificationRepo(), permanent: true);
     Get.put<ComplaintRepo>(ComplaintRepo(), permanent: true);

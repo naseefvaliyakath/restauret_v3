@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/components/toggle/gf_toggle.dart';
-import 'package:getwidget/types/gf_toggle_type.dart';
 import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
 import '../../alerts/change_password_prompt_alert/change_password_prompt_to_cashier_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
@@ -35,12 +32,15 @@ class GeneralSettingsScreen extends StatelessWidget {
                   ],
                 ),
                 20.verticalSpace,
-                ProfileMenu(
-                  text: "Change password",
-                  icon: Icons.account_circle_rounded,
-                  press: () => {
-                    changePasswordPromptToCashierMode(context: context)
-                  },
+                Visibility(
+                  visible: Get.find<StartupController>().applicationPlan == 1 ? true : false,
+                  child: ProfileMenu(
+                    text: "Change password",
+                    icon: Icons.account_circle_rounded,
+                    press: () => {
+                      changePasswordPromptToCashierMode(context: context)
+                    },
+                  ),
                 ),
                 ProfileMenu(
                   text: "Show address in bill",
@@ -85,6 +85,20 @@ class GeneralSettingsScreen extends StatelessWidget {
                     value: ctrl.setAllowPurchaseBookToWaiterToggle,
                     onToggle: (bool value) {
                       ctrl.setAllowPurchaseBookToWaiter(value);
+                    },
+                  ),
+                ),
+                ProfileMenu(
+                  text: "Show Error",
+                  icon: Icons.shop,
+                  press: () {},
+                  actionWidget: FlutterSwitch(
+                    width: 50.sp,
+                    height: 30.sp,
+                    activeColor: AppColors.mainColor,
+                    value: ctrl.setShowErrorToggle,
+                    onToggle: (bool value) {
+                      ctrl.setShowError(value);
                     },
                   ),
                 ),

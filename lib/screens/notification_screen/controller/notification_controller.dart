@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/api_data_loader/notification_data.dart';
-import 'package:rest_verision_3/api_data_loader/purchase_item_data.dart';
 import 'package:rest_verision_3/models/notification_response/notification.dart';
-import 'package:rest_verision_3/models/purchase_items/purchase_item.dart';
-import 'package:rest_verision_3/repository/purchase_item_repository.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../check_internet/check_internet.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/my_response.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class NotificationController extends GetxController {
   final NotificationData _notificationData = Get.find<NotificationData>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? for show full screen loading
   bool isLoading = false;
@@ -68,6 +67,9 @@ class NotificationController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'notification_controller',methodName: 'getInitialNotification()');
       return;
     }
     finally{
@@ -92,16 +94,19 @@ class NotificationController extends GetxController {
           _myNotification.clear();
           _myNotification.addAll(_storedNotification);
           if (showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       } else {
         if (showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'notification_controller',methodName: 'refreshNotification()');
+      return;
     } finally {
       hideLoading();
       update();

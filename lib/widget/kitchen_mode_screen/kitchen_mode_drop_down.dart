@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/password_prompt_alert/password_prompt_to_cashier_alert.dart';
+import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rest_verision_3/screens/kitchen_mode_screen/kitchen_mode_main/controller/kitchen_mode_main_controller.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
 import '../../routes/route_helper.dart';
@@ -40,7 +41,7 @@ class KitchenModeDropDown extends StatelessWidget {
                 ctrl.logOutFromApp();
               }
               else if(value.text == 'Exit'){
-                passwordPromptToCashierMode(context: context);
+                passwordPromptToCashierMode(context: context,reason: EXIT_TO_CASHIER);
               }
               else if(value.text == 'Ring'){
                     await ctrl.setNewKotRingSound(!ctrl.kotRingSound);

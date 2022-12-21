@@ -1,19 +1,15 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../api_data_loader/category_data.dart';
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../local_storage/local_storage_controller.dart';
-import '../../../models/category_response/category.dart';
 import '../../../models/foods_response/foods.dart';
 import '../../../models/my_response.dart';
 import '../../../repository/food_repository.dart';
@@ -25,6 +21,8 @@ class MenuBookController extends GetxController {
   final FoodData _foodData = Get.find<FoodData>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
 
   //? this will store all AllFood from the server
@@ -54,13 +52,14 @@ class MenuBookController extends GetxController {
 
   //? to authorize cashier and waiter
   bool isCashier = false;
-
-  String menuBookUrl = 'https://mobizate.com/';
+  int shopId = Get.find<StartupController>().SHOPE_ID;
+  String shopName = Get.find<StartupController>().shopName;
+  String menuBookUrl = 'https://mobizate.com/restaurentmenu/';
 
 
   //? to set toggle btn as per saved data
-  bool setShowPriceToggle = false;
-  bool setShowSpecialToggle = false;
+  bool setShowPriceToggle = true;
+  bool setShowSpecialToggle = true;
   bool setAvailableOnlyToggle = false;
 
   //? to share qr code
@@ -105,11 +104,13 @@ class MenuBookController extends GetxController {
         //? to show full food in UI
         _myAllFoods.clear();
         _myAllFoods.addAll(_storedAllFoods);
-        print('lll ${_myAllFoods.length}');
         sortingFood(_myAllFoods);
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'getInitialFood()');
       return;
     }
   }
@@ -128,7 +129,10 @@ class MenuBookController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'updateAvailableFood()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -148,7 +152,10 @@ class MenuBookController extends GetxController {
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'updateSpecialFood()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -170,15 +177,18 @@ class MenuBookController extends GetxController {
          _myAllFoods.addAll(_storedAllFoods);
          sortingFood(_myAllFoods);
          if(showSnack) {
-           AppSnackBar.successSnackBar('Success', 'Updated successfully');
+           AppSnackBar.successSnackBar('Success', response.message);
          }
        }
      }else{
        if(showSnack) {
-         AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+         AppSnackBar.errorSnackBar('Error', response.message);
        }
      }
    } catch (e) {
+     String myMessage = showErr ? e.toString() : 'Something wrong !!';
+     AppSnackBar.errorSnackBar('Error', myMessage);
+     errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'refreshAllFood()');
      return;
    }finally{
      update();
@@ -199,7 +209,10 @@ class MenuBookController extends GetxController {
       }
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'checkIsCashier()');
+      return;
     }
   }
 
@@ -248,7 +261,10 @@ class MenuBookController extends GetxController {
             foodsByCategory.add(temp);
           }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'sortingFood()');
+      return;
     }
   }
 
@@ -260,7 +276,10 @@ class MenuBookController extends GetxController {
       setShowPriceToggle = showPrice;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'setShowPriceToHive()');
+      return;
     }
   }
 
@@ -271,7 +290,10 @@ class MenuBookController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'readShowPriceFromHive()');
+      return true;
     }
   }
 
@@ -282,7 +304,10 @@ class MenuBookController extends GetxController {
       setShowSpecialToggle = showSpecial;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'setShowSpecialToHive()');
+      return;
     }
   }
 
@@ -293,7 +318,10 @@ class MenuBookController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'readShowSpecialFromHive()');
+      return true;
     }
   }
 
@@ -302,9 +330,13 @@ class MenuBookController extends GetxController {
     try {
       await _myLocalStorage.setData(SET_AVAILABLE_ONLY_IN_HIVE, available);
       setAvailableOnlyToggle = available;
+      refreshAllFood(showSnack: false);
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'setAvailableOnlyToHive()');
+      return;
     }
   }
 
@@ -315,19 +347,42 @@ class MenuBookController extends GetxController {
       update();
       return result;
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'readAvailableOnlyFromHive()');
+      return false;
     }
   }
 
   shareQrCode() async {
-    await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((image) async {
-      if (image != null) {
-        final directory = await getApplicationDocumentsDirectory();
-        final imagePath = await File('${directory.path}/image.png').create();
-        await imagePath.writeAsBytes(image);
-        await Share.shareFiles([imagePath.path]);
-      }
-    });
+    try {
+      await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((image) async {
+            if (image != null) {
+              final directory = await getApplicationDocumentsDirectory();
+              final imagePath = await File('${directory.path}/image.png').create();
+              await imagePath.writeAsBytes(image);
+              await Share.shareFiles([imagePath.path]);
+            }
+          });
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'shareQrCode()');
+      return;
+    }
+  }
+
+  String menuBookUrlGenerated(){
+    try {
+      String shopNameNoSpace = shopName.replaceAll(' ', '');
+      String url = '$menuBookUrl?para1=$shopId&para2=$setShowSpecialToggle&para3=$setShowSpecialToggle&para4=$setAvailableOnlyToggle&para5=$shopNameNoSpace';
+      return url;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'menuBookUrlGenerated()');
+      return 'error';
+    }
   }
 
   showLoading() {

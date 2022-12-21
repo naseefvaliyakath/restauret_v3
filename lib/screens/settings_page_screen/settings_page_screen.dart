@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/message_alert.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
+import 'package:rest_verision_3/screens/help_video_screen/help_video_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/profile_page/profile_screen.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
@@ -77,14 +78,24 @@ class SettingsPageScreen extends StatelessWidget {
                   addNewComplaintAlert(context: context);
                 },
               ),
+              Visibility(
+                visible: Get.find<StartupController>().applicationPlan == 1 ? true : false,
+                child: ProfileMenu(
+                  text: "Change mode",
+                  icon: Icons.mode_sharp,
+                  press: () async {
+                    //? to refresh _appModeNumber from hive before show popup
+                    //? because these appModeNumber is used to show and hide password field
+                    await ctrl.getAppModeNumber();
+                    changeModeOfAppAlert(context: context);
+                  },
+                ),
+              ),
               ProfileMenu(
-                text: "Change mode",
-                icon: Icons.mode_sharp,
-                press: () async {
-                  //? to refresh _appModeNumber from hive before show popup
-                  //? because these appModeNumber is used to show and hide password field
-                  await ctrl.getAppModeNumber();
-                  changeModeOfAppAlert(context: context);
+                text: "Tutorials",
+                icon: Icons.logout,
+                press: () {
+                  Get.to(HelpVideoScreen());
                 },
               ),
               ProfileMenu(

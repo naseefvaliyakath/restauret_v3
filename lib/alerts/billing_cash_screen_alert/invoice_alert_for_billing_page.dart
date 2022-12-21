@@ -77,7 +77,7 @@ void invoiceAlertForBillingViewPage({
                     discountPercent: discountPercent,
                     charges: charges,
                   );
-                  BillingScreenController ctrl = BillingScreenController();
+
                  Get.find<PrintCTRL>().printKot(kotList: billingItems, type: orderType, fullKot: EMPTY_KITCHEN_ORDER);
                 },
               ),

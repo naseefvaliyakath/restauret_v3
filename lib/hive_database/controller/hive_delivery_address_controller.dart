@@ -1,9 +1,11 @@
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../error_handler/error_handler.dart';
 import '../box_repository.dart';
 import '../hive_model/delivery_address/hive_delivery_address_item.dart';
 
 class HiveDeliveryAddressController extends GetxController {
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
   ///? delivery address
   final Box _deliveryAddressBox = BoxRepository.getDeliveryAddressBox();
   Box get deliveryAddressBox => _deliveryAddressBox;
@@ -15,7 +17,8 @@ class HiveDeliveryAddressController extends GetxController {
       await _deliveryAddressBox.add(deliveryAddressItem);
       update();
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_delivery_address_controller',methodName: 'createDeliveryAddress()');
+      return;
     }
   }
 
@@ -25,7 +28,8 @@ class HiveDeliveryAddressController extends GetxController {
       await _deliveryAddressBox.put(key, deliveryAddressItem);
       update();
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_delivery_address_controller',methodName: 'updateDeliveryAddress()');
+      return;
     }
   }
 
@@ -39,7 +43,8 @@ class HiveDeliveryAddressController extends GetxController {
       update();
       return deliveryAddressItems;
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_delivery_address_controller',methodName: 'getDeliveryAddress()');
+      return [];
     }
     finally{
       update();
@@ -52,7 +57,8 @@ class HiveDeliveryAddressController extends GetxController {
       await _deliveryAddressBox.deleteAt(index);
       update();
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_delivery_address_controller',methodName: 'deleteDeliveryAddress()');
+      return;
     }
   }
 
@@ -62,7 +68,8 @@ class HiveDeliveryAddressController extends GetxController {
       await _deliveryAddressBox.clear();
       update();
     } catch (e) {
-      rethrow;
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'hive_delivery_address_controller',methodName: 'clearDeliveryAddress()');
+      return;
     }
   }
 

@@ -19,6 +19,7 @@ final String DELETE_CATEGORY = 'category/deleteCategory';
 const String ADD_SETTLED_ORDER = 'orders/addSettleOrder/';
 const String ADD_KOT_ORDER = 'orders/addKitchenOrder/';
 const String ALL_SETTLED_ORDER = 'orders/allSettleOrder/';
+const String ALL_KOT = 'orders/allKot/';
 const String DELETE_KOT_ORDER = 'orders/deleteKitcheOrder/';
 const String UPDATE_KOT_ORDER = 'orders/updateKitcheOrder/';
 const String DELETE_SETTLED_ORDER = 'orders/deleteSettledOrder/';
@@ -59,6 +60,8 @@ const String DELETE_PURCHASE = 'purchase_item/deletePurchase';
 const String GET_NOTIFICATION = 'notification/getAllNotification';
 
 const String INSERT_COMPLAINT = 'complaints/addComplaint';
+
+const String INSERT_FLUTTER_LOG = 'flutterLogs/addLog';
 
 
 

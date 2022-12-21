@@ -164,6 +164,8 @@ class MenuSetupScreen extends StatelessWidget {
                                   priceQuarter: ctrl.myAllFoods[index].fdQtrPrice ?? 0,
                                   available: ctrl.myAllFoods[index].fdIsAvailable ?? 'no',
                                   special: ctrl.myAllFoods[index].fdIsSpecial ?? 'no',
+                                  showSpecial: ctrl.setShowSpecialToggle,
+                                  showPrice: ctrl.setShowPriceToggle,
                                   fdIsLoos: ctrl.myAllFoods[index].fdIsLoos ?? 'no',
                                 ),
                               );

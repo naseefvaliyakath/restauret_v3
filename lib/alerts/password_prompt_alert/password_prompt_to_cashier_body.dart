@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../../screens/login_screen/controller/startup_controller.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
@@ -8,7 +9,8 @@ import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/text_field_widget.dart';
 
 class PasswordPromptAlertBody extends StatelessWidget {
-  const PasswordPromptAlertBody({Key? key}) : super(key: key);
+  final String reason;
+  const PasswordPromptAlertBody({Key? key, required this.reason}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +42,21 @@ class PasswordPromptAlertBody extends StatelessWidget {
                         ctrl: ctrl,
                         color: Colors.green,
                         onTap: () async {
+                          if(FocusScope.of(context).isFirstFocus) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          }
                        bool result = await ctrl.checkPassword();
                        if(result){
-                         //? resting app mode to cashier
-                         ctrl.resetAppModeNumberInHive();
-                         Get.offAllNamed(RouteHelper.getHome());
+                         if(reason == EXIT_TO_CASHIER){
+                           //? resting app mode to cashier
+                           ctrl.resetAppModeNumberInHive();
+                           Get.offAllNamed(RouteHelper.getHome());
+                         }
+                         else if(reason == ENTER_TO_REPORT){
+                           Navigator.pop(context);
+                           Get.toNamed(RouteHelper.getReportScreen());
+                         }
+
                        }
                         },
                       ),

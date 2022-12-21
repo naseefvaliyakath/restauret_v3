@@ -49,6 +49,4 @@ class SocketController extends GetxController {
   }
 
 
-
-
 }

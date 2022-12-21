@@ -7,6 +7,7 @@ import 'package:rest_verision_3/screens/login_screen/controller/startup_controll
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../models/my_response.dart';
 import '../../../routes/route_helper.dart';
@@ -17,6 +18,8 @@ import '../../../widget/common_widget/snack_bar.dart';
 class SettingsController extends GetxController {
   final MyLocalStorage _myLocalStorage = Get.find<MyLocalStorage>();
   final ComplaintRepo _complaintRepo = Get.find<ComplaintRepo>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   final RoundedLoadingButtonController btnControllerAddComplaint = RoundedLoadingButtonController();
 
@@ -72,7 +75,10 @@ class SettingsController extends GetxController {
       _groupValueForModes = _appModeNumber;
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'settings_controller',methodName: 'getAppModeNumber()');
+      return;
     }
   }
 
@@ -81,7 +87,10 @@ class SettingsController extends GetxController {
     try {
       _myLocalStorage.setData(HIVE_APP_MODE_NUMBER, appModeNumber);
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'settings_controller',methodName: 'saveAppModeNumberInHive()');
+      return;
     }
   }
 
@@ -112,7 +121,10 @@ class SettingsController extends GetxController {
         Get.offAllNamed(RouteHelper.getHome());
       }
     }catch(e){
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'settings_controller',methodName: 'modeChangeSubmit()');
+      return;
     }
     finally{
       //? update data from hive , else need to restart app to get app mode number from hive to _appModeNumber variable
@@ -131,7 +143,10 @@ class SettingsController extends GetxController {
       Get.find<StartupController>().subIdTD.text ='';
       Get.offAllNamed(RouteHelper.getInitial());
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'settings_controller',methodName: 'logOutFromApp()');
+      return;
     }
   }
 
@@ -173,7 +188,10 @@ class SettingsController extends GetxController {
 
     catch (e) {
       btnControllerAddComplaint.error();
-      AppSnackBar.errorSnackBar('Error', 'Something wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'settings_controller',methodName: 'insertComplaint()');
+      return;
     }
     finally {
       complaintMobTD.text = '';

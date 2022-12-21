@@ -42,11 +42,15 @@ dependencies:
   #flutter_pos_printer_platform: ^1.0.12 #For IOS & Windows
   esc_pos_utils: ^1.1.0 #For IOS & Windows
   package_info_plus: ^3.0.2
-  store_redirect: ^2.0.1
+  dependencies:
+  open_store: ^0.4.0
   qr_flutter: ^4.0.0
   share_plus: ^6.3.0
   path_provider: ^2.0.11
   syncfusion_flutter_charts: ^20.3.60
+  flutter_secure_storage: ^7.0.1 #store token
+  device_info_plus: ^8.0.0
+  url_launcher: ^6.1.7 #to tutorials videos to youtube
   flutter: 
     sdk: flutter
 

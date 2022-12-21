@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/repository/kot_repository.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../alerts/billing_cash_screen_alert/billing_cash_screen_alert.dart';
@@ -11,6 +12,7 @@ import '../../../api_data_loader/settled_order_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/api_link/api_link.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../hive_database/controller/hive_hold_bill_controller.dart';
 import '../../../hive_database/hive_model/hold_item/hive_hold_item.dart';
 import '../../../models/foods_response/food_response.dart';
@@ -19,7 +21,6 @@ import '../../../models/kitchen_order_response/kitchen_order_array.dart';
 import '../../../models/kitchen_order_response/order_bill.dart';
 import '../../../models/my_response.dart';
 import '../../../models/settled_order_response/settled_order.dart';
-import '../../../models/settled_order_response/settled_order_response.dart';
 import '../../../repository/settled_order_repository.dart';
 import '../../../routes/route_helper.dart';
 import '../../../services/dio_error.dart';
@@ -30,10 +31,13 @@ import '../../login_screen/controller/startup_controller.dart';
 
 class OrderViewController extends GetxController {
   final SettledOrderRepo _settledOrderRepo = Get.find<SettledOrderRepo>();
+  final KotRepo _kotRepo = Get.find<KotRepo>();
   final SettledOrderData _settledOrderData = Get.find<SettledOrderData>();
   final HttpService _httpService = Get.find<HttpService>();
   final IO.Socket _socket = Get.find<SocketController>().socket;
   final HiveHoldBillController _hiveHoldBillController = Get.find<HiveHoldBillController>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? to show and hide loading
   bool isLoading = false;
@@ -133,10 +137,15 @@ class OrderViewController extends GetxController {
   void onInit() async {
     initTxtController();
     checkInternetConnection();
-    _socket.connect();
+    //? for full feature application
+    if(Get.find<StartupController>().applicationPlan == 1){
+      _socket.connect();
+      setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
+      setUpKitchenOrderSingleListener(); //? for new kot order
+    }else{
+      getAllKot();
+    }
     getAllHoldOrder();
-    setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
-    setUpKitchenOrderSingleListener(); //? for new kot order
     getInitialSettledOrder(); //? to load settled order first time
     super.onInit();
   }
@@ -147,6 +156,36 @@ class OrderViewController extends GetxController {
     _socket.dispose();
     disposeTxtController();
     super.onClose();
+  }
+
+
+  getAllKot({bool showSnack = false}) async {
+    try {
+      MyResponse response = await _kotRepo.getAllKot();
+      if (response.statusCode == 1) {
+        KitchenOrderArray parsedResponse = response.data;
+        if (parsedResponse.kitchenOrder == null) {
+          _kotBillingItems;
+        } else {
+          _kotBillingItems.clear();
+          _kotBillingItems.addAll(parsedResponse.kitchenOrder?.toList() ?? []);
+          if(showSnack){
+            AppSnackBar.successSnackBar('Success', response.message);
+          }
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error', response.message);
+      }
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'getAllKot()');
+      return;
+    }
+    finally{
+      update();
+    }
+
   }
 
   //? for single order adding live
@@ -162,7 +201,6 @@ class OrderViewController extends GetxController {
         //?no error
         bool err = order.error ?? true;
         if (!err) {
-          print('fd shop id ${order.fdShopId}');
           //?check if item is already in list
           bool isExist = true;
           for (var element in _kotBillingItems) {
@@ -185,7 +223,10 @@ class OrderViewController extends GetxController {
         }
       });
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'setUpKitchenOrderSingleListener()');
+      return;
     }
   }
 
@@ -215,13 +256,22 @@ class OrderViewController extends GetxController {
         }
       });
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'setUpKitchenOrderFromDbListener()');
+      return;
     }
   }
 
   //? this emit will receive in server and emit from server to refresh data
   refreshDatabaseKot() {
-    _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
+    if(Get.find<StartupController>().applicationPlan == 1){
+      _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
+    }
+    else{
+      getAllKot();
+    }
+
   }
 
   //? this emit will receive server and emit from server to with kotID to ring order
@@ -257,6 +307,9 @@ class OrderViewController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'getInitialSettledOrder()');
       return;
     }
   }
@@ -274,15 +327,18 @@ class OrderViewController extends GetxController {
           _settledBillingItems.clear();
           _settledBillingItems.addAll(_storedAllSettledOrder);
           if(showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       }else{
         if(showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'refreshSettledOrder()');
       return;
     }finally{
       update();
@@ -320,7 +376,10 @@ class OrderViewController extends GetxController {
           double.parse((settleCashReceivedCtrl.value.text == '' ? 0 : cashReceived - grandTotalNew).toStringAsFixed(3));
       settleGrandTotalCtrl.value.text = '$grandTotalNew';
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'calculateNetTotal()');
+      return;
     }
   }
 
@@ -366,7 +425,10 @@ class OrderViewController extends GetxController {
         billingCashScreenAlert(context: context, ctrl: ctrl, from: 'kotAlert');
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'settleKotBillingCash()');
+      return;
     }
   }
 
@@ -401,14 +463,16 @@ class OrderViewController extends GetxController {
         return false;
       } else {
         btnControllerSettle.success();
-        //? to disable settled and settled and pe=rint btn
+        //? to disable settled and settled and settled&print btn
         isClickedSettle.value = true;
         AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
         return true;
       }
     } on DioError catch (e) {
       btnControllerSettle.error();
-      AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'insertSettledBill()');
       return false;
     } catch (e) {
       btnControllerSettle.error();
@@ -440,7 +504,10 @@ class OrderViewController extends GetxController {
         AppSnackBar.errorSnackBar('Error', response.message);
       }
     }  catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'deleteSettledOrder()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -469,7 +536,10 @@ class OrderViewController extends GetxController {
         billingCashScreenAlert(context: context, ctrl: ctrl, from: 'updateSettle');
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'updateSettleBillingCash()');
+      return;
     }
   }
 
@@ -506,6 +576,10 @@ class OrderViewController extends GetxController {
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
     } catch (e) {
       btnControllerSettle.error();
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'updateSettledBill()');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerSettle.reset();
@@ -521,47 +595,57 @@ class OrderViewController extends GetxController {
       _holdBillingItems.addAll(_hiveHoldBillController.getHoldBill());
       update();
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'getAllHoldOrder()');
+      return;
     }
     update();
   }
 
   //? unHold holdItem sending data to billing screen to un hold
   unHoldHoldItem({required holdBillingItems, required int holdItemIndex, required String orderType}) async {
-    switch (orderType) {
-      case TAKEAWAY:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
-        }
-        break;
+    try {
+      switch (orderType) {
+            case TAKEAWAY:
+              {
+                Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
+              }
+              break;
 
-      case HOME_DELEVERY:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
-        }
-        break;
+            case HOME_DELEVERY:
+              {
+                Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
+              }
+              break;
 
-      case ONLINE:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
-        }
-        break;
+            case ONLINE:
+              {
+                Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
+              }
+              break;
 
-      case DINING:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
-        }
-        break;
+            case DINING:
+              {
+                Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
+              }
+              break;
 
-      default:
-        {
-          Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
-        }
-        break;
+            default:
+              {
+                Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'holdItem': holdBillingItems});
+              }
+              break;
+          }
+
+      //? delete the hold item from hold item list
+      await _hiveHoldBillController.deleteHoldBill(index: holdItemIndex);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'unHoldHoldItem()');
+      return;
     }
-
-    //? delete the hold item from hold item list
-    await _hiveHoldBillController.deleteHoldBill(index: holdItemIndex);
   }
 
   //? edit kot order or update kot order navigate to billing screen
@@ -593,7 +677,10 @@ class OrderViewController extends GetxController {
       AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
     } catch (e) {
       btnControllerCancellKOtOrder.error();
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'deleteKotOrder()');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnControllerCancellKOtOrder.reset();
@@ -645,11 +732,18 @@ class OrderViewController extends GetxController {
   }
 
   Future<void> ringAlert() async {
-    if (kDebugMode) {
-      print('ring sound');
+    try {
+      if (kDebugMode) {
+            print('ring sound');
+          }
+      await player.setSource(AssetSource('sounds/ring_two.mp3'));
+      await player.resume();
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'ringAlert()');
+      return;
     }
-    await player.setSource(AssetSource('sounds/ring_two.mp3'));
-    await player.resume();
   }
 
 
@@ -670,7 +764,10 @@ class OrderViewController extends GetxController {
            refreshSettledOrder(startDate: dateRange.start,endTime: dateRange.end);
          }
    } catch (e) {
-     rethrow;
+     String myMessage = showErr ? e.toString() : 'Something wrong !!';
+     AppSnackBar.errorSnackBar('Error', myMessage);
+     errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'datePickerForSettledOrder()');
+     return;
    }
    finally{
      update();

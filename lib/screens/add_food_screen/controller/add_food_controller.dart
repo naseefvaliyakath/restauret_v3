@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart' hide Response;
@@ -7,12 +6,13 @@ import 'package:rest_verision_3/api_data_loader/category_data.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/models/category_response/category.dart';
 import 'package:rest_verision_3/repository/category_repository.dart';
-
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
+import '../../../error_handler/error_handler.dart';
 import '../../../models/my_response.dart';
 import '../../../repository/food_repository.dart';
 import '../../../widget/common_widget/snack_bar.dart';
+import '../../login_screen/controller/startup_controller.dart';
 
 class AddFoodController extends GetxController {
   //?controllers
@@ -20,6 +20,8 @@ class AddFoodController extends GetxController {
   final CategoryRepo _categoryRepo = Get.find<CategoryRepo>();
   final FoodRepo _foodRepo = Get.find<FoodRepo>();
   final FoodData _foodData = Get.find<FoodData>();
+  bool showErr  = Get.find<StartupController>().showErr;
+  final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
   //? to store image file
   File? file;
@@ -110,6 +112,9 @@ class AddFoodController extends GetxController {
       }
       update();
     } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'add_food_controller',methodName: 'getInitialCategory()');
       return;
     }
     finally{
@@ -135,16 +140,19 @@ class AddFoodController extends GetxController {
           _myCategory.clear();
           _myCategory.addAll(_storedCategory);
           if(showSnack) {
-            AppSnackBar.successSnackBar('Success', 'Updated successfully');
+            AppSnackBar.successSnackBar('Success', response.message);
           }
         }
       }else{
         if(showSnack) {
-          AppSnackBar.errorSnackBar('Error', 'Something went to wrong !!');
+          AppSnackBar.errorSnackBar('Error', response.message);
         }
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'add_food_controller',methodName: 'refreshCategory()');
+      return;
     } finally {
       isLoadingCategory = false;
       update();
@@ -155,7 +163,6 @@ class AddFoodController extends GetxController {
 
   //? to change tapped category
   setCategoryTappedIndex(int val,String fdCategorySelected) {
-
     tappedIndex = val;
     //? update selected category on tapping
     selectedCategory = fdCategorySelected;
@@ -190,7 +197,10 @@ class AddFoodController extends GetxController {
         AppSnackBar.errorSnackBar('Field is Empty', 'Pleas enter valid name');
       }
     }  catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something Wrong !!');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'add_food_controller',methodName: 'insertCategory()');
+      return;
     } finally {
       categoryNameTD.text = '';
       addCategoryLoading = false;
@@ -221,7 +231,9 @@ class AddFoodController extends GetxController {
         AppSnackBar.errorSnackBar('Error', 'Cannot delete this category');
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'add_food_controller',methodName: 'deleteCategory()');
     } finally {
       isLoadingCategory = false;
       update();
@@ -289,7 +301,10 @@ class AddFoodController extends GetxController {
         AppSnackBar.errorSnackBar('Fill the fields!', 'Enter the values in fields!!');
       }
     } catch (e) {
-      rethrow;
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'add_food_controller',methodName: 'validateFoodDetails()');
+      return;
     } finally {
       hideLoading();
       update();
@@ -327,13 +342,17 @@ class AddFoodController extends GetxController {
         _foodData.getAllFoods();
         clearFields();
         setPriceToggle(false);
-        AppSnackBar.successSnackBar('Success', response.message);
+        String myMessage = showErr ? response.message : 'Updated successfully';
+        AppSnackBar.successSnackBar('Success', myMessage);
       } else {
-        AppSnackBar.errorSnackBar('Error', response.message);
+        String myMessage = showErr ? response.message : 'Something wrong !!';
+        AppSnackBar.errorSnackBar('Error', myMessage);
         return;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something wet to wrong');
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'add_food_controller',methodName: 'insertFood()');
     } finally {
       hideLoading();
       update();

@@ -26,6 +26,9 @@ class NoticeAndUpdate{
   @JsonKey(name : "nextShowingDate")
   List<int>? nextShowingDate;
 
+  @JsonKey(name : "timeInterval")
+  int? timeInterval;
+
 
 
   @JsonKey(name : "createdAt")
@@ -39,6 +42,7 @@ class NoticeAndUpdate{
       this.version,
       this.platform,
       this.nextShowingDate,
+      this.timeInterval,
       this.createdAt,
       this.dismissable,
       this.message,
