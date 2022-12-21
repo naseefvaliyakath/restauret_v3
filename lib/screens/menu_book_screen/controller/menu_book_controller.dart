@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/hive_constants/hive_costants.dart';

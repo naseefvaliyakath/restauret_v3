@@ -1,15 +1,10 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
 
 import '../../constants/app_colors/app_colors.dart';
-import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
-import '../../screens/all_food_screen/controller/all_food_controller.dart';
-import '../../screens/today_food_screen/controller/today_food_controller.dart';
 import '../common_widget/common_text/heading_rich_text.dart';
 import '../common_widget/notification_icon.dart';
 

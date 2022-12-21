@@ -1,14 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 
 import '../widget/billing_screen/delete_biiling_alert_edit_food_dody.dart';
 import '../widget/common_widget/buttons/dialog_button.dart';
-import '../widget/common_widget/common_text/big_text.dart';
 import '../widget/common_widget/common_text/mid_text.dart';
 import 'my_dialog_body.dart';
 

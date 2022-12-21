@@ -3,10 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
-import 'package:rest_verision_3/widget/common_widget/common_text/mid_text.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/small_text.dart';
-
-import '../../constants/app_colors/app_colors.dart';
 
 class MultiplePriceRadioGroup extends StatelessWidget {
   final int index;

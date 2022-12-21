@@ -1,11 +1,12 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
-import '../../models/notice_and_update/notice_and_update.dart';
-import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'package:open_store/open_store.dart';
+import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
+
+import '../../widget/common_widget/buttons/app_round_mini_btn.dart';
 
 
 void showNoticeUpdateAlert({

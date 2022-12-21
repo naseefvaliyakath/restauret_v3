@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/mid_text.dart';
-import 'package:rest_verision_3/widget/common_widget/common_text/small_text.dart';
-
-import '../../constants/app_colors/app_colors.dart';
 
 class ToggleBtnInCard extends StatelessWidget {
   final String text;

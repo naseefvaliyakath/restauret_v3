@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
+import 'package:rest_verision_3/widget/common_widget/buttons/app_round_mini_btn.dart';
 import 'package:rest_verision_3/widget/common_widget/loading_page.dart';
 import 'package:rest_verision_3/widget/credit_book_screen/credit_book_app_bar_widget.dart';
-import 'package:rest_verision_3/widget/common_widget/buttons/app_round_mini_btn.dart';
+
 import '../../alerts/add_new_user_alert/add_new_user_alert.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../widget/credit_book_screen/crdit_user_tile.dart';
-import '../credit_user_screen/credit_book_user_screen.dart';
 
 class CreditBookUserScreen extends StatelessWidget {
    const CreditBookUserScreen({Key? key}) : super(key: key);

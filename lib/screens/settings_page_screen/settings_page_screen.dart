@@ -5,13 +5,12 @@ import 'package:rest_verision_3/alerts/message_alert.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/screens/help_video_screen/help_video_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
-import 'package:rest_verision_3/screens/profile_page/profile_screen.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
+
 import '../../alerts/add_new_complaint_alert/add_new_complaint_alert.dart';
 import '../../alerts/change_mode_of_alert/change_mode_of_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/settings_page_screen/profile_menu.dart';
-import '../../widget/settings_page_screen/profile_pic.dart';
 
 
 class SettingsPageScreen extends StatelessWidget {
@@ -95,7 +94,7 @@ class SettingsPageScreen extends StatelessWidget {
                 text: "Tutorials",
                 icon: Icons.logout,
                 press: () {
-                  Get.to(HelpVideoScreen());
+                  Get.toNamed(RouteHelper.getVideoTutorialScreen());
                 },
               ),
               ProfileMenu(

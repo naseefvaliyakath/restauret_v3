@@ -1,18 +1,6 @@
-import 'dart:io';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
-import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
-import '../../constants/strings/my_strings.dart';
-import '../../error_handler/error_handler.dart';
+
 import '../../models/kitchen_order_response/kitchen_order.dart';
-import '../../screens/billing_screen/controller/billing_screen_controller.dart';
-import 'library/iosWinPrint.dart';
-import 'library/iosWinPrintMethods.dart';
-import 'library/print_responce.dart';
 
 class PrintCTRL extends GetxController {
 

@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           initialRoute: RouteHelper.getInitial(),
           initialBinding: LoginBinding(),
           unknownRoute: GetPage(name: '/notFount', page: () => const HomeScreen()),
-          defaultTransition: Transition.fade,
+          defaultTransition: Transition.cupertino,
           getPages: RouteHelper.routes,
         );
       },

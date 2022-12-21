@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/common_widget/text_field_widget.dart';
 import 'controller/startup_controller.dart';

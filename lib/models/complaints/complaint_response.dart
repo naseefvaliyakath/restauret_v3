@@ -1,8 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rest_verision_3/models/complaints/complaint_item.dart';
-import 'package:rest_verision_3/models/credit_user_response/credit_user.dart';
-import 'package:rest_verision_3/models/purchase_items/purchase_item.dart';
-import 'package:rest_verision_3/models/room_response/room.dart';
 
 part 'complaint_response.g.dart';
 @JsonSerializable()

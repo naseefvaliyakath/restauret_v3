@@ -7,9 +7,9 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
-import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:ticket_widget/ticket_widget.dart';
+
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../../widget/common_widget/common_text/small_text.dart';

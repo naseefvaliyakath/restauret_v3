@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:rest_verision_3/constants/app_secret_constants/app_secret_constants.dart';
 import 'package:rest_verision_3/models/notice_and_update/notice_and_update.dart';
 import 'package:rest_verision_3/models/notice_and_update/notice_and_update_response.dart';
 import 'package:rest_verision_3/models/shop_response/shop.dart';
@@ -15,6 +14,7 @@ import 'package:rest_verision_3/repository/flutter_log_repository.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+
 import '../../../alerts/update_notice_alert/update_notice_alert.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../constants/strings/my_strings.dart';

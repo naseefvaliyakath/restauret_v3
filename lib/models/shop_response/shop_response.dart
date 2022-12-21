@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:rest_verision_3/models/room_response/room.dart';
 import 'package:rest_verision_3/models/shop_response/shop.dart';
 
 part 'shop_response.g.dart';

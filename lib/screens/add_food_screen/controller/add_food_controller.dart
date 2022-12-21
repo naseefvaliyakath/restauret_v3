@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart' hide Response;
@@ -6,6 +7,7 @@ import 'package:rest_verision_3/api_data_loader/category_data.dart';
 import 'package:rest_verision_3/api_data_loader/food_data.dart';
 import 'package:rest_verision_3/models/category_response/category.dart';
 import 'package:rest_verision_3/repository/category_repository.dart';
+
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../error_handler/error_handler.dart';

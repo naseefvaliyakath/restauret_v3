@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+
 import '../error_handler/error_handler.dart';
 import '../models/foods_response/food_response.dart';
 import '../models/foods_response/foods.dart';

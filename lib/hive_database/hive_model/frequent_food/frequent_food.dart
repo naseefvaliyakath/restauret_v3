@@ -1,4 +1,5 @@
 import 'package:hive_flutter/adapters.dart';
+
 part 'frequent_food.g.dart';
 
 @HiveType(typeId: 2)

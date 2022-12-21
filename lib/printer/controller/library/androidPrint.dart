@@ -1,5 +1,4 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rest_verision_3/printer/controller/library/print_responce.dart';
 import 'package:rest_verision_3/printer/controller/library/printer_config.dart';

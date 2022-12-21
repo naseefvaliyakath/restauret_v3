@@ -1,22 +1,19 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
-import 'package:rest_verision_3/error_handler/error_handler.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
+import 'package:rest_verision_3/services/service.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
+
 import '../../alerts/password_prompt_alert/password_prompt_to_cashier_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
-import '../../repository/flutter_log_repository.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/notification_icon.dart';
 import '../../widget/dash_bord_screen/dash_bord_card.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 class DashBordScreen extends StatelessWidget {
   const DashBordScreen({Key? key}) : super(key: key);
@@ -37,7 +34,8 @@ class DashBordScreen extends StatelessWidget {
               //notification icon
               NotificationIcon(
                 onTap: () async {
-                  print(Get.find<StartupController>().showErr);
+                  print(Get.find<HttpService>().token
+                  );
                  // Get.toNamed(RouteHelper.getNotificationScreen());
                 },
               )

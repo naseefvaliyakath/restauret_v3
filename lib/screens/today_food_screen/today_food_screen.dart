@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
+
 import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/round_border_icon_button.dart';

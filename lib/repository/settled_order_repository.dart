@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+
 import '../constants/api_link/api_link.dart';
 import '../error_handler/error_handler.dart';
 import '../models/foods_response/food_response.dart';
