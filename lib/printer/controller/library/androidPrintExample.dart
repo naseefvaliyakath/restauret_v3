@@ -9,7 +9,7 @@ import 'androidPrintWidgets.dart';
 import 'androidPrintenum.dart';
 
 class AndroidPrintExample {
-  ScreenshotController _screenshotController = ScreenshotController();
+  final ScreenshotController _screenshotController = ScreenshotController();
 
   Future<void> _testPrintForAndroid() async {
     PrintResponse readyForPrint = await AndroidPrint().isReadyForPrint();

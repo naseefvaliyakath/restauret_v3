@@ -8,6 +8,9 @@ import 'package:rest_verision_3/screens/report_screen/controller/report_controll
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../models/settled_order_response/settled_order.dart';
+import '../../widget/common_widget/common_text/big_text.dart';
+import '../../widget/common_widget/common_text/mid_text.dart';
+import '../../widget/common_widget/common_text/small_text.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/order_view_screen/date_picker_for_order_view.dart';
 
@@ -161,13 +164,13 @@ class ReportScreen extends StatelessWidget {
                             10.horizontalSpace,
                           ],
                         ),
-                        ListTile(
-                          title: Text('total order: $totalOrder'),
-                        ),
-                        ListTile(
-                          title: Text('totalCash : $totalCash'),
-                        ),
                         if(ctrl.mySettledItem.isNotEmpty)...[
+                          ListTile(
+                            title: Text('total order: $totalOrder'),
+                          ),
+                          ListTile(
+                            title: Text('totalCash : $totalCash'),
+                          ),
                           Card(
                             child: Column(
                               children: [
@@ -299,8 +302,9 @@ class ReportScreen extends StatelessWidget {
                           Card(
                             child: Column(
                               children: [
-                                Text('Orders By product'),
-                                ListTile(
+                                const Text('Orders By product'),
+                                const ListTile(
+                                  dense: true,
                                   title: Text(
                                     'Qty',
                                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -311,6 +315,7 @@ class ReportScreen extends StatelessWidget {
                                 Column(
                                     children: List.generate(sortByFoodList.length, (index) {
                                       return ListTile(
+                                        dense: true,
                                         title: Text(sortByFoodList[index].title),
                                         leading: Text('${sortByFoodList[index].qtyTotal}'),
                                         trailing: Text('${sortByFoodList[index].priceTotal}'),
@@ -319,8 +324,14 @@ class ReportScreen extends StatelessWidget {
                               ],
                             ),
                           ),
+                          SizedBox(height: 250)
+                        ]else...[
+                          SizedBox(height: 200),
+                          //TODO : overflow not added in MidText
+                          // MidText(text: 'There is no records to display for the selected date rangegsdfg df gd f g',overflow: TextOverflow.visible),
+                          Text('There is no records to display for the selected date range')
                         ],
-                        SizedBox(height: 250)
+
                       ],
                     ),
                   ),
