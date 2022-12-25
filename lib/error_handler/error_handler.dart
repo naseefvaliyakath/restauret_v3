@@ -1,8 +1,8 @@
 import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:rest_verision_3/models/my_response.dart';
 import 'package:rest_verision_3/repository/flutter_log_repository.dart';
 
 class ErrorHandler extends GetxService {

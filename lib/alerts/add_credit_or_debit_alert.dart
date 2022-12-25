@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
 import 'package:rest_verision_3/screens/credit_debit_screen/controller/credit_debit_ctrl.dart';
-import 'package:rest_verision_3/widget/common_widget/buttons/app_min_button.dart';
 
 import '../widget/common_widget/buttons/progress_button.dart';
 import '../widget/common_widget/common_text/big_text.dart';

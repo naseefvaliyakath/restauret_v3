@@ -1,9 +1,9 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+
 import '../../alerts/common_alerts.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';

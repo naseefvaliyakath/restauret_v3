@@ -8,9 +8,9 @@ import 'package:getwidget/components/radio/gf_radio.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_radio_type.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
+
 import '../../constants/app_colors/app_colors.dart';
 import '../../screens/settings_page_screen/controller/settings_controller.dart';
-import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../../widget/common_widget/text_field_widget.dart';

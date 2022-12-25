@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
+
 import '../../alerts/change_password_prompt_alert/change_password_prompt_to_cashier_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/settings_page_screen/profile_menu.dart';

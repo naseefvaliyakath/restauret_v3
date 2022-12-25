@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_widget/ticket_widget.dart';
+
 import '../../constants/strings/my_strings.dart';
 import '../../models/settled_order_response/settled_order.dart';
 import '../../screens/login_screen/controller/startup_controller.dart';

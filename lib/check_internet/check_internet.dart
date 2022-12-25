@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+
 import '../error_handler/error_handler.dart';
 import '../widget/common_widget/snack_bar.dart';
 

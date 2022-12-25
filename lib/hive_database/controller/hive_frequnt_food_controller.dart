@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rest_verision_3/hive_database/hive_model/frequent_food/frequent_food.dart';
+
 import '../../error_handler/error_handler.dart';
 import '../box_repository.dart';
 

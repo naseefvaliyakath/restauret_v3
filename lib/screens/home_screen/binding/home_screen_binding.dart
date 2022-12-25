@@ -9,13 +9,12 @@ import 'package:rest_verision_3/repository/room_repository.dart';
 import 'package:rest_verision_3/repository/settled_order_repository.dart';
 import 'package:rest_verision_3/repository/table_chair_set_repository.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
+
 import '../../../api_data_loader/food_data.dart';
-import '../../../hive_database/controller/hive_hold_bill_controller.dart';
-import '../../../local_storage/local_storage_controller.dart';
+import '../../../api_data_loader/settled_order_data.dart';
 import '../../../repository/category_repository.dart';
-import '../../../repository/startup_repository.dart';
-import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
+import '../../report_screen/controller/report_controller.dart';
 import '../../settings_page_screen/controller/settings_controller.dart';
 
 
@@ -43,11 +42,13 @@ class HomeBinding implements Bindings {
     //?api data loader for initial loading data
     Get.put<FoodData>(FoodData(), permanent: true);
     Get.put<CategoryData>(CategoryData(), permanent: true);
+    Get.put<SettledOrderData>(SettledOrderData(), permanent: true);
 
 
     //?screen binding
     //? today screen should permanent , else when change mode from waiter to cashier it threw error
     Get.put<TodayFoodController>(TodayFoodController(), permanent: true);
+    Get.put<ReportController>(ReportController(), permanent: true);
 
 
   }

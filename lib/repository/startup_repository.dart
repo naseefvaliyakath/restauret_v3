@@ -2,11 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/models/notice_and_update/notice_and_update_response.dart';
 import 'package:rest_verision_3/models/shop_response/shop_response.dart';
+
 import '../constants/api_link/api_link.dart';
-import '../constants/app_secret_constants/app_secret_constants.dart';
 import '../error_handler/error_handler.dart';
 import '../models/my_response.dart';
-import '../screens/login_screen/controller/startup_controller.dart';
 import '../services/dio_error.dart';
 import '../services/service.dart';
 

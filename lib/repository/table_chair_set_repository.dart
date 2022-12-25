@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../constants/api_link/api_link.dart';
-import '../constants/app_secret_constants/app_secret_constants.dart';
 import '../models/my_response.dart';
 import '../models/table_chair_response/table_chair_set_response.dart';
 import '../screens/login_screen/controller/startup_controller.dart';

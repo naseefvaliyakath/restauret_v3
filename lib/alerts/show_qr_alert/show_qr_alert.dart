@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rest_verision_3/alerts/add_new_user_alert/add_new_user_alert_body.dart';
-import 'package:rest_verision_3/alerts/password_prompt_alert/password_prompt_to_cashier_body.dart';
 import 'package:rest_verision_3/alerts/show_qr_alert/show_qr_alert_body.dart';
+
 import '../../widget/common_widget/common_text/big_text.dart';
 
 

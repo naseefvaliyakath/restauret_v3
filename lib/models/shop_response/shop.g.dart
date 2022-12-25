@@ -13,17 +13,16 @@ Shop _$ShopFromJson(Map<String, dynamic> json) => Shop(
       json['shopAddr'] as String?,
       json['applicationPlan'] as int?,
       json['token'] as String?,
+      json['subcIdStatus'] as String?,
       json['subcId'] as String?,
       json['password'] as String?,
       json['expiryDate'] == null
           ? null
           : DateTime.parse(json['expiryDate'] as String),
       json['logoImg'] as String?,
-    )
-      ..subcIdStatus = json['subcIdStatus'] as String?
-      ..createdAt = json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String);
+    )..createdAt = json['createdAt'] == null
+        ? null
+        : DateTime.parse(json['createdAt'] as String);
 
 Map<String, dynamic> _$ShopToJson(Shop instance) => <String, dynamic>{
       'fdShopId': instance.fdShopId,

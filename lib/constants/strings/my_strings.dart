@@ -55,7 +55,7 @@ KitchenOrder EMPTY_KITCHEN_ORDER = KitchenOrder(
   fdDelAddress: {'name': '', 'number': 0, 'address': ''},
 );
 
-Shop EMPTY_SHOP = Shop(-1, 'error', 0000, 'error', 2,'error','0000', '0000',DateTime.now(),'https://mobizate.com/uploadsOnlineApp/logo_hotel.png');
+Shop EMPTY_SHOP = Shop(-1, 'error', 0000, 'error', 2,'error','Active','0000', '0000',DateTime.now(),'https://mobizate.com/uploadsOnlineApp/logo_hotel.png');
 
 NoticeAndUpdate EMPTY_NOTICE_UPDATE = NoticeAndUpdate(-1,'notice', ['0.0.0','0.0.0','0.0.0'], ['ios','android','windows'], [5,10,15,20],120, DateTime.now(), true, 'error');
 

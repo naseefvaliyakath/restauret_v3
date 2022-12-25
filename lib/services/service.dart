@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart' hide Response,FormData,MultipartFile;
+
 import '../constants/api_link/api_link.dart';
 import '../constants/app_secret_constants/app_secret_constants.dart';
-import '../error_handler/error_handler.dart';
 
 
-class HttpService extends GetxService{
+
+class HttpService extends GetxController{
   //? secure storage for saving token
   FlutterSecureStorage storage =  const FlutterSecureStorage();
   Dio _dio = Dio();
@@ -296,6 +298,8 @@ class HttpService extends GetxService{
 
   updatingToken(tokenFromLogin){
     token = tokenFromLogin;
+    _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
+    update();
   }
   initializeSecureStorage(){
     try {

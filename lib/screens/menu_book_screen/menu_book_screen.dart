@@ -6,17 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/printer/controller/print_controller.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
-import 'package:rest_verision_3/widget/common_widget/common_text/mid_text.dart';
-import '../../alerts/common_alerts.dart';
+
 import '../../alerts/show_qr_alert/show_qr_alert.dart';
 import '../../constants/strings/my_strings.dart';
-import '../../models/foods_response/foods.dart';
 import '../../routes/route_helper.dart';
-import '../../widget/all_food_screen/category_drop_down_all.dart';
-import '../../widget/common_widget/food_card.dart';
-import '../../widget/common_widget/food_search_bar.dart';
 import '../../widget/common_widget/loading_page.dart';
-import '../../widget/common_widget/two_button-bottom_sheet.dart';
 import '../../widget/menu_book_screen/icon_btn_with_text.dart';
 import '../../widget/menu_book_screen/menu_food_card.dart';
 import 'controller/menu_book_controller.dart';

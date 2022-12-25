@@ -4,9 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:intl/intl.dart';
-import 'package:rest_verision_3/screens/credit_user_screen/controller/credit_user_ctrl.dart';
 import 'package:rest_verision_3/widget/common_widget/buttons/app_min_button.dart';
 import 'package:rest_verision_3/widget/common_widget/loading_page.dart';
+
 import '../../alerts/add_credit_or_debit_alert.dart';
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
+
 import '../constants/hive_constants/hive_costants.dart';
 import '../error_handler/error_handler.dart';
 class MyLocalStorage extends GetxController {

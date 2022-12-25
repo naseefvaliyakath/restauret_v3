@@ -3,6 +3,7 @@ import 'package:rest_verision_3/screens/add_food_screen/add_food_screen.dart';
 import 'package:rest_verision_3/screens/add_food_screen/binding/add_food_binding.dart';
 import 'package:rest_verision_3/screens/credit_debit_screen/binding/credit_book_binding.dart';
 import 'package:rest_verision_3/screens/credit_debit_screen/credit_debit_screen.dart';
+import 'package:rest_verision_3/screens/help_video_screen/video_play_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/binding/login_binding.dart';
 import 'package:rest_verision_3/screens/login_screen/login_screen.dart';
 import 'package:rest_verision_3/screens/menu_book_screen/binding/menu_book_binding.dart';
@@ -20,6 +21,8 @@ import '../screens/credit_user_screen/binding/credit_user_binding.dart';
 import '../screens/credit_user_screen/credit_book_user_screen.dart';
 import '../screens/general_settings_page/binding/general_settings_binding.dart';
 import '../screens/general_settings_page/general_settings_page.dart';
+import '../screens/help_video_screen/binding/help_video_binding.dart';
+import '../screens/help_video_screen/help_video_screen.dart';
 import '../screens/home_screen/binding/home_screen_binding.dart';
 import '../screens/home_screen/home_screen.dart';
 import '../screens/kitchen_mode_screen/kitchen_mode_main/binding/kitchen_mode_main_binding.dart';
@@ -50,6 +53,8 @@ class RouteHelper {
   static const String menuSetupScreen = '/menuSetupScreen';
   static const String reportScreen = '/reportScreen';
   static const String notificationScreen = '/notificationScreen';
+  static const String videoTutorialScreen = '/videoTutorialScreen';
+  static const String videoPlayScreen = '/videoPlayScreen';
 
   static String getInitial() => initial;
 
@@ -84,6 +89,10 @@ class RouteHelper {
   static String getReportScreen() => reportScreen;
 
   static String getNotificationScreen() => notificationScreen;
+
+  static String getVideoTutorialScreen() => videoTutorialScreen;
+
+  static String getVideoPlayScreen() => videoPlayScreen;
 
 
 
@@ -193,6 +202,18 @@ class RouteHelper {
         name: notificationScreen,
         page: () => const NotificationScreen(),
         binding: NotificationBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: videoTutorialScreen,
+        page: () => const HelpVideoScreen(),
+        binding: HelpVideoBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: videoPlayScreen,
+        page: () => const VideoPlayScreen(),
+        binding: HelpVideoBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
   ];

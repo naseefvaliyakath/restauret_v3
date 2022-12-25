@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -8,17 +7,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
-
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../dash_bord_screen/dashboard_screen.dart';
+import '../home_screen_report/home_screen_report.dart';
 import '../settings_page_screen/settings_page_screen.dart';
 import '../today_food_screen/today_food_screen.dart';
 
@@ -34,10 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final isDialOpen = ValueNotifier(false);
   int pageIndex = 0;
 
+
   //pages of application home
   List<Widget> pages = [
     const DashBordScreen(),
-    const Center(child: Text('fourth screen')),
+    const HomeScreenReport(),
     const TodayFoodScreen(),
     const SettingsPageScreen(),
   ];
@@ -156,20 +154,36 @@ class _HomeScreenState extends State<HomeScreen> {
       Icons.person_pin,
     ];
 
-    return AnimatedBottomNavigationBar(
-      activeColor: AppColors.mainColor,
+    List<String> label = [
+      'Home',
+      'Report',
+      'Food',
+      'Settings',
+    ];
+
+    return AnimatedBottomNavigationBar.builder(
+
+      // activeColor: AppColors.mainColor,
       splashColor: Colors.red,
-      inactiveColor: AppColors.mainColor_2,
-      icons: iconItems,
+      //inactiveColor: AppColors.mainColor_2,
+      //icons: iconItems,
       activeIndex: pageIndex,
       gapLocation: GapLocation.center,
       notchSmoothness: NotchSmoothness.softEdge,
       leftCornerRadius: 10.r,
-      iconSize: 25.sp,
+      //iconSize: 25.sp,
       rightCornerRadius: 10.r,
       onTap: (index) {
         selectedTab(index);
-      },
+      }, itemCount: 4, tabBuilder: (int index, bool isActive) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(iconItems[index] ,color: isActive ? AppColors.mainColor : AppColors.mainColor_2,size: 24.sp,),
+            Text(label[index],style: TextStyle(color: isActive ? AppColors.mainColor : AppColors.mainColor_2,fontSize: 14.sp)),
+          ],
+        );
+    },
       //other params
     );
   }
