@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/report_screen/controller/report_controller.dart';
 
+import '../report_screen/mini_report.dart';
+
 class HomeScreenReport extends StatelessWidget {
   const HomeScreenReport({Key? key}) : super(key: key);
 
@@ -12,7 +14,7 @@ class HomeScreenReport extends StatelessWidget {
     return GetBuilder<ReportController>(builder: (ctrl) {
       return SafeArea(
           child:
-              appModeNumber == 1 ? const Center(child: Text('report')) : const Center(child: Text('not autherizes')));
+              appModeNumber == 1 ? MiniReport() : const Center(child: Text('not autherizes')));
     });
   }
 }
