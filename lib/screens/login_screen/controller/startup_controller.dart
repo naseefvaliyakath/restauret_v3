@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,13 +13,13 @@ import 'package:rest_verision_3/repository/flutter_log_repository.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-
 import '../../../alerts/update_notice_alert/update_notice_alert.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
 import '../../../constants/strings/my_strings.dart';
 import '../../../error_handler/error_handler.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../models/my_response.dart';
+import '../../../printer/controller/library/iosWinPrint.dart';
 import '../../../repository/startup_repository.dart';
 import '../../../services/service.dart';
 import '../../settings_page_screen/controller/settings_controller.dart';
@@ -90,31 +89,32 @@ class StartupController extends GetxController {
     await readAllowPurchaseBookToWaiterFromHive();
     await readShowErrorFromHive();
     checkNoticeAndUpdate();
-   // _initBtPrinter();
+    checkSubscriptionStatusToLogout();
+    _initBtPrinter();
     super.onInit();
   }
 
-  // _initBtPrinter() async {
-  //   try {
-  //     //Connect Bt printer
-  //     IosWinPrint iOSWinPrintInstance = IosWinPrint();
-  //     await iOSWinPrintInstance.getDevices();
-  //
-  //     BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
-  //     if(bluetoothPrinter!=null){
-  //           await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
-  //         }else{
-  //           if (kDebugMode) {
-  //             print('No device selected');
-  //           }
-  //         }
-  //   } catch (e) {
-  //     String myMessage = showErr ? e.toString() : 'Something wrong !!';
-  //     AppSnackBar.errorSnackBar('Error', myMessage);
-  //     errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: '_initBtPrinter()');
-  //     return;
-  //   }
-  // }
+  _initBtPrinter() async {
+    try {
+      //Connect Bt printer
+      IosWinPrint iOSWinPrintInstance = IosWinPrint();
+      await iOSWinPrintInstance.getDevices();
+
+      BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
+      if(bluetoothPrinter!=null){
+            await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
+          }else{
+            if (kDebugMode) {
+              print('No device selected');
+            }
+          }
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: '_initBtPrinter()');
+      return;
+    }
+  }
 
   loginToApp() async {
     try {
@@ -296,7 +296,7 @@ class StartupController extends GetxController {
     }
   }
 
-  showPlanExpiryAlert() async {
+  showPlanExpiryAlert(expiryDate) async {
     try {
       final difference = expiryDate.difference(DateTime.now()).inDays;
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -344,7 +344,6 @@ class StartupController extends GetxController {
   checkLoginAndAppMode() async {
     await readAppModeInHive();
     await readShopDetailsFromHive();
-    showPlanExpiryAlert();
   }
 
   //? this will call when logout from app then it make showLogin = true
@@ -655,62 +654,25 @@ class StartupController extends GetxController {
     }
   }
 
-  //? to use in getIntervalCount()
-  setIntervalCount(int intervalCount) async {
-    try {
-      await Get.find<MyLocalStorage>().setData(INTERVEL_COUNT_TO_CALL_EXPAIRY, intervalCount);
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'setIntervalCount()');
-      return;
-    }
-  }
-  //? to use in getIntervalCount()
-  Future<int> readIntervalCount() async {
-    try {
-      int intervalCount = await Get.find<MyLocalStorage>().readData(INTERVEL_COUNT_TO_CALL_EXPAIRY) ?? 1;
-      return intervalCount;
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readIntervalCount()');
-      return 1;
-    }
-  }
 
-  //? this function val return int , and its increment in every count and reset after 15
-  //? so we can call function to server without continues every time , its to avoid server load
-  ///? used to log out app
-  Future<int> getIntervalCount() async {
-    try {
-      int intervalCount = await Get.find<MyLocalStorage>().readData(INTERVEL_COUNT_TO_CALL_EXPAIRY) ?? 1;
-      intervalCount = intervalCount > 15 ? 0 : intervalCount + 1;
-      await Get.find<MyLocalStorage>().setData(INTERVEL_COUNT_TO_CALL_EXPAIRY, intervalCount);
-      return intervalCount;
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'getIntervalCount()');
-      return 1;
-    }
-  }
 
+  //? checking checkSubscriptionStatusToLogout and showing expairy popup
   checkSubscriptionStatusToLogout() async {
     try {
-      int count = await getIntervalCount();
-      if (count > 15) {
-            Shop shop = await getShop(subcId);
-            //? setting and reading shop details in hive to update values if any changes happened
-            //? eg : user is recharged plan and need to update expiry date in profile page
-            setShopInHive(shop);
-            readShopDetailsFromHive();
-            if (shop.subcIdStatus != 'Active') {
-              //? log out app if its not active
-              Get.find<SettingsController>().logOutFromApp();
+      Shop shop = await getShop(subcId);
+      //? setting and reading shop details in hive to update values if any changes happened
+      //? eg : user is recharged plan and need to update expiry date in profile page
+      if(shop.fdShopId != -1){
+        DateTime expiryDate_ = shop.expiryDate ?? DateTime.now();
+        showPlanExpiryAlert(expiryDate_);
+        print(expiryDate);
+        if (shop.subcIdStatus == 'Deactivate') {
+          //? log out app if its not active
+          Get.find<SettingsController>().logOutFromApp();
 
-            }
-          }
+        }
+      }
+
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);

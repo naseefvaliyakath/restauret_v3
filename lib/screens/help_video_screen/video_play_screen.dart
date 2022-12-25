@@ -42,17 +42,38 @@ class VideoPlayScreen extends StatelessWidget {
           ],
         ),
         body: Center(
-          child: YoutubePlayer(
-            controller: ctrl.controller,
-            liveUIColor: Colors.amber,
-            bottomActions: [
-              CurrentPosition(),
-              Visibility(
-                  visible: false,
-                  child: FullScreenButton(
-                    color: Colors.white,
-                  )),
-              ProgressBar(isExpanded: true),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              YoutubePlayer(
+                controller: ctrl.controller,
+                liveUIColor: Colors.amber,
+                bottomActions: [
+                  CurrentPosition(),
+                  Visibility(
+                      visible: false,
+                      child: FullScreenButton(
+                        color: Colors.white,
+                      )),
+                  ProgressBar(isExpanded: true),
+                ],
+              ),
+              20.verticalSpace,
+              GestureDetector(
+                onTap: (){
+                  ctrl.urlLaunchSingleVideo(ctrl.videoLink);
+                },
+                child: Container(
+                  height: 50.sp,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/image/youtube.png'),
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),

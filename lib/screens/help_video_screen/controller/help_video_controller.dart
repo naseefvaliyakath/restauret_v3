@@ -1,8 +1,11 @@
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class HelpVideoController extends GetxController {
+class
+HelpVideoController extends GetxController {
   String videoLink = '_eawn-0G_og';
+  final Uri url = Uri.parse('https://www.youtube.com/watch?v=-tcuHxWsWNY');
   String name = 'Video';
   YoutubePlayerController controller = YoutubePlayerController(
     initialVideoId: 'iLnmTe5Q2Qw',
@@ -22,6 +25,20 @@ class HelpVideoController extends GetxController {
       initialVideoId: videoLink,
     );
     update();
+  }
+
+  // to open channel (not single video)
+  Future<void> urlLaunchUrl() async {
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> urlLaunchSingleVideo(link) async {
+    Uri url = Uri.parse('https://www.youtube.com/watch?v=$link');
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
   }
 
 }

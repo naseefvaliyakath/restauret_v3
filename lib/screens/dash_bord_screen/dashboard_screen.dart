@@ -62,7 +62,7 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: AppColors.mainColor,
                     icon: FontAwesomeIcons.burger,
                     onTap: () async {
-                      Get.find<StartupController>().checkSubscriptionStatusToLogout();
+                    //  Get.find<StartupController>().checkSubscriptionStatusToLogout();
                       Get.toNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": TAKEAWAY});
                     },
                   ),

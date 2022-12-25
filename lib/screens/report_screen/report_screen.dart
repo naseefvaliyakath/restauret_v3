@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:rest_verision_3/screens/report_screen/controller/report_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
 import '../../constants/app_colors/app_colors.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/order_view_screen/date_picker_for_order_view.dart';

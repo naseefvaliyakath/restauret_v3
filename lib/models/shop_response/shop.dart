@@ -50,6 +50,7 @@ class Shop{
       this.shopAddr,
       this.applicationPlan,
       this.token,
+      this.subcIdStatus,
       this.subcId,
       this.password,
       this.expiryDate,
