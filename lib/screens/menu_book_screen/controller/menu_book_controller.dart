@@ -56,7 +56,7 @@ class MenuBookController extends GetxController {
   bool isCashier = false;
   int shopId = Get.find<StartupController>().SHOPE_ID;
   String shopName = Get.find<StartupController>().shopName;
-  String menuBookUrl = 'https://mobizate.com/restaurentmenu/';
+  String menuBookUrl = 'https://mobizate.com/menuBook/getAllFoodForMenu';
 
 
   //? to set toggle btn as per saved data
@@ -377,7 +377,7 @@ class MenuBookController extends GetxController {
   String menuBookUrlGenerated(){
     try {
       String shopNameNoSpace = shopName.replaceAll(' ', '');
-      String url = '$menuBookUrl?para1=$shopId&para2=$setShowSpecialToggle&para3=$setShowSpecialToggle&para4=$setAvailableOnlyToggle&para5=$shopNameNoSpace';
+      String url = '$menuBookUrl?fdShopId=$shopId&showSpecial=$setShowSpecialToggle&showRate=$setShowSpecialToggle&fdIsAvailable=$setAvailableOnlyToggle&shopName=$shopNameNoSpace';
       return url;
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';

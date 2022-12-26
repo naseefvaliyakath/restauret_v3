@@ -21,6 +21,7 @@ class HttpService extends GetxController{
   void onInit() async {
     initializeSecureStorage();
     token = await storage.read(key: 'token') ?? STARTUP_TOKEN;
+    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjQzMjEiLCJpYXQiOjE2NzEyMTQyOTV9.gB6CXlz5nj4twK-DBGBlpus85UxLYvhrLMl8j0LCZog";
     _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
     initializeInterceptors();
     super.onInit();

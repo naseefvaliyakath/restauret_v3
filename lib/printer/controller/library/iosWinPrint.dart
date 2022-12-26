@@ -191,7 +191,7 @@ class IosWinPrint {
           }
 
       if(Platform.isIOS){
-            await Future.delayed(const Duration(milliseconds: 1000));
+            await Future.delayed(const Duration(milliseconds: 500));
           }
 
       if (bluetoothPrinter.typePrinter == PrinterType.bluetooth && Platform.isAndroid) {
