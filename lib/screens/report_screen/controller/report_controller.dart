@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../api_data_loader/settled_order_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../models/my_response.dart';

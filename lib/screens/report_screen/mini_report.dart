@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:rest_verision_3/screens/report_screen/controller/report_controller.dart';
 import 'package:rest_verision_3/screens/report_screen/report_screen.dart';
+import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
+import 'package:rest_verision_3/widget/common_widget/common_text/small_text.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../widget/common_widget/common_text/mid_text.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/order_view_screen/date_picker_for_order_view.dart';
 
@@ -71,34 +74,42 @@ class MiniReport extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                10.verticalSpace,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     10.horizontalSpace,
-                    DatePickerForOrderView(
-                      maninAxisAlignment: MainAxisAlignment.center,
-                      dateTime: ctrl.selectedDateRangeForSettledOrder,
-                      onTap: () async {
-                        ctrl.datePickerForSettledOrder(context);
-                      },
-                    ),
+                    const BigText(text: 'Today sales' ),
                     10.horizontalSpace,
                   ],
                 ),
+                5.verticalSpace,
+                const SmallText(text: 'Pull to refresh'),
+                20.verticalSpace,
                 if(ctrl.mySettledItem.isNotEmpty)...[
-                  ListTile(
-                    title: Text('total order: $totalOrder'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      20.horizontalSpace,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MidText(text: 'Total order: $totalOrder'),
+                          5.verticalSpace,
+                          MidText(text:'TotalCash : $totalCash'),
+                        ],
+                      ),
+                    ],
                   ),
-                  ListTile(
-                    title: Text('totalCash : $totalCash'),
-                  ),
+
+                  30.verticalSpace,
                   Card(
                     child: Column(
                       children: [
                         SfCartesianChart(
                           primaryXAxis: CategoryAxis(
                             axisLabelFormatter: (axisLabelRenderArgs) {
-                              return ChartAxisLabel('${axisLabelRenderArgs.text}', TextStyle());
+                              return ChartAxisLabel(axisLabelRenderArgs.text, TextStyle());
                             },
                           ),
                           title: ChartTitle(text: 'ORDERS BY TYPE'),
@@ -124,7 +135,7 @@ class MiniReport extends StatelessWidget {
                             return ListTile(
                               dense: true,
                               leading: Text(ordersByTypeList[index].type),
-                              title: Text('    ${ordersByTypeList[index].orderCount}'),
+                              title: Text('${ordersByTypeList[index].orderCount}'),
                               trailing: Text('${ordersByTypeList[index].priceTotal}'),
                             );
                           }),
@@ -132,12 +143,12 @@ class MiniReport extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 250)
+                  250.verticalSpace
                 ]else...[
-                  SizedBox(height: 200),
+                  250.verticalSpace,
                   //TODO : overflow not added in MidText
                   // MidText(text: 'There is no records to display for the selected date rangegsdfg df gd f g',overflow: TextOverflow.visible),
-                  Text('There is no records to display for the selected date range')
+                  const MidText(text: 'No record fount !!')
                 ],
 
               ],

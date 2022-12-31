@@ -6,13 +6,14 @@ import 'package:rest_verision_3/screens/help_video_screen/controller/help_video_
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../routes/route_helper.dart';
+import 'controller/video_play_screen_controller.dart';
 
 class VideoPlayScreen extends StatelessWidget {
   const VideoPlayScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HelpVideoController>(builder: (ctrl) {
+    return GetBuilder<VideoPlayScreenCtrl>(builder: (ctrl) {
       return Scaffold(
         appBar: AppBar(
           elevation: 0,

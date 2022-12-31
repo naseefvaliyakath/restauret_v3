@@ -14,6 +14,7 @@ import '../../routes/route_helper.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/notification_icon.dart';
 import '../../widget/dash_bord_screen/dash_bord_card.dart';
+import '../report_screen/controller/report_controller.dart';
 
 class DashBordScreen extends StatelessWidget {
   const DashBordScreen({Key? key}) : super(key: key);
@@ -148,6 +149,7 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: AppColors.mainColor_2,
                     icon: Icons.auto_graph,
                     onTap: () async {
+                      Get.find<ReportController>().refreshSettledOrder(showSnack: false);
                       if(Get.find<StartupController>().appModeNumber == 1){
                         passwordPromptToCashierMode(context: context,reason: ENTER_TO_REPORT);
                       }else{

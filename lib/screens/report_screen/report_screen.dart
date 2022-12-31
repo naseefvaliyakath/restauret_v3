@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:rest_verision_3/screens/report_screen/controller/report_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -164,20 +165,30 @@ class ReportScreen extends StatelessWidget {
                             10.horizontalSpace,
                           ],
                         ),
+                        10.verticalSpace,
                         if(ctrl.mySettledItem.isNotEmpty)...[
-                          ListTile(
-                            title: Text('total order: $totalOrder'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              20.horizontalSpace,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  MidText(text: 'Total order: $totalOrder'),
+                                  5.verticalSpace,
+                                  MidText(text:'TotalCash : $totalCash'),
+                                ],
+                              ),
+                            ],
                           ),
-                          ListTile(
-                            title: Text('totalCash : $totalCash'),
-                          ),
+                          30.verticalSpace,
                           Card(
                             child: Column(
                               children: [
                                 SfCartesianChart(
                                   primaryXAxis: CategoryAxis(
                                     axisLabelFormatter: (axisLabelRenderArgs) {
-                                      return ChartAxisLabel('${axisLabelRenderArgs.text}', TextStyle());
+                                      return ChartAxisLabel(axisLabelRenderArgs.text, TextStyle());
                                     },
                                   ),
                                   title: ChartTitle(text: 'ORDERS BY TYPE'),
@@ -214,9 +225,9 @@ class ReportScreen extends StatelessWidget {
                           Card(
                             child: Column(
                               children: [
-                                SizedBox(height: 10),
+                                10.verticalSpace,
                                 SfCircularChart(
-                                  title: ChartTitle(text: 'Orders by payment method'),
+                                  title: ChartTitle(text: 'Orders by payment method'.toUpperCase()),
                                   // backgroundColor: Colors.red,
                                   // margin: EdgeInsets.zero,
                                   tooltipBehavior: TooltipBehavior(enable: true),
@@ -272,7 +283,7 @@ class ReportScreen extends StatelessWidget {
                                       xValueMapper: (OrdersByOnlineApp data, _) => data.appName,
                                       yValueMapper: (OrdersByOnlineApp data, _) => data.orderCount,
                                       // radius: '60%',
-                                      dataLabelSettings: DataLabelSettings(
+                                      dataLabelSettings: const DataLabelSettings(
                                         isVisible: true,
                                       ),
                                     ),
@@ -302,7 +313,7 @@ class ReportScreen extends StatelessWidget {
                           Card(
                             child: Column(
                               children: [
-                                const Text('Orders By product'),
+                                 Text('Orders By product'.toUpperCase(),style: TextStyle(fontSize: 20.sp),),
                                 const ListTile(
                                   dense: true,
                                   title: Text(
@@ -324,12 +335,11 @@ class ReportScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          SizedBox(height: 250)
+                          250.verticalSpace,
                         ]else...[
-                          SizedBox(height: 200),
+                          200.verticalSpace,
                           //TODO : overflow not added in MidText
-                          // MidText(text: 'There is no records to display for the selected date rangegsdfg df gd f g',overflow: TextOverflow.visible),
-                          Text('There is no records to display for the selected date range')
+                          const BigText(text: 'No orders !!')
                         ],
 
                       ],

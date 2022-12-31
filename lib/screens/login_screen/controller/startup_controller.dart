@@ -665,11 +665,9 @@ class StartupController extends GetxController {
       if(shop.fdShopId != -1){
         DateTime expiryDate_ = shop.expiryDate ?? DateTime.now();
         showPlanExpiryAlert(expiryDate_);
-        print(expiryDate);
         if (shop.subcIdStatus == 'Deactivate') {
           //? log out app if its not active
           Get.find<SettingsController>().logOutFromApp();
-
         }
       }
 

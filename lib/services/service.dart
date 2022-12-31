@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart' hide Response,FormData,MultipartFile;
-
 import '../constants/api_link/api_link.dart';
 import '../constants/app_secret_constants/app_secret_constants.dart';
 
@@ -21,7 +19,6 @@ class HttpService extends GetxController{
   void onInit() async {
     initializeSecureStorage();
     token = await storage.read(key: 'token') ?? STARTUP_TOKEN;
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjQzMjEiLCJpYXQiOjE2NzEyMTQyOTV9.gB6CXlz5nj4twK-DBGBlpus85UxLYvhrLMl8j0LCZog";
     _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
     initializeInterceptors();
     super.onInit();
@@ -167,18 +164,18 @@ class HttpService extends GetxController{
 
   Future<Response> updateFood(
       {required File? file,
-      required fdName,
-      required fdCategory,
-      required fdPrice,
-      required fdThreeBiTwoPrsPrice,
-      required fdHalfPrice,
-      required fdQtrPrice,
-      required fdIsLoos,
-      required cookTime,
-      required fdShopId,
-      required fdImg,
-      required fdIsToday,
-      required fdId}) async {
+        required fdName,
+        required fdCategory,
+        required fdPrice,
+        required fdThreeBiTwoPrsPrice,
+        required fdHalfPrice,
+        required fdQtrPrice,
+        required fdIsLoos,
+        required cookTime,
+        required fdShopId,
+        required fdImg,
+        required fdIsToday,
+        required fdId}) async {
     FormData formData;
 
     if (kDebugMode) {
@@ -304,11 +301,11 @@ class HttpService extends GetxController{
   initializeSecureStorage(){
     try {
       if(Platform.isAndroid){
-            AndroidOptions getAndroidOptions() => const AndroidOptions(
-              encryptedSharedPreferences: true,
-            );
-            storage = FlutterSecureStorage(aOptions: getAndroidOptions());
-          }
+        AndroidOptions getAndroidOptions() => const AndroidOptions(
+          encryptedSharedPreferences: true,
+        );
+        storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+      }
     } catch (e) {
       return;
     }

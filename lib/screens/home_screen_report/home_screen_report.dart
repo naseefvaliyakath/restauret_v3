@@ -14,7 +14,7 @@ class HomeScreenReport extends StatelessWidget {
     return GetBuilder<ReportController>(builder: (ctrl) {
       return SafeArea(
           child:
-              appModeNumber == 1 ? MiniReport() : const Center(child: Text('not autherizes')));
+              appModeNumber == 1 ? const MiniReport() : const Center(child: Text('not autherizes')));
     });
   }
 }

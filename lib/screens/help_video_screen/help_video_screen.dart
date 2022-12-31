@@ -7,6 +7,7 @@ import 'package:rest_verision_3/screens/help_video_screen/controller/help_video_
 import 'package:rest_verision_3/screens/help_video_screen/video_play_screen.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/small_text.dart';
 import '../../constants/app_colors/app_colors.dart';
+import '../../models/tutorial_model/tutorial.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/settings_page_screen/profile_menu.dart';
 
@@ -15,6 +16,21 @@ class HelpVideoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> videoWidgets(List<Tutorial> item)
+    {
+      List<Widget> list = <Widget>[];
+      for(var i = 0; i < item.length; i++){
+        list.add(ProfileMenu(
+          text: item[i].title ?? 'Error',
+          icon: Icons.ondemand_video_rounded,
+          press: () {
+            Get.toNamed(RouteHelper.getVideoPlayScreen(),
+                arguments: {'link': item[i].link, 'name': item[i].title ?? 'error'});
+          },
+        ));
+      }
+      return list;
+    }
     return GetBuilder<HelpVideoController>(builder: (ctrl) {
       return Scaffold(
         appBar: AppBar(
@@ -55,22 +71,8 @@ class HelpVideoScreen extends StatelessWidget {
             child: Column(
               children: [
                 20.verticalSpace,
-                ProfileMenu(
-                  text: "Dash bord screen",
-                  icon: Icons.ondemand_video_rounded,
-                  press: () {
-                    Get.toNamed(RouteHelper.getVideoPlayScreen(),
-                        arguments: {'link': 't0Q2otsqC4I', 'name': 'Dash bord screen'});
-                  },
-                ),
-                ProfileMenu(
-                  text: "Billing screen",
-                  icon: Icons.ondemand_video_rounded,
-                  press: () {
-                    Get.toNamed(
-                        RouteHelper.getVideoPlayScreen(), arguments: {'link': 'wEz5jejK3aw', 'name': 'Billing screen'});
-                  },
-                ),
+                ...videoWidgets(ctrl.allTutorial),
+
               ],
             ),
           ),),

@@ -63,6 +63,8 @@ const String INSERT_COMPLAINT = 'complaints/addComplaint';
 
 const String INSERT_FLUTTER_LOG = 'flutterLogs/addLog';
 
+const String GET_TUTORIAL = 'tutorialVideo/allTutorial';
+
 
 
 
