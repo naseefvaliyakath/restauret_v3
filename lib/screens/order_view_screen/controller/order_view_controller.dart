@@ -141,7 +141,6 @@ class OrderViewController extends GetxController {
     if(Get.find<StartupController>().applicationPlan == 1){
       _socket.connect();
       setUpKitchenOrderFromDbListener(); //? first load kotBill data from db
-      setUpKitchenOrderSingleListener(); //? for new kot order
     }else{
       getAllKot();
     }
@@ -189,47 +188,7 @@ class OrderViewController extends GetxController {
 
   }
 
-  //? for single order adding live
-  setUpKitchenOrderSingleListener() {
-    try {
-      KitchenOrder order = EMPTY_KITCHEN_ORDER;
-      _socket.on('kitchen_orders_receive', (data) async {
-        if (kDebugMode) {
-          print('kot order single received');
-        }
-        //? assign single KOT to order variable
-        order = KitchenOrder.fromJson(data);
-        //?no error
-        bool err = order.error ?? true;
-        if (!err) {
-          //?check if item is already in list
-          bool isExist = true;
-          for (var element in _kotBillingItems) {
-            if (element.Kot_id != order.Kot_id) {
-              isExist = false;
-            } else {
-              isExist = true;
-            }
-          }
-          //?add if not exist
-          if (isExist == false) {
-            _kotBillingItems.insert(0, order);
-            ringAlert();
-          } else {
-            _kotBillingItems.addAll(_kotBillingItems);
-          }
-          update();
-        } else {
-          return;
-        }
-      });
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'setUpKitchenOrderSingleListener()');
-      return;
-    }
-  }
+
 
   //? for first load data to bill from data base
   setUpKitchenOrderFromDbListener() {

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 import '../../../../alerts/kitchen_ring_popup_alert/kitchen_popup_ring_alert.dart';
 import '../../../../check_internet/check_internet.dart';
 import '../../../../constants/api_link/api_link.dart';
@@ -70,8 +71,6 @@ class KitchenModeMainController extends GetxController {
     setNewKotRingRemember();
     //? for loading all kot
     setUpKitchenOrderFromDbListener();
-    //?for new kot order
-    setUpKitchenOrderSingleListener();
     //? kot ring sound silent or general
     await readNewKotRingSound();
     //? to set  remember alert sound silent or general
@@ -89,49 +88,8 @@ class KitchenModeMainController extends GetxController {
     super.onClose();
   }
 
-  //? for single order adding live
-  setUpKitchenOrderSingleListener() {
-    try {
-      KitchenOrder order = EMPTY_KITCHEN_ORDER;
-      _socket.on('kitchen_orders_receive', (data) async {
-        if (kDebugMode) {
-          print('kot order single rcv');
-          //? assign single KOT to order variable
-          order = KitchenOrder.fromJson(data);
-          //?no error
-          bool err = order.error ?? true;
-        if (!err) {
-          //? check if item is already in list
-          bool isExist = true;
-          for (var element in _allKotBillingItems) {
-            if (element.Kot_id != order.Kot_id) {
-              isExist = false;
-            } else {
-              isExist = true;
-            }
-          }
-          //? add if not exist
-          if (isExist == false) {
-            _allKotBillingItems.insert(0, order);
-            updateKotItemsAsPerTab();
-            ringOrderAlert();
-          } else {
-            //? nothing will happened
-          }
-            _allKotBillingItems = _allKotBillingItems;
-          }
-          update();
-        } else {
-          return;
-        }
-      });
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'kitchen_mode_main_ctrl',methodName: 'setUpKitchenOrderSingleListener()');
-      return;
-    }
-  }
+
+
 
   //? for first load data to bill from data base
   setUpKitchenOrderFromDbListener() {
@@ -139,11 +97,14 @@ class KitchenModeMainController extends GetxController {
       KitchenOrderArray order = KitchenOrderArray(error: true, errorCode: '', totalSize: 0);
       _socket.on('database-data-receive', (data) {
         if (kDebugMode) {
-          print('kot socket database refresh');
+          print('kot socket database refresh $data');
         }
 
         //? this is not single KOT order , its list of orders
         order = KitchenOrderArray.fromJson(data);
+        if(order.errorCode == 'Kot added successfully'){
+          ringOrderAlert();
+        }
         List<KitchenOrder>? kitchenOrders = order.kitchenOrder;
         //? no error
         bool err = order.error;
