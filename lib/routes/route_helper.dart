@@ -37,6 +37,7 @@ import '../screens/purchase_book_screen/binding/purchase_book_binding.dart';
 import '../screens/purchase_book_screen/purchase_book_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../screens/home_screen/pc_home_screen_a.dart';
+import '../screens/report_screen/pc_report_screen.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
 
 class RouteHelper {
@@ -199,7 +200,7 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
         name: reportScreen,
-        page: () => const ReportScreen(),
+        page: () =>   1.sh < 1.sw ?  const PcReportScreen() : const ReportScreen(),
         binding: ReportBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),

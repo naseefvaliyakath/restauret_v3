@@ -272,8 +272,8 @@ class MenuBookController extends GetxController {
 
   String menuBookUrlGenerated(){
     try {
-      String shopNameNoSpace = shopName.replaceAll(' ', '');
-      String url = '$menuBookUrl?fdShopId=$shopId&showSpecial=true&showRate=true&fdIsAvailable=true&shopName=$shopNameNoSpace';
+      String shopNameNoSpace = shopName.replaceAll(' ', '%20');
+      String url = '$menuBookUrl?fdShopId=$shopId&shopName=$shopNameNoSpace';
       return url;
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
