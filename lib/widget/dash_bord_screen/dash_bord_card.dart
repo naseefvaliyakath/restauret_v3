@@ -30,7 +30,7 @@ class DashBordCard extends StatelessWidget {
         onTap();
       },
       child: Container(
-        padding: EdgeInsets.only(left: 30.sp, top: 30.sp,right: 15.sp),
+        padding: EdgeInsets.symmetric(horizontal: 30,vertical: 10),
         decoration: BoxDecoration(
             color: bgColor.withOpacity(0.9),
             borderRadius: BorderRadius.circular(10.r),
@@ -50,8 +50,8 @@ class DashBordCard extends StatelessWidget {
               ),
             ]),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Icon(

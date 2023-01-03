@@ -9,6 +9,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/order_view_screen/date_picker_for_order_view.dart';
+import 'components/orderType_graph.dart';
+import 'components/orderType_table.dart';
+import 'graph_models/graph_model.dart';
 
 
 class MiniReport extends StatelessWidget {
@@ -16,53 +19,8 @@ class MiniReport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ReportController>(builder: (ctrl){
-      int totalOrder = 0;
-      num totalCash = 0;
-      Map<String, Map<String, num>> ordersByTypeMap = {};
-      List<OrdersByType> ordersByTypeList = [];
-
-      for (var element in ctrl.mySettledItem) {
-        totalOrder += 1;
-        totalCash += element.grandTotal ?? 0;
-
-        // ordersByType
-        if (element.fdOrderType != null) {
-          if (ordersByTypeMap[element.fdOrderType] == null) {
-            ordersByTypeMap[element.fdOrderType!] = {'orderCount': 0, 'total': 0};
-          }
-          num orderCount = (ordersByTypeMap[element.fdOrderType!]!['orderCount'])! + 1;
-          num total = (ordersByTypeMap[element.fdOrderType!]!['total'])! + (element.grandTotal!);
-          ordersByTypeMap[element.fdOrderType!] = {'orderCount': orderCount, 'total': total};
-        }
-      }
-
-      ordersByTypeMap.forEach((key, value) {
-        ordersByTypeList.add(OrdersByType(type: key, orderCount: value['orderCount'] ?? 0, priceTotal: value['total'] ?? 0));
-      });
-
-
-
-
-      Color getColorForBarChart({required int index}) {
-        List<Color> color = [
-          Colors.lightBlue,
-          Colors.teal,
-          Colors.deepPurpleAccent,
-          Colors.pinkAccent,
-          Colors.cyan,
-          Colors.amberAccent,
-          Colors.greenAccent,
-          Colors.purpleAccent,
-          Colors.brown,
-          Colors.orange,
-        ];
-        if (index >= color.length) {
-          return Colors.deepPurpleAccent;
-        }
-        return color[index];
-      }
-
+    return GetBuilder<ReportController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return SafeArea(
         child: ctrl.isLoading
             ? const MyLoading()
@@ -73,19 +31,22 @@ class MiniReport extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                10.verticalSpace,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     10.horizontalSpace,
-                    const BigText(text: 'Today sales' ),
+                    DatePickerForOrderView(
+                      maninAxisAlignment: MainAxisAlignment.center,
+                      dateTime: ctrl.selectedDateRangeForSettledOrder,
+                      onTap: () async {
+                        ctrl.datePickerForSettledOrder(context);
+                      },
+                    ),
                     10.horizontalSpace,
                   ],
                 ),
-                5.verticalSpace,
-                const SmallText(text: 'Pull to refresh'),
-                20.verticalSpace,
-                if(ctrl.mySettledItem.isNotEmpty)...[
+                10.verticalSpace,
+                if (ctrl.mySettledItem.isNotEmpty) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -93,63 +54,35 @@ class MiniReport extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          MidText(text: 'Total order: $totalOrder'),
+                          MidText(text: 'Total order: ${ctrl.totalOrder}'),
                           5.verticalSpace,
-                          MidText(text:'TotalCash : $totalCash'),
+                          MidText(text: 'TotalCash : ${ctrl.totalCash}'),
                         ],
                       ),
                     ],
                   ),
-
                   30.verticalSpace,
                   Card(
-                    child: Column(
+                    child: horizontal?Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SfCartesianChart(
-                          primaryXAxis: CategoryAxis(
-                            axisLabelFormatter: (axisLabelRenderArgs) {
-                              return ChartAxisLabel(axisLabelRenderArgs.text, const TextStyle());
-                            },
-                          ),
-                          title: ChartTitle(text: 'ORDERS BY TYPE'),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: [
-                            StackedColumnSeries(
-                                pointColorMapper: (datum, index) {
-                                  return getColorForBarChart(index: index);
-                                },
-                                dataSource: ordersByTypeList,
-                                xValueMapper: (OrdersByType data, _) => data.type,
-                                yValueMapper: (OrdersByType data, _) => data.orderCount),
-                          ],
-                        ),
-                        const ListTile(
-                          dense: true,
-                          title: Text('Order count', style: TextStyle(fontWeight: FontWeight.bold)),
-                          leading: Text('Order Type', style: TextStyle(fontWeight: FontWeight.bold)),
-                          trailing: Text('Revenue', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        Column(
-                          children: List.generate(ordersByTypeList.length, (index) {
-                            return ListTile(
-                              dense: true,
-                              leading: Text(ordersByTypeList[index].type),
-                              title: Text('${ordersByTypeList[index].orderCount}'),
-                              trailing: Text('${ordersByTypeList[index].priceTotal}'),
-                            );
-                          }),
-                        )
+                        Expanded(child: OrderTypeGraph(ctrl: ctrl)),
+                        Expanded(child: OrderTypeTable(ctrl: ctrl)),
+                      ],
+                    ):Column(
+                      children: [
+                        OrderTypeGraph(ctrl: ctrl),
+                        OrderTypeTable(ctrl: ctrl)
                       ],
                     ),
                   ),
-                  250.verticalSpace
-                ]else...[
-                  250.verticalSpace,
-                  //TODO : overflow not added in MidText
-                  // MidText(text: 'There is no records to display for the selected date rangegsdfg df gd f g',overflow: TextOverflow.visible),
-                  const MidText(text: 'No record fount !!')
-                ],
 
+                  250.verticalSpace,
+                ] else ...[
+                  200.verticalSpace,
+                  //TODO : overflow not added in MidText
+                  const BigText(text: 'No orders !!')
+                ],
               ],
             ),
           ),

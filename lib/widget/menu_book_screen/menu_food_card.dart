@@ -38,7 +38,7 @@ class MenuFoodCard extends StatelessWidget {
   Widget build(BuildContext context) {
     bool horizontal = 1.sh < 1.sw ? true : false;
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(50.r), boxShadow: [
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.r), boxShadow: [
         BoxShadow(
           offset: const Offset(4, 6),
           blurRadius: 4,
@@ -50,10 +50,10 @@ class MenuFoodCard extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50.r),
+              borderRadius: BorderRadius.circular(30.r),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(50.r),
+              borderRadius: BorderRadius.circular(30.r),
               child: CachedNetworkImage(
                 imageUrl: img,
                 placeholder: (context, url) => Lottie.asset(
@@ -74,36 +74,31 @@ class MenuFoodCard extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(50.r),
+              borderRadius: BorderRadius.circular(30.r),
             ),
           ),
           Positioned(
-              left: 2.w,
-
-              /// 12.0
-              bottom: 1.sh / 42.54,
-
-              /// 15.0
+            top: 40.h,
+            child: Padding(
+              padding:  EdgeInsets.only(top: 10.h,left: 5.h),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     name,
-                    softWrap: false,
                     style: TextStyle(
-                      fontSize: horizontal ?  1.sh / 35.15 :  1.sh / 55.15,
+                      fontSize: horizontal ? 17.sp : 18.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
-                    overflow: TextOverflow.fade,
                   ),
                   Visibility(
                     visible: showPrice,
                     child: Text(fdIsLoos == 'yes' ? 'Full      : $price' : 'Rs : $price',
                         softWrap: false,
                         style: TextStyle(
-                          fontSize: horizontal ? 1.sh/39 : 1.sh / 49,
+                          fontSize: horizontal ? 16.sp : 17.sp,
                           color: AppColors.mainColor_2,
                           fontWeight: FontWeight.bold,
                         )),
@@ -117,21 +112,21 @@ class MenuFoodCard extends StatelessWidget {
                         Text('3 by 4       : $priceThreeByTwo',
                             softWrap: false,
                             style: TextStyle(
-                              fontSize:horizontal ? 1.sh/49 :  1.sh / 69,
+                              fontSize: horizontal ? 12.sp : 13.sp,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
                         Text('Half           : $priceHalf',
                             softWrap: false,
                             style: TextStyle(
-                              fontSize:horizontal ? 1.sh/49 : 1.sh / 69,
+                              fontSize: horizontal ?  12.sp :  13.sp,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
                         Text('Quarter    : $priceQuarter',
                             softWrap: false,
                             style: TextStyle(
-                              fontSize:horizontal ? 1.sh/49 : 1.sh / 69,
+                              fontSize: horizontal ?  12.sp : 13.sp,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
@@ -139,61 +134,61 @@ class MenuFoodCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              )),
-          Positioned(
-            top: 1.sh / 68.3,
-            right: 1.sw / 20.1,
-            child: Column(
-              children: [
-                Visibility(
-                  visible: available == 'no' ? false : true,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(5.r),
-                        ),
-                        child: BigText(
-                          text: 'Available',
-                          color: Colors.white,
-                          size: 12.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           Positioned(
-            top: 1.sh / 17.3,
-            right: 1.sw / 20.1,
-            child: Column(
-              children: [
-                Visibility(
-                  visible: (special == 'yes' && showSpecial) ? true : false,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
-                        decoration: BoxDecoration(
-                          color: Colors.pink.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(5.r),
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.only(top: 8.h, right: 14.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Visibility(
+                    visible: available == 'no' ? false : true,
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(5.r),
+                          ),
+                          child: BigText(
+                            text: 'Available',
+                            color: Colors.white,
+                            size: 12.sp,
+                          ),
                         ),
-                        child: BigText(
-                          text: 'Special',
-                          color: Colors.white,
-                          size: 12.sp,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  Visibility(
+                    visible: (special == 'yes' && showSpecial) ? true : false,
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
+                          decoration: BoxDecoration(
+                            color: Colors.pink.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(5.r),
+                          ),
+                          child: BigText(
+                            text: 'Special',
+                            color: Colors.white,
+                            size: 12.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
