@@ -22,6 +22,7 @@ class TodayFoodScreen extends StatelessWidget {
 
     return GetBuilder<TodayFoodController>(
       builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
         return RefreshIndicator(
           onRefresh: () async {
             //? to vibrate
@@ -72,7 +73,7 @@ class TodayFoodScreen extends StatelessWidget {
                           ],
                         ),
                         bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(60.h),
+                          preferredSize: Size.fromHeight(horizontal ? 90.h :  60.h),
                           child: Padding(
                             padding: EdgeInsets.only(left: 10.0.w, right: 10.w),
                             //? search bar and food sort icon in row
@@ -85,7 +86,8 @@ class TodayFoodScreen extends StatelessWidget {
                                     ctrl.searchTodayFood();
                                   },
                                 ),
-                                const CategoryDropDownToday()
+                                const CategoryDropDownToday(),
+
                               ],
                             ),
                           ),

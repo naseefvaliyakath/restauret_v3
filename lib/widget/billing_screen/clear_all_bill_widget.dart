@@ -12,14 +12,15 @@ class ClearAllBill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return InkWell(
       onTap: (){
         onTap();
       },
       child: Card(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 5.sp),
-          margin: EdgeInsets.symmetric(vertical: 1.sp),
+          padding: EdgeInsets.symmetric(horizontal:horizontal ? 15.sp :  5.sp),
+          margin: EdgeInsets.symmetric(vertical: horizontal ? 9.sp : 1.sp),
           child: Row(
             children: [
               Icon(Icons.clear_all,size: 12.sp,),

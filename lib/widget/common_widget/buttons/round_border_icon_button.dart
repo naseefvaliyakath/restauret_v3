@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -14,12 +16,13 @@ class RoundBorderIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return InkWell(
       onTap: () {
         onTap();
       },
       child: Container(
-        padding: EdgeInsets.all(8.sp),
+        padding: EdgeInsets.all(horizontal ? 15.sp : 8.sp ),
         decoration: BoxDecoration(
             color: AppColors.mainColor,
             borderRadius: BorderRadius.circular(15.r),
@@ -30,7 +33,7 @@ class RoundBorderIconButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 16.sp,
+                size: horizontal ? 24.sp : 16.sp,
                 color: Colors.white,
               ),
               3.verticalSpace,

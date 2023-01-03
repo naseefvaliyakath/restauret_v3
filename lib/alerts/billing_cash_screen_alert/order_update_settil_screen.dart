@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/billing_cash_screen_alert/payment_drop_down_for_update_settled_order.dart';
 import 'package:rest_verision_3/widget/common_widget/horizontal_divider.dart';
-
 import '../../constants/app_colors/app_colors.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
@@ -18,16 +17,17 @@ class OrderUpdateSettleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Obx(() {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
         ),
-        width: 0.8.sw,
+        width: horizontal ? 0.4.sw :0.8.sw,
         padding: EdgeInsets.all(10.sp),
         child: SizedBox(
-          width: 0.8.sw,
+          width:horizontal ? 0.4.sw : 0.8.sw,
           child: (Column(
             children: [
               const HorizontalDivider(),

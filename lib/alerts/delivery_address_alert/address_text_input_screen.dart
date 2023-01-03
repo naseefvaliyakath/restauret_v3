@@ -11,8 +11,9 @@ class AddressTextInputScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Container(
-      width: 0.75.sw,
+      width:horizontal ? 0.3.sw : 0.75.sw,
       color: Colors.white,
       padding: EdgeInsets.all(10.sp),
       child: SizedBox(

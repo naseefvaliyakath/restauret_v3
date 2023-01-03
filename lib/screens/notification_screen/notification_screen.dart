@@ -13,6 +13,7 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -36,29 +37,34 @@ class NotificationScreen extends StatelessWidget {
               onRefresh: () async {
                 await ctrl.refreshNotification();
               },
-                  child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.separated(
-                              itemBuilder: (context, index) {
-                                return TransactionTile(
-                                  leading: Icons.notifications_outlined,
-                                  titleText: ctrl.myNotification[index]?.title ?? 'no title',
-                                  subTitle:
-                                      'Date: ${DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.myNotification[index].createdAt ?? DateTime.now())}',
-                                  color: AppColors.mainColor,
-                                  trailingText: '',
-                                  leadingColor: AppColors.mainColor,
-                                  leadingOnTap: () {
+                  child: Center(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: horizontal ? 100.w : 0),
+                      child: Column(
+                          children: [
+                            Expanded(
+                              child: ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    return TransactionTile(
+                                      leading: Icons.notifications_outlined,
+                                      titleText: ctrl.myNotification[index]?.title ?? 'no title',
+                                      subTitle:
+                                          'Date: ${DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.myNotification[index].createdAt ?? DateTime.now())}',
+                                      color: AppColors.mainColor,
+                                      trailingText: '',
+                                      leadingColor: AppColors.mainColor,
+                                      leadingOnTap: () {
 
+                                      },
+                                    );
                                   },
-                                );
-                              },
-                              separatorBuilder: (context, index) => const Divider(),
-                              itemCount: ctrl.myNotification.length),
+                                  separatorBuilder: (context, index) => const Divider(),
+                                  itemCount: ctrl.myNotification.length),
+                            ),
+                          ],
                         ),
-                      ],
                     ),
+                  ),
                 ),
           );
         }));

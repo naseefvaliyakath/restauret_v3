@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
-
 import '../../alerts/invoice_alert_for_order_view_page/invoice_alert_for_order_view.dart';
 import '../../alerts/kot_order_manage_alert/kot_order_manage_alert.dart';
 import '../../alerts/my_dialog_body.dart';
@@ -37,6 +36,7 @@ class OrderViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GetBuilder<OrderViewController>(builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
         return ctrl.isLoading
             ? const MyLoading()
             : RefreshIndicator(
@@ -113,17 +113,19 @@ class OrderViewScreen extends StatelessWidget {
                                 ),
                                 SizedBox(
                                   //? type of order like KOT , SETTLED ,HOLD
-                                  height: 55.h,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: categoryCard.length,
-                                    itemBuilder: (BuildContext ctx, index) {
-                                      return OrderCategory(
+                                  height: horizontal ? 75.h : 55.h,
+                                  width: double.maxFinite,
+                                  child:Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children:
+                                    categoryCard.map((e)  {
+                                    return  OrderCategory(
+                                        firstLetter:e['text'][0],
                                         onTap: () async {
                                           //? for color change
-                                          ctrl.setStatusTappedIndex(index);
+                                          ctrl.setStatusTappedIndex(categoryCard.indexOf(e));
                                           // ?for show different orders
-                                          ctrl.updateTappedTabName(categoryCard[index]['text'] ?? 'KOT');
+                                          ctrl.updateTappedTabName(e['text'] ?? 'KOT');
                                           if (ctrl.tappedTabName == 'KOT') {
                                             //  ctrl.refreshDatabaseKot();
                                           }
@@ -134,12 +136,12 @@ class OrderViewScreen extends StatelessWidget {
                                             await ctrl.getAllHoldOrder();
                                           }
                                         },
-                                        color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                        circleColor: categoryCard[index]['circleColor'],
-                                        text: categoryCard[index]['text'] ?? 'KOT',
+                                        color: ctrl.tappedIndex == categoryCard.indexOf(e) ? AppColors.mainColor_2 : Colors.white,
+                                        circleColor: e['circleColor'],
+                                        text: e['text'] ?? 'KOT',
                                       );
-                                    },
-                                  ),
+                                    }).toList()
+                                  ,),
                                 ),
                               ],
                             ),

@@ -7,7 +7,6 @@ import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/services/service.dart';
 import 'package:rest_verision_3/widget/common_widget/snack_bar.dart';
-
 import '../../alerts/password_prompt_alert/password_prompt_to_cashier_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../routes/route_helper.dart';
@@ -149,6 +148,7 @@ class DashBordScreen extends StatelessWidget {
                     bgColor: AppColors.mainColor_2,
                     icon: Icons.auto_graph,
                     onTap: () async {
+                      //? to refresh report page
                       Get.find<ReportController>().refreshSettledOrder(showSnack: false);
                       if(Get.find<StartupController>().appModeNumber == 1){
                         passwordPromptToCashierMode(context: context,reason: ENTER_TO_REPORT);

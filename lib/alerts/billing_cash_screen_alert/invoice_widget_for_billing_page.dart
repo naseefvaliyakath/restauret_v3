@@ -9,7 +9,6 @@ import 'package:lottie/lottie.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:ticket_widget/ticket_widget.dart';
-
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../../widget/common_widget/common_text/small_text.dart';
@@ -48,11 +47,12 @@ class InvoiceWidgetForBillingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     if (kDebugMode) {
       print('billing kot $orderType');
     }
     return TicketWidget(
-      width: 0.8 * 1.sw,
+      width: horizontal ? 0.5.sw :  0.8 * 1.sw,
       height: 0.68 * 1.sh,
       isCornerRounded: true,
       padding: EdgeInsets.symmetric(horizontal: 20.sp),

@@ -19,6 +19,7 @@ class ShowPickedImgCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Center(
       child: Stack(children: [
         GestureDetector(
@@ -49,7 +50,7 @@ class ShowPickedImgCard extends StatelessWidget {
                     offset: Offset(5, 0),
                   ),
                 ]),
-            width: 170.w,
+            width: horizontal ? 60.w : 170.w,
             height: 220.h,
 
 

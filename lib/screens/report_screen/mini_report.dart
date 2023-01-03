@@ -44,7 +44,6 @@ class MiniReport extends StatelessWidget {
 
 
 
-
       Color getColorForBarChart({required int index}) {
         List<Color> color = [
           Colors.lightBlue,
@@ -109,7 +108,7 @@ class MiniReport extends StatelessWidget {
                         SfCartesianChart(
                           primaryXAxis: CategoryAxis(
                             axisLabelFormatter: (axisLabelRenderArgs) {
-                              return ChartAxisLabel(axisLabelRenderArgs.text, TextStyle());
+                              return ChartAxisLabel(axisLabelRenderArgs.text, const TextStyle());
                             },
                           ),
                           title: ChartTitle(text: 'ORDERS BY TYPE'),

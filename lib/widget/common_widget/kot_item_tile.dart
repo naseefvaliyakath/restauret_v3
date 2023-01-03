@@ -27,6 +27,7 @@ class KotItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Container(
       decoration: const BoxDecoration(
           color: Colors.white),
@@ -45,7 +46,7 @@ class KotItemTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: showPrice ? 150.w : 200.w,
+                  width: showPrice ? (horizontal ? 120.w : 150.w) :(horizontal ? 170.w : 200.w),
                   child: Text(
                     itemName,
                     maxLines: 1,

@@ -15,13 +15,14 @@ class SelectOnlineAppScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<BillingScreenController>(builder: (ctrl) {
       return ctrl.isLoading ?  SizedBox(
         //? to make same size in loading
-          width: 1.sw * 0.8,
+          width: horizontal ? 0.5.sw : 1.sw * 0.8,
           height: 1.sh * 0.5,
           child: const MyLoading()) : SizedBox(
-        width: 1.sw * 0.8,
+        width:horizontal ? 0.5.sw : 1.sw * 0.8,
         height: 1.sh * 0.5,
         child: CustomScrollView(
           primary: false,

@@ -10,6 +10,7 @@ class DatePickerForOrderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Flexible(
       child: InkWell(
         onTap: () async {
@@ -18,9 +19,10 @@ class DatePickerForOrderView extends StatelessWidget {
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           child: SizedBox(
+            width: horizontal ?  200.w : double.maxFinite,
             child: Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: horizontal ? 16.h :  8.h),
                 child: Row(
                   mainAxisAlignment: maninAxisAlignment,
                   children: [
@@ -36,7 +38,7 @@ class DatePickerForOrderView extends StatelessWidget {
                           '${DateFormat('dd-MM-yyyy').format(dateTime.start)} - ${DateFormat('dd-MM-yyyy').format(dateTime.end)}',
                           overflow: TextOverflow.fade,
                           style: TextStyle(
-                            fontSize: 13.sp,
+                            fontSize:horizontal ? 20.sp :  13.sp,
                             color: Colors.grey,
                           ),
                         ),

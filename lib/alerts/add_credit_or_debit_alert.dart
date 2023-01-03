@@ -15,6 +15,7 @@ addCreditOrDebit(BuildContext context, String type) {
     barrierDismissible: true,
     builder: (BuildContext context) {
       return GetBuilder<CreditDebitCtrl>(builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.r))),
           insetPadding: const EdgeInsets.all(0),
@@ -29,7 +30,7 @@ addCreditOrDebit(BuildContext context, String type) {
           )),
           actions: [
             SizedBox(
-              width: 250.w,
+              width: horizontal ? 120.w :250.w,
               height: 40.sp,
               child: ProgressButton(
                 btnCtrlName: 'addCreditDebit',
@@ -51,26 +52,29 @@ addCreditOrDebit(BuildContext context, String type) {
           ],
           content: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 1.sw * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFieldWidget(
-                  hintText: 'Amount',
-                  textEditingController: ctrl.creditDebitTD,
-                  isNumberOnly: true,
-                  borderRadius: 15,
-                  onChange: (_) {},
-                ),
-                10.verticalSpace,
-                TextFieldWidget(
-                  hintText: 'Description',
-                  maxLIne: 3,
-                  textEditingController: ctrl.creditDebitDescTD,
-                  txtLength: 30,
-                  borderRadius: 15.r,
-                  onChange: (_) {},
-                ),
-              ],
+            child: SizedBox(
+              width: horizontal ?  120.w : 250.w,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFieldWidget(
+                    hintText: 'Amount',
+                    textEditingController: ctrl.creditDebitTD,
+                    isNumberOnly: true,
+                    borderRadius: 15,
+                    onChange: (_) {},
+                  ),
+                  10.verticalSpace,
+                  TextFieldWidget(
+                    hintText: 'Description',
+                    maxLIne: 3,
+                    textEditingController: ctrl.creditDebitDescTD,
+                    txtLength: 30,
+                    borderRadius: 15.r,
+                    onChange: (_) {},
+                  ),
+                ],
+              ),
             ),
           ),
         );

@@ -17,6 +17,7 @@ class CategoryCard
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return InkWell(
         borderRadius: BorderRadius.circular(20.r),
       onTap: ()=>onTap(),
@@ -27,8 +28,8 @@ class CategoryCard
         color: color,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
         child: SizedBox(
-          height: 60.h,
-          width: MediaQuery.of(context).size.width * 0.33,
+          height:horizontal ? 75.h : 60.h,
+          width: horizontal ?  0.18.sw : 0.33.sw  ,
           child: Center(
             child: Padding(
               padding: EdgeInsets.all(8.sp),

@@ -11,6 +11,7 @@ class KotBillItemHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Container(
       decoration: const BoxDecoration(color: Colors.white),
       margin: EdgeInsets.only(bottom: 1.sp),
@@ -25,7 +26,7 @@ class KotBillItemHeading extends StatelessWidget {
               style: TextStyle(fontSize: 13.sp),
             ),
             SizedBox(
-              width: showPrice ? 150.w :  200.w,
+              width: showPrice ? (horizontal ? 120.w : 150.w) :(horizontal ? 170.w : 200.w),
               child: Text(
                 'Name',
                 maxLines: 1,

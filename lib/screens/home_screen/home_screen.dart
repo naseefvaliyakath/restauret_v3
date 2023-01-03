@@ -16,6 +16,7 @@ import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../dash_bord_screen/dashboard_screen.dart';
 import '../home_screen_report/home_screen_report.dart';
+import '../report_screen/controller/report_controller.dart';
 import '../settings_page_screen/settings_page_screen.dart';
 import '../today_food_screen/today_food_screen.dart';
 
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Icons.home,
       Icons.stacked_bar_chart,
       Icons.fastfood,
-      Icons.person_pin,
+      Icons.settings,
     ];
 
     List<String> label = [
@@ -174,6 +175,10 @@ class _HomeScreenState extends State<HomeScreen> {
       //iconSize: 25.sp,
       rightCornerRadius: 10.r,
       onTap: (index) {
+        if(index == 1){
+          //? to refresh report page
+          Get.find<ReportController>().refreshSettledOrder(showSnack: false,showLoad: false);
+        }
         selectedTab(index);
       }, itemCount: 4, tabBuilder: (int index, bool isActive) {
         return Column(

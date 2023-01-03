@@ -16,13 +16,14 @@ class FoodSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Expanded(
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
         child: SizedBox(
           child: Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical:horizontal ? 20.h :  8.h),
               child: TextField(
                 onChanged: (vale) {
                   onChanged(vale);
@@ -31,12 +32,12 @@ class FoodSearchBar extends StatelessWidget {
                 decoration: InputDecoration(
                   icon: Icon(
                     Icons.search,
-                    size: 24.sp,
+                    size: horizontal ? 28.sp : 24.sp,
                     color: AppColors.textGrey,
                   ),
                   border: InputBorder.none,
                   hintText: 'Search here ...',
-                  hintStyle: TextStyle(color: AppColors.textGrey, fontSize: 16.sp),
+                  hintStyle: TextStyle(color: AppColors.textGrey, fontSize:horizontal ? 26.sp : 16.sp),
                   isDense: true,
                   // Added this
                   contentPadding: EdgeInsets.all(3.sp), // Added this

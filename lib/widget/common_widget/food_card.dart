@@ -67,7 +67,7 @@ class FoodCard extends StatelessWidget {
             ),
           ),
           Positioned(
-              left: 1.sw / 34.25,
+              left: 5.w,
 
               /// 12.0
               bottom: 1.sh / 45.54,

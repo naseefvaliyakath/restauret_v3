@@ -22,6 +22,7 @@ class BillingFoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return GestureDetector(
       onVerticalDragEnd: (detals){
         int sensitivity = 8;
@@ -98,7 +99,7 @@ class BillingFoodCard extends StatelessWidget {
                           name == '' ? 'error' : name,
                           softWrap: false,
                           style: TextStyle(
-                            fontSize: 12.sp,
+                            fontSize: horizontal ? 14.sp : 12.sp,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -108,7 +109,7 @@ class BillingFoodCard extends StatelessWidget {
                       Text('Rs: $price',
                           softWrap: false,
                           style: TextStyle(
-                            fontSize: 1.sh / 69,
+                            fontSize: horizontal ? 1.sh / 49 : 1.sh / 69,
                             color: AppColors.mainColor,
                             fontWeight: FontWeight.bold,
                           )),
@@ -121,21 +122,21 @@ class BillingFoodCard extends StatelessWidget {
                             Text('3 by 4    : $priceThreeByTwo',
                                 softWrap: false,
                                 style: TextStyle(
-                                  fontSize: 1.sh / 99,
+                                  fontSize: horizontal ? 1.sh / 59 : 1.sh / 99,
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,
                                 )),
                             Text('Half        : $priceHalf',
                                 softWrap: false,
                                 style: TextStyle(
-                                  fontSize: 1.sh / 99,
+                                  fontSize:horizontal ? 1.sh / 59 :  1.sh / 99,
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,
                                 )),
                             Text('Quarter : $priceQuarter',
                                 softWrap: false,
                                 style: TextStyle(
-                                  fontSize: 1.sh / 99,
+                                  fontSize:horizontal ? 1.sh / 59 : 1.sh / 99,
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,
                                 )),

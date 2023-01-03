@@ -14,11 +14,12 @@ class AddNewComplaintAlertBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<SettingsController>(builder: (ctrl) {
       ctrl.complaintMobTD.text = Get.find<StartupController>().shopNumber.toString();
       String? selectedValue;
       return SizedBox(
-        width: 1.sw * 0.6,
+        width: horizontal ? 0.3.sw :  1.sw * 0.6,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -26,6 +27,7 @@ class AddNewComplaintAlertBody extends StatelessWidget {
               hintText: 'Enter details ....',
               textEditingController: ctrl.complaintTextTD,
               borderRadius: 15.r,
+              txtLength: 100,
               maxLIne: 3,
               onChange: (_) {},
             ),
@@ -51,7 +53,7 @@ class AddNewComplaintAlertBody extends StatelessWidget {
                         size: 16.sp,
                         color: Colors.black,
                       ),
-                      8.horizontalSpace,
+                      1.horizontalSpace,
                       Expanded(
                         child: Text(
                           ctrl.selectedComplaintType.toUpperCase(),

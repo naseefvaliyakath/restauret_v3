@@ -10,6 +10,7 @@ class HeadingRichText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Flexible(
       child: FittedBox(
         child: RichText(
@@ -19,7 +20,7 @@ class HeadingRichText extends StatelessWidget {
                 text:name,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 28.sp,
+                    fontSize: horizontal ? 35.sp :  28.sp,
                     color: AppColors.textColor)),
           ]),
           maxLines: 1,

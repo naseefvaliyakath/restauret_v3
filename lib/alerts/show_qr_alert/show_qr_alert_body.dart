@@ -11,9 +11,10 @@ class ShowQrAlertBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<MenuBookController>(builder: (ctrl) {
       return SizedBox(
-        width: 1.sw * 0.6,
+        width:horizontal ? 0.3.sw : 1.sw * 0.6,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

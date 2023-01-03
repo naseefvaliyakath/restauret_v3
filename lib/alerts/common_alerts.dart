@@ -58,6 +58,7 @@ void twoFunctionAlert({
 
 
 deleteItemFromBillAlert(context, index) async {
+  bool horizontal = 1.sh < 1.sw ? true : false;
   //? ktNote text-field controller
   TextEditingController ktNoteController = TextEditingController();
   //? on first time if kitchen note then update from bill list
@@ -74,6 +75,7 @@ deleteItemFromBillAlert(context, index) async {
     dialogType: DialogType.question,
     headerAnimationLoop: false,
     animType: AnimType.bottomSlide,
+    width: horizontal ? 0.3.sw : double.maxFinite,
     body: GetBuilder<BillingScreenController>(builder: (ctrl) {
       return Column(
         children: [

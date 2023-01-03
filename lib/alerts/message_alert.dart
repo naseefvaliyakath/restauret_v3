@@ -8,6 +8,7 @@ import '../widget/common_widget/common_text/big_text.dart';
 
 void messageAlert({required BuildContext context ,required String title , required String text}) {
   try {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     showAnimatedDialog(
       context: context,
       barrierDismissible: true,
@@ -20,6 +21,7 @@ void messageAlert({required BuildContext context ,required String title , requir
           actionsAlignment: MainAxisAlignment.center,
           title:  Center(child: BigText(text: title)),
           content: SizedBox(
+            width: horizontal ? 120.w : 250.w,
             height: 100.sp,
               child: Center(child: MidText(text: text,))),
         );

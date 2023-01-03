@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../screens/billing_screen/controller/billing_screen_controller.dart';
@@ -16,6 +17,7 @@ foodBillingAlert(
       required fdIsLoos,
       required price,
     }) async {
+  bool horizontal = 1.sh < 1.sw ? true : false;
   //? ktNote textField controller
   TextEditingController ktNoteController = TextEditingController();
 
@@ -35,39 +37,42 @@ foodBillingAlert(
     context: context,
     animType: AnimType.scale,
     dialogType: DialogType.info,
+    width:horizontal ?  0.4.sw : double.maxFinite,
     body: GetBuilder<BillingScreenController>(builder: (ctrl) {
       //? all value and function pass to body widget
-      return FoodBillingAlertBody(
-        name: name,
-        index: index,
-        fdIsLoos: fdIsLoos ?? 'no',
-        count: ctrl.count,
-        addFoodToBill: () {
-          ctrl.addFoodToBill(
-            fdIsLoos ?? 'no',
-            fdId ?? 0,
-            fdIsLoos == 'no' ?  (name ?? '') : ctrl.multiSelectedFoodName,
-            ctrl.count ,
-            ctrl.price ,
-            ktNoteController.text,
-          );
-          Navigator.pop(context);
-        },
-        ktTextCtrl: ktNoteController,
-        qntIncrement: () {
-          ctrl.incrementQnt();
-        },
-        qntDecrement: () {
-          ctrl.decrementQnt();
-        },
-        priceIncrement: () {
-          ctrl.incrementPrice();
-        },
-        priceDecrement: () {
-          ctrl.decrementPrice();
-        },
-        price: ctrl.price,
+      return SizedBox(
+        child: FoodBillingAlertBody(
+          name: name,
+          index: index,
+          fdIsLoos: fdIsLoos ?? 'no',
+          count: ctrl.count,
+          addFoodToBill: () {
+            ctrl.addFoodToBill(
+              fdIsLoos ?? 'no',
+              fdId ?? 0,
+              fdIsLoos == 'no' ?  (name ?? '') : ctrl.multiSelectedFoodName,
+              ctrl.count ,
+              ctrl.price ,
+              ktNoteController.text,
+            );
+            Navigator.pop(context);
+          },
+          ktTextCtrl: ktNoteController,
+          qntIncrement: () {
+            ctrl.incrementQnt();
+          },
+          qntDecrement: () {
+            ctrl.decrementQnt();
+          },
+          priceIncrement: () {
+            ctrl.incrementPrice();
+          },
+          priceDecrement: () {
+            ctrl.decrementPrice();
+          },
+          price: ctrl.price,
 
+        ),
       );
     }),
   ).show();

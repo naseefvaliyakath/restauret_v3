@@ -15,6 +15,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Scaffold(
       body: GetBuilder<StartupController>(builder: (ctrl) {
         return SafeArea(
@@ -27,7 +28,7 @@ class LoginScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: SizedBox(
-                  width: 0.8.sw,
+                  width:horizontal ? 0.3.sw : 0.8.sw,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

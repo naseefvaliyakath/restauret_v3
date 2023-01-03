@@ -61,41 +61,6 @@ class MenuSetupScreen extends StatelessWidget {
                           },
                         ),
                         //? search bar and sort icon
-                        bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(60.h),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10.0.w, right: 10.w),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ToggleBtnInCard(
-                                  text: 'Show price',
-                                  color: Colors.green,
-                                  value: ctrl.setShowPriceToggle,
-                                  onToggle: (value) {
-                                    ctrl.setShowPriceToHive(value);
-                                  },
-                                ),
-                                ToggleBtnInCard(
-                                  text: 'Show Special',
-                                  color: AppColors.mainColor_2,
-                                  value: ctrl.setShowSpecialToggle,
-                                  onToggle: (value) {
-                                    ctrl.setShowSpecialToHive(value);
-                                  },
-                                ),
-                                ToggleBtnInCard(
-                                  text: 'Available only',
-                                  color: AppColors.mainColor,
-                                  value: ctrl.setAvailableOnlyToggle,
-                                  onToggle: (value) {
-                                    ctrl.setAvailableOnlyToHive(value);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                         backgroundColor: const Color(0xfffafafa),
                       ),
                       //? body section
@@ -158,8 +123,8 @@ class MenuSetupScreen extends StatelessWidget {
                                   priceQuarter: ctrl.myAllFoods[index].fdQtrPrice ?? 0,
                                   available: ctrl.myAllFoods[index].fdIsAvailable ?? 'no',
                                   special: ctrl.myAllFoods[index].fdIsSpecial ?? 'no',
-                                  showSpecial: ctrl.setShowSpecialToggle,
-                                  showPrice: ctrl.setShowPriceToggle,
+                                  showSpecial: true,
+                                  showPrice: true,
                                   fdIsLoos: ctrl.myAllFoods[index].fdIsLoos ?? 'no',
                                 ),
                               );

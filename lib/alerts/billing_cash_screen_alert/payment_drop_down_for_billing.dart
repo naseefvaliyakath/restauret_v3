@@ -12,6 +12,7 @@ class PaymentDropDownForBilling extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     String? selected;
     return GetBuilder<BillingScreenController>(builder: (ctrl) {
 
@@ -49,7 +50,7 @@ class PaymentDropDownForBilling extends StatelessWidget {
                         value: e,
                         // value: _mySelection,
                         child: SizedBox(
-                          width: 0.3 * 1.sw,
+                          width: horizontal ? 0.2 .sw : 0.3 * 1.sw,
                           child: Row(
                             children: <Widget>[
                               ClipRRect(

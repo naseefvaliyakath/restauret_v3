@@ -36,6 +36,7 @@ class MenuFoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(50.r), boxShadow: [
         BoxShadow(
@@ -77,7 +78,7 @@ class MenuFoodCard extends StatelessWidget {
             ),
           ),
           Positioned(
-              left: 1.sw / 30.25,
+              left: 2.w,
 
               /// 12.0
               bottom: 1.sh / 42.54,
@@ -91,7 +92,7 @@ class MenuFoodCard extends StatelessWidget {
                     name,
                     softWrap: false,
                     style: TextStyle(
-                      fontSize: 1.sh / 55.15,
+                      fontSize: horizontal ?  1.sh / 35.15 :  1.sh / 55.15,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -102,7 +103,7 @@ class MenuFoodCard extends StatelessWidget {
                     child: Text(fdIsLoos == 'yes' ? 'Full      : $price' : 'Rs : $price',
                         softWrap: false,
                         style: TextStyle(
-                          fontSize: 1.sh / 49,
+                          fontSize: horizontal ? 1.sh/39 : 1.sh / 49,
                           color: AppColors.mainColor_2,
                           fontWeight: FontWeight.bold,
                         )),
@@ -116,21 +117,21 @@ class MenuFoodCard extends StatelessWidget {
                         Text('3 by 4       : $priceThreeByTwo',
                             softWrap: false,
                             style: TextStyle(
-                              fontSize: 1.sh / 69,
+                              fontSize:horizontal ? 1.sh/49 :  1.sh / 69,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
                         Text('Half           : $priceHalf',
                             softWrap: false,
                             style: TextStyle(
-                              fontSize: 1.sh / 69,
+                              fontSize:horizontal ? 1.sh/49 : 1.sh / 69,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
                         Text('Quarter    : $priceQuarter',
                             softWrap: false,
                             style: TextStyle(
-                              fontSize: 1.sh / 69,
+                              fontSize:horizontal ? 1.sh/49 : 1.sh / 69,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),

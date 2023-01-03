@@ -11,15 +11,15 @@ class CategoryDropDownToday extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     String? selected;
     return GetBuilder<TodayFoodController>(builder: (ctrl) {
-
       return Center(
         child: Card(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical:horizontal ? 20.h : 8.h),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -48,7 +48,7 @@ class CategoryDropDownToday extends StatelessWidget {
                         value: e.catName ?? COMMON_CATEGORY,
                         // value: _mySelection,
                         child: SizedBox(
-                          width: 0.3 * 1.sw,
+                          width:horizontal ? 0.1.sw :  0.3 * 1.sw,
                           child: Row(
                             children: <Widget>[
                               ClipRRect(
@@ -60,7 +60,7 @@ class CategoryDropDownToday extends StatelessWidget {
 
                                 child: Text((e.catName ?? COMMON_CATEGORY).toUpperCase(),
                                   style: TextStyle(
-                                      fontSize: 12.sp
+                                      fontSize:12.sp
                                   ),
                                   softWrap: false,
                                   overflow: TextOverflow.fade,),

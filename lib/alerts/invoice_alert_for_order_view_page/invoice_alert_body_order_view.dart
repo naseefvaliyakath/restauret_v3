@@ -25,8 +25,9 @@ class InvoiceAlertBodyOrderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return TicketWidget(
-      width: 0.8 * 1.sw,
+      width: horizontal ? 0.5.sw : 0.8 * 1.sw,
       height: 0.68 * 1.sh,
       isCornerRounded: true,
       padding: EdgeInsets.symmetric(horizontal: 20.sp),

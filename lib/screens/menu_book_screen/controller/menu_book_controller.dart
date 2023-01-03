@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../../../api_data_loader/food_data.dart';
 import '../../../check_internet/check_internet.dart';
 import '../../../constants/hive_constants/hive_costants.dart';
@@ -59,10 +57,6 @@ class MenuBookController extends GetxController {
   String menuBookUrl = 'https://mobizate.com/menuBook/getAllFoodForMenu';
 
 
-  //? to set toggle btn as per saved data
-  bool setShowPriceToggle = true;
-  bool setShowSpecialToggle = true;
-  bool setAvailableOnlyToggle = false;
 
   //? to share qr code
   ScreenshotController screenshotController = ScreenshotController();
@@ -71,9 +65,6 @@ class MenuBookController extends GetxController {
   void onInit() async {
     await checkIsCashier();
     checkInternetConnection();
-    readShowPriceFromHive();
-    readShowSpecialFromHive();
-    readAvailableOnlyFromHive();
     getInitialFood();
     super.onInit();
   }
@@ -220,18 +211,6 @@ class MenuBookController extends GetxController {
 
   sortingFood(List<Foods> myAllFoods) async {
     try {
-      //? selecting available food only if setAvailableOnlyToggle is true
-      List<Foods> availableFoodOnly = [];
-      await readAvailableOnlyFromHive();
-      if(setAvailableOnlyToggle){
-        for (var element in myAllFoods) {
-          if(element.fdIsAvailable == 'yes'){
-            availableFoodOnly.add(element);
-          }
-        }
-        myAllFoods.clear();
-        myAllFoods.addAll(availableFoodOnly);
-      }
 
       //? sorting special food
       for (var element in myAllFoods) {
@@ -271,90 +250,7 @@ class MenuBookController extends GetxController {
   }
 
 
-  //? to set toggle
-  Future setShowPriceToHive(bool showPrice) async {
-    try {
-      await _myLocalStorage.setData(SET_SHOW_PRICE_IN_HIVE, showPrice);
-      setShowPriceToggle = showPrice;
-      update();
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'setShowPriceToHive()');
-      return;
-    }
-  }
 
-  Future<bool> readShowPriceFromHive() async {
-    try {
-      bool result = await _myLocalStorage.readData(SET_SHOW_PRICE_IN_HIVE) ?? false;
-      setShowPriceToggle = result;
-      update();
-      return result;
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'readShowPriceFromHive()');
-      return true;
-    }
-  }
-
-  //? to set toggle
-  Future setShowSpecialToHive(bool showSpecial) async {
-    try {
-      await _myLocalStorage.setData(SET_SHOW_SPECIAL_IN_HIVE, showSpecial);
-      setShowSpecialToggle = showSpecial;
-      update();
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'setShowSpecialToHive()');
-      return;
-    }
-  }
-
-  Future<bool> readShowSpecialFromHive() async {
-    try {
-      bool result = await _myLocalStorage.readData(SET_SHOW_SPECIAL_IN_HIVE) ?? false;
-      setShowSpecialToggle = result;
-      update();
-      return result;
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'readShowSpecialFromHive()');
-      return true;
-    }
-  }
-
-  //? to set toggle
-  Future setAvailableOnlyToHive(bool available) async {
-    try {
-      await _myLocalStorage.setData(SET_AVAILABLE_ONLY_IN_HIVE, available);
-      setAvailableOnlyToggle = available;
-      refreshAllFood(showSnack: false);
-      update();
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'setAvailableOnlyToHive()');
-      return;
-    }
-  }
-
-  Future<bool> readAvailableOnlyFromHive() async {
-    try {
-      bool result = await _myLocalStorage.readData(SET_AVAILABLE_ONLY_IN_HIVE) ?? false;
-      setAvailableOnlyToggle = result;
-      update();
-      return result;
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'menu_book_controller',methodName: 'readAvailableOnlyFromHive()');
-      return false;
-    }
-  }
 
   shareQrCode() async {
     try {
@@ -377,7 +273,7 @@ class MenuBookController extends GetxController {
   String menuBookUrlGenerated(){
     try {
       String shopNameNoSpace = shopName.replaceAll(' ', '');
-      String url = '$menuBookUrl?fdShopId=$shopId&showSpecial=$setShowSpecialToggle&showRate=$setShowSpecialToggle&fdIsAvailable=$setAvailableOnlyToggle&shopName=$shopNameNoSpace';
+      String url = '$menuBookUrl?fdShopId=$shopId&showSpecial=true&showRate=true&fdIsAvailable=true&shopName=$shopNameNoSpace';
       return url;
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';

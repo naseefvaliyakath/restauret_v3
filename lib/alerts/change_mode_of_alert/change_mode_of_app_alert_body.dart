@@ -8,7 +8,6 @@ import 'package:getwidget/components/radio/gf_radio.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_radio_type.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
-
 import '../../constants/app_colors/app_colors.dart';
 import '../../screens/settings_page_screen/controller/settings_controller.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
@@ -21,9 +20,10 @@ class ChangeModeOfAppAlertBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<SettingsController>(builder: (ctrl) {
       return SizedBox(
-        width: 1.sw * 0.8,
+        width:horizontal ? 0.3.sw : 1.sw * 0.8,
         child: MediaQuery.removePadding(
           context: context,
           child: Column(

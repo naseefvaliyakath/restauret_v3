@@ -6,17 +6,20 @@ import 'buttons/round_border_button.dart';
 
 
 class TwoBtnBottomSheet {
+
   static void bottomSheet(
       {required String b1Name,
       required String b2Name,
       required Function b1Function,
       required Function b2Function}) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     Get.bottomSheet(
       Container(
           padding: EdgeInsets.symmetric(
             horizontal: 20.w,
             vertical: 50.h,
           ),
+          margin: EdgeInsets.only(left:horizontal ?  120.w : 0,right:horizontal ? 80.w : 0),
           decoration: BoxDecoration(
               color: Colors.black54,
               borderRadius: BorderRadius.only(
@@ -42,8 +45,8 @@ class TwoBtnBottomSheet {
 
             ],
           )),
-      enterBottomSheetDuration: const Duration(milliseconds: 500),
-      exitBottomSheetDuration: const Duration(milliseconds: 500),
+      enterBottomSheetDuration: const Duration(milliseconds: 300),
+      exitBottomSheetDuration: const Duration(milliseconds: 300),
     );
   }
 }

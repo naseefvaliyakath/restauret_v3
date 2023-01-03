@@ -28,6 +28,7 @@ class DeleteBillingAlertEditBillBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -42,7 +43,7 @@ class DeleteBillingAlertEditBillBody extends StatelessWidget {
                   size: 15.sp,
                 ),
                 SizedBox(
-                  width: 120.w,
+                  width: horizontal ? 40.w : 120.w,
                   child: FittedBox(
                     fit: BoxFit.fitWidth,
                     child: Card(
@@ -92,7 +93,7 @@ class DeleteBillingAlertEditBillBody extends StatelessWidget {
                   size: 15.sp,
                 ),
                 SizedBox(
-                  width: 120.w,
+                  width: horizontal ? 40.w : 120.w,
                   child: FittedBox(
                     fit: BoxFit.fitWidth,
                     child: Card(

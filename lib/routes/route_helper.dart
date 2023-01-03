@@ -13,10 +13,12 @@ import 'package:rest_verision_3/screens/notification_screen/notification_screen.
 import 'package:rest_verision_3/screens/report_screen/binding/report_binding.dart';
 import 'package:rest_verision_3/screens/report_screen/report_screen.dart';
 import 'package:rest_verision_3/screens/update_food_screen/update_food_screen.dart';
+import '../screens/add_food_screen/pc_add_food_screen.dart';
 import '../screens/all_food_screen/all_food_screen.dart';
 import '../screens/all_food_screen/binding/all_food_binding.dart';
 import '../screens/billing_screen/billing_screen.dart';
 import '../screens/billing_screen/binding/billing_screen_binding.dart';
+import '../screens/billing_screen/pc_billing_screen.dart';
 import '../screens/credit_user_screen/binding/credit_user_binding.dart';
 import '../screens/credit_user_screen/credit_book_user_screen.dart';
 import '../screens/general_settings_page/binding/general_settings_binding.dart';
@@ -33,9 +35,12 @@ import '../screens/order_view_screen/order_view _screen.dart';
 import '../screens/profile_page/profile_screen.dart';
 import '../screens/purchase_book_screen/binding/purchase_book_binding.dart';
 import '../screens/purchase_book_screen/purchase_book_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../screens/home_screen/pc_home_screen_a.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
 
 class RouteHelper {
+  bool horizontal = 1.sh < 1.sw ? true : false;
   static const String initial = '/';
   static const String home = '/home';
   static const String allFoodScreen = '/all-food';
@@ -106,7 +111,7 @@ class RouteHelper {
     ),
     GetPage(
       name: home,
-      page: () => const HomeScreen(),
+      page: () =>  1.sh < 1.sw ? const PcHomeScreen() : const HomeScreen(),
       binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 600),
@@ -120,7 +125,7 @@ class RouteHelper {
     ),
     GetPage(
       name: addFoodScreen,
-      page: () => const AddFoodScreen(),
+      page: () =>1.sh < 1.sw ?  const PcAddFoodScreen() : const AddFoodScreen() ,
       binding: AddFoodBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
@@ -134,7 +139,7 @@ class RouteHelper {
     ),
     GetPage(
       name: billingScreen,
-      page: () => const BillingScreen(),
+      page: () =>   1.sh < 1.sw ?  const PcBillingScreen() : const BillingScreen(),
       binding: BillingScreenBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),

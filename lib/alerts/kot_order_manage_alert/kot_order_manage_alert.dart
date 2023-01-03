@@ -19,6 +19,7 @@ import '../../widget/common_widget/snack_bar.dart';
 //? in order view page to show different action buttons for kot
 //? eg Settle , RING , EDIT ..etc
 kotOrderManageAlert({required BuildContext context, required OrderViewController ctrl, required int index}) {
+  bool horizontal = 1.sh < 1.sw ? true : false;
   showAnimatedDialog(
     context: context,
     barrierDismissible: true,
@@ -37,7 +38,7 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                 children: [
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 20.h),
-                    width: 0.8.sw,
+                    width:horizontal ? 0.4.sw : 0.8.sw,
                     height: Get.find<StartupController>().applicationPlan == 1 ?  330.h : 280.h,
                     child: Stack(
                       alignment: AlignmentDirectional.topCenter,
@@ -46,7 +47,7 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                           top: 45.h,
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 10.sp),
-                            width: 0.8.sw,
+                            width:horizontal ? 0.4.sw : 0.8.sw,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.r),
                               color: Colors.white,

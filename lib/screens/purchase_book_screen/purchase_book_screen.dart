@@ -9,6 +9,7 @@ import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
+import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/loading_page.dart';
 import '../../widget/common_widget/transaction_tile.dart';
 import '../../widget/order_view_screen/date_picker_for_order_view.dart';
@@ -18,6 +19,7 @@ class PurchaseBookScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -45,7 +47,7 @@ class PurchaseBookScreen extends StatelessWidget {
             10.horizontalSpace
           ],
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar:horizontal ? const SizedBox() :  Container(
           decoration: const BoxDecoration(
             color: Colors.white,
             boxShadow: [
@@ -69,6 +71,13 @@ class PurchaseBookScreen extends StatelessWidget {
             ],
           ),
         ),
+        floatingActionButton: horizontal ? FloatingActionButton(
+          onPressed: () {
+            addNewPurchaseAlert(context: context);
+          },
+          child: Icon(Icons.add, size: 24.sp, color: Colors.white),
+        ) : const SizedBox(),
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         body: GetBuilder<PurchaseBookCTRL>(builder: (ctrl) {
           return SafeArea(
             child: ctrl.isLoading
@@ -79,6 +88,7 @@ class PurchaseBookScreen extends StatelessWidget {
               },
                   child: Column(
                       children: [
+                      horizontal ?  BigText(text: 'SELECT DATE',size: horizontal ? 30.sp : 25.sp,) : const SizedBox(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -94,35 +104,39 @@ class PurchaseBookScreen extends StatelessWidget {
                           ],
                         ),
                         Expanded(
-                          child: ListView.separated(
-                              itemBuilder: (context, index) {
-                                return TransactionTile(
-                                  leading: Icons.remove,
-                                  titleText: ctrl.myPurchaseItem[index]?.description ?? 'no description',
-                                  subTitle:
-                                      'Date: ${DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.myPurchaseItem[index].createdAt ?? DateTime.now())}',
-                                  color: AppColors.mainColor,
-                                  trailingText: (ctrl.myPurchaseItem[index]?.price ?? 0).toString(),
-                                  leadingColor: AppColors.mainColor,
-                                  leadingOnTap: () {
-                                    twoFunctionAlert(
-                                        context: context,
-                                        onTap: () {
-                                          ctrl.deletePurchase(ctrl.myPurchaseItem[index].purchaseId ?? -1);
-                                        },
-                                        onCancelTap: () {},
-                                        title: 'Delete this purchase?',
-                                        subTitle: 'Do you want to delete this purchase');
-                                  },
-                                );
-                              },
-                              separatorBuilder: (context, index) => const Divider(),
-                              itemCount: ctrl.myPurchaseItem.length),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: horizontal ? 100.w : 0),
+                            child: ListView.separated(
+                                itemBuilder: (context, index) {
+                                  return TransactionTile(
+                                    leading: Icons.remove,
+                                    titleText: ctrl.myPurchaseItem[index]?.description ?? 'no description',
+                                    subTitle:
+                                        'Date: ${DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.myPurchaseItem[index].createdAt ?? DateTime.now())}',
+                                    color: AppColors.mainColor,
+                                    trailingText: (ctrl.myPurchaseItem[index]?.price ?? 0).toString(),
+                                    leadingColor: AppColors.mainColor,
+                                    leadingOnTap: () {
+                                      twoFunctionAlert(
+                                          context: context,
+                                          onTap: () {
+                                            ctrl.deletePurchase(ctrl.myPurchaseItem[index].purchaseId ?? -1);
+                                          },
+                                          onCancelTap: () {},
+                                          title: 'Delete this purchase?',
+                                          subTitle: 'Do you want to delete this purchase');
+                                    },
+                                  );
+                                },
+                                separatorBuilder: (context, index) => const Divider(),
+                                itemCount: ctrl.myPurchaseItem.length),
+                          ),
                         ),
                       ],
                     ),
                 ),
           );
         }));
+
   }
 }

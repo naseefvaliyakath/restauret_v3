@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WhiteButtonWithIcon extends StatelessWidget {
+
   final String text;
   final IconData icon;
   final Function onTap;
@@ -9,6 +10,7 @@ class WhiteButtonWithIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return InkWell(
       onTap: ()=>onTap(),
       child: Center(
@@ -23,7 +25,7 @@ class WhiteButtonWithIcon extends StatelessWidget {
               children: <Widget>[
                 FittedBox(child: Icon(icon,color: Colors.grey,size: 18.sp,)),
                5.horizontalSpace,
-               FittedBox(child: Text(text,style: const TextStyle(color: Colors.grey,),))
+               FittedBox(child: Text(text,style:  const TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),))
               ],
             ),
           ),

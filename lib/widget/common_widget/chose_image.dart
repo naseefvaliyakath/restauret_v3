@@ -8,6 +8,7 @@ class ChooseImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Center(
       child: Container(
         decoration: BoxDecoration(
@@ -29,7 +30,7 @@ class ChooseImage extends StatelessWidget {
               ),
             ]
         ),
-        width: 170.w,
+        width: horizontal ? 60.w :170.w,
         height: 220.h,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

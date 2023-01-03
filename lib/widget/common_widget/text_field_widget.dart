@@ -38,6 +38,7 @@ class TextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return SizedBox(
       width: width ?? double.maxFinite,
       child: TextField(
@@ -53,7 +54,7 @@ class TextFieldWidget extends StatelessWidget {
           hintText: hintText,
           hintStyle: TextStyle(
             color: AppColors.textGrey,
-            fontSize: hintSize ?? 18.w,
+            fontSize: hintSize ??( horizontal ? 7.w :  18.w),
           ),
           filled: true,
           isDense: isDens,

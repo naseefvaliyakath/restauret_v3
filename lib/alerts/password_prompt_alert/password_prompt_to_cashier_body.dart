@@ -16,8 +16,9 @@ class PasswordPromptAlertBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<StartupController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return SizedBox(
-        width: 1.sw * 0.6,
+        width: horizontal ?  0.3.sw : 0.6.sw ,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

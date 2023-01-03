@@ -16,6 +16,7 @@ void showNoticeUpdateAlert({
   required bool dismissible,
 }) {
   try {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     showAnimatedDialog(
       context: context,
       barrierDismissible: dismissible,
@@ -69,7 +70,7 @@ void showNoticeUpdateAlert({
           ],
           content: SizedBox(
               height: 60.sp,
-              width: 0.7.sw,
+              width: horizontal ? 0.3.sw : 0.7.sw,
               child: Center(
                   child: Text(
                 message,

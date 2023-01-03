@@ -120,26 +120,28 @@ class KitchenModeMainScreen extends StatelessWidget {
                             ),
                             SizedBox(
                               height: 55.h,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: categoryCard.length,
-                                itemBuilder: (BuildContext ctx, index) {
-                                  return OrderCategory(
+                              child:Wrap(
+                                alignment: WrapAlignment.center,
+                                children:
+                                categoryCard.map((e) {
+                                  return   OrderCategory(
+                                    firstLetter:e['text'][0],
                                     onTap: () async {
                                       //? for color change tapped category
-                                      ctrl.setStatusTappedIndex(index);
+                                      ctrl.setStatusTappedIndex(categoryCard.indexOf(e));
                                       //?for show different orders
-                                      ctrl.updateTappedTabName(categoryCard[index]['text']);
+                                      ctrl.updateTappedTabName(e['text']);
                                       //? sorting items in all tabs PENDING , PROGRESS , READY .. etc
                                       ctrl.updateKotItemsAsPerTab();
                                     },
-                                    color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                    circleColor: categoryCard[index]['circleColor'],
-                                    text: categoryCard[index]['text'],
+                                    color: ctrl.tappedIndex == categoryCard.indexOf(e) ? AppColors.mainColor_2 : Colors.white,
+                                    circleColor: e['circleColor'],
+                                    text: e['text'],
                                   );
-                                },
+                                }).toList(),
                               ),
                             ),
+                            20.verticalSpace,
                           ],
                         ),
                       ),

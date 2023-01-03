@@ -22,6 +22,7 @@ class MenuBookScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GetBuilder<MenuBookController>(builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
         return ctrl.isLoading
             ? const MyLoading()
             : SafeArea(
@@ -94,11 +95,11 @@ class MenuBookScreen extends StatelessWidget {
                       backgroundColor: const Color(0xfffafafa),
                     ),
                     //? body section
-                    ctrl.setShowSpecialToggle ? const SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: ListTile(
                         title:   BigText(text:'SPECIAL FOOD'),
                       ),
-                    ) : const SliverToBoxAdapter(),
+                    ),
                     SliverPadding(
                       padding: EdgeInsets.all(20.sp),
                       sliver: SliverGrid(
@@ -123,14 +124,14 @@ class MenuBookScreen extends StatelessWidget {
                                 priceQuarter: ctrl.specialFoods[index].fdQtrPrice ?? 0,
                                 available: ctrl.specialFoods[index].fdIsAvailable ?? 'no',
                                 special: ctrl.specialFoods[index].fdIsSpecial ?? 'no',
-                                showPrice: ctrl.setShowPriceToggle,
-                                showSpecial: ctrl.setShowSpecialToggle,
+                                showPrice: true,
+                                showSpecial: true,
                                 fdIsLoos: ctrl.specialFoods[index].fdIsLoos ?? 'no',
                               ),
                             );
                           },
                           //? to hide special food on toggling byn in setup page
-                          childCount:ctrl.setShowSpecialToggle ?  ctrl.specialFoods.length : 0,
+                          childCount:  ctrl.specialFoods.length,
                         ),
                       ),
                     ),
@@ -144,7 +145,7 @@ class MenuBookScreen extends StatelessWidget {
                               ListTile(title: BigText(text:(ctrl.foodsByCategory[index]['title']).toString().toUpperCase())),
                               GridView.builder(
                                   gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
+                                    crossAxisCount: horizontal ? 7 :  2,
                                     mainAxisSpacing: 18.sp,
                                     crossAxisSpacing: 18.sp,
                                     childAspectRatio: 0.8 / 0.8,
@@ -162,8 +163,8 @@ class MenuBookScreen extends StatelessWidget {
                                       priceQuarter: ctrl.foodsByCategory[index]['products'][index2].fdQtrPrice ?? 0,
                                       available: ctrl.foodsByCategory[index]['products'][index2].fdIsAvailable ?? 'no',
                                       special: ctrl.foodsByCategory[index]['products'][index2].fdIsSpecial ?? 'no',
-                                      showPrice: ctrl.setShowPriceToggle,
-                                      showSpecial: ctrl.setShowSpecialToggle,
+                                      showPrice: true,
+                                      showSpecial: true,
                                       fdIsLoos: ctrl.foodsByCategory[index]['products'][index2].fdIsLoos ?? 'no',
                                     );
                                   }
