@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -84,7 +86,15 @@ class PcBillingScreen extends StatelessWidget {
                     //? notification icon
                     RefreshIconBtn(
                       onTap: () {
-                        AppSnackBar.myFlutterToast(message: 'Long press for refresh', bgColor: Colors.black54);
+                        if(Platform.isWindows){
+                          //? to vibrate
+                          HapticFeedback.mediumImpact();
+                          ctrl.refreshTodayFood();
+                          ctrl.refreshCategory();
+                        }else{
+                          AppSnackBar.myFlutterToast(message: 'Long press for refresh', bgColor: Colors.black54);
+                        }
+
                       },
                       onLongTap: () {
                         //? to vibrate
@@ -277,6 +287,7 @@ class PcBillingScreen extends StatelessWidget {
                                           ListTile(
                                             title: Text((e['name'] ?? '')),
                                             subtitle: Text((e['ktNote'] ?? '')),
+                                            dense: true,
                                           ),
                                         ),
                                         DataCell(Text((e['qnt'] ?? 0).toString())),

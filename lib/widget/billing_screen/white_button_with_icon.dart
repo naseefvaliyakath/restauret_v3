@@ -19,7 +19,7 @@ class WhiteButtonWithIcon extends StatelessWidget {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 8.h),
-            height: 0.04.sh,
+            height: horizontal ? 0.05.sh :  0.04.sh,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

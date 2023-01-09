@@ -16,6 +16,7 @@ class MyDialogBody {
     required Function onTapOK,
     required Function onTapCancel,
   }) {
+   bool horizontal = 1.sh < 1.sw ? true : false;
     showAnimatedDialog(
       context: context,
       barrierDismissible: true,
@@ -34,7 +35,7 @@ class MyDialogBody {
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 5.sp),
                     color: Colors.transparent,
-                    width: 0.8.sw,
+                    width: horizontal ? 0.3.sw : 0.8.sw,
                     height: 250.h,
                     child: Stack(
                       alignment: AlignmentDirectional.topCenter,
@@ -43,12 +44,13 @@ class MyDialogBody {
                           top: 25.h,
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 5.sp),
-                            width: 0.7.sw,
+                            width: horizontal ? 0.26.sw : 0.7.sw,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.r),
                               color: Colors.white,
                             ),
                             child: Container(
+                              width: horizontal ? 0.26.sw : 0.7.sw,
                               padding: EdgeInsets.symmetric(horizontal: 10.sp),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -71,19 +73,24 @@ class MyDialogBody {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      AppRoundMiniBtn(
-                                        text: btnOkText,
-                                        color: Colors.green,
-                                        onTap: () {
-                                          onTapOK();
-                                        },
-                                      ),
-                                      AppRoundMiniBtn(
-                                          text: btnCancelText,
-                                          color: Colors.redAccent,
+                                      Flexible(
+                                        child: AppRoundMiniBtn(
+                                          text: btnOkText,
+                                          color: Colors.green,
                                           onTap: () {
-                                            onTapCancel();
-                                          })
+                                            onTapOK();
+                                          },
+                                        ),
+                                      ),
+                                      10.horizontalSpace,
+                                      Flexible(
+                                        child: AppRoundMiniBtn(
+                                            text: btnCancelText,
+                                            color: Colors.redAccent,
+                                            onTap: () {
+                                              onTapCancel();
+                                            }),
+                                      )
                                     ],
                                   ),
                                   10.verticalSpace,

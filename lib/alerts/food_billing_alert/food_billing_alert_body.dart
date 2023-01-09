@@ -40,8 +40,8 @@ class FoodBillingAlertBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<BillingScreenController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return Center(
         child: SizedBox(
           child: Column(

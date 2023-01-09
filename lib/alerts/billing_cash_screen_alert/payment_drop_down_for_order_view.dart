@@ -12,10 +12,10 @@ class PaymentDropDownForOrderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
+
     String? selected;
     return GetBuilder<OrderViewController>(builder: (ctrl) {
-
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return Center(
         child: Card(
           shape:

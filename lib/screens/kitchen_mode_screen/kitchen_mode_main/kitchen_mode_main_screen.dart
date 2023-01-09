@@ -29,7 +29,7 @@ class KitchenModeMainScreen extends StatelessWidget {
   ];
 
   final List items = ["Notification", "settings"];
-
+  bool horizontal = 1.sh < 1.sw ? true : false;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -39,6 +39,7 @@ class KitchenModeMainScreen extends StatelessWidget {
       },
       child: Scaffold(
         body: GetBuilder<KitchenModeMainController>(builder: (ctrl) {
+          ScrollController scrollController = ScrollController();
           return RefreshIndicator(
             onRefresh: () async{
               //? to vibrate
@@ -119,26 +120,32 @@ class KitchenModeMainScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(
-                              height: 55.h,
-                              child:Wrap(
-                                alignment: WrapAlignment.center,
-                                children:
-                                categoryCard.map((e) {
-                                  return   OrderCategory(
-                                    firstLetter:e['text'][0],
+                              height: horizontal ? 75.h : 55.h,
+                              width: double.maxFinite,
+                              child:Scrollbar(
+                                thickness: Platform.isWindows ? 10.sp :  0,
+                                controller: scrollController,
+                                child: ListView.builder(
+                                  controller: scrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context,index){
+                                  return OrderCategory(
+                                    firstLetter:categoryCard[index]['text'][0],
                                     onTap: () async {
                                       //? for color change tapped category
-                                      ctrl.setStatusTappedIndex(categoryCard.indexOf(e));
+                                      ctrl.setStatusTappedIndex(index);
                                       //?for show different orders
-                                      ctrl.updateTappedTabName(e['text']);
+                                      ctrl.updateTappedTabName(categoryCard[index]['text']);
                                       //? sorting items in all tabs PENDING , PROGRESS , READY .. etc
                                       ctrl.updateKotItemsAsPerTab();
                                     },
-                                    color: ctrl.tappedIndex == categoryCard.indexOf(e) ? AppColors.mainColor_2 : Colors.white,
-                                    circleColor: e['circleColor'],
-                                    text: e['text'],
+                                    color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
+                                    circleColor: categoryCard[index]['circleColor'],
+                                    text: categoryCard[index]['text'],
                                   );
-                                }).toList(),
+                                },
+                                  itemCount: categoryCard.length,
+                                ),
                               ),
                             ),
                             20.verticalSpace,

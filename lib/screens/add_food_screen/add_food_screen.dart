@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../alerts/common_alerts.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
@@ -327,7 +325,9 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
 
   void _getFromCamara() async {
     XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080,imageQuality: 30);
-    _cropImage(pickedFile!.path);
+    if(pickedFile != null){
+      _cropImage(pickedFile!.path);
+    }
     Navigator.pop(context);
   }
 

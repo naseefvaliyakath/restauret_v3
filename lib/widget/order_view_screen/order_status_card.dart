@@ -62,7 +62,7 @@ class OrderStatusCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Padding(
-              padding: EdgeInsets.all(3.sp),
+              padding: EdgeInsets.symmetric(horizontal: 3.sp),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +12,7 @@ import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/food_card.dart';
 import '../../widget/common_widget/food_search_bar.dart';
 import '../../widget/common_widget/loading_page.dart';
+import '../../widget/common_widget/refresh_icon_btn.dart';
 import '../../widget/common_widget/two_button-bottom_sheet.dart';
 import '../../widget/today_food_screen/category_drop_down_today.dart';
 import 'controller/today_food_controller.dart';
@@ -19,7 +22,6 @@ class TodayFoodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GetBuilder<TodayFoodController>(
       builder: (ctrl) {
         bool horizontal = 1.sh < 1.sw ? true : false;
@@ -68,12 +70,23 @@ class TodayFoodScreen extends StatelessWidget {
                                     Get.toNamed(RouteHelper.getAllFoodScreen());
                                   },
                                 ),
+                               Platform.isWindows ?  10.horizontalSpace : 0.horizontalSpace,
+                                Visibility(
+                                  visible: Platform.isWindows ? true : false,
+                                  child: RefreshIconBtn(
+                                    onTap: () {
+                                      ctrl.refreshTodayFood(showSnack: true);
+                                    },
+                                    onLongTap: () {
+                                    },
+                                  ),
+                                ),
                               ],
                             )
                           ],
                         ),
                         bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(horizontal ? 90.h :  60.h),
+                          preferredSize: Size.fromHeight(horizontal ? 90.h : 60.h),
                           child: Padding(
                             padding: EdgeInsets.only(left: 10.0.w, right: 10.w),
                             //? search bar and food sort icon in row
@@ -87,7 +100,6 @@ class TodayFoodScreen extends StatelessWidget {
                                   },
                                 ),
                                 const CategoryDropDownToday(),
-
                               ],
                             ),
                           ),
@@ -108,12 +120,10 @@ class TodayFoodScreen extends StatelessWidget {
                             (BuildContext context, int index) {
                               return InkWell(
                                 onTap: () {
-                                  if(ctrl.isCashier){
+                                  if (ctrl.isCashier) {
                                     TwoBtnBottomSheet.bottomSheet(
                                         b1Name: 'Remove From Today Food',
-                                        b2Name: (ctrl.myTodayFoods[index].fdIsQuick ?? 'no') == 'no'
-                                            ? 'Add to quick bill'
-                                            : 'Remove from quick bill',
+                                        b2Name: (ctrl.myTodayFoods[index].fdIsQuick ?? 'no') == 'no' ? 'Add to quick bill' : 'Remove from quick bill',
                                         b1Function: () async {
                                           Navigator.pop(context);
                                           ctrl.removeFromToday(ctrl.myTodayFoods[index].fdId ?? -1, 'no');

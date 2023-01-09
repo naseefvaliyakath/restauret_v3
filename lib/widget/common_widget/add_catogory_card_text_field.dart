@@ -21,12 +21,13 @@ class AddCategoryCardTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
       child: SizedBox(
         height: height,
-        width: MediaQuery.of(context).size.width * 0.39,
+        width: horizontal ? 0.15.sw : 0.4.sw,
         child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 5.sp),
@@ -60,7 +61,7 @@ class AddCategoryCardTextField extends StatelessWidget {
                       border: InputBorder.none,
                       hintStyle: TextStyle(
                         color: AppColors.textGrey,
-                        fontSize: 14.sp,
+                        fontSize: horizontal ? 20.sp :  14.sp,
                       ),
                       filled: true,
                       isDense: true,

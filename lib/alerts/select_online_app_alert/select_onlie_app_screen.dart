@@ -15,8 +15,9 @@ class SelectOnlineAppScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
+
     return GetBuilder<BillingScreenController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return ctrl.isLoading ?  SizedBox(
         //? to make same size in loading
           width: horizontal ? 0.5.sw : 1.sw * 0.8,

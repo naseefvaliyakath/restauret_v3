@@ -28,6 +28,7 @@ import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
 import '../../../widget/common_widget/snack_bar.dart';
 import '../../login_screen/controller/startup_controller.dart';
+import '../../report_screen/controller/report_controller.dart';
 
 class OrderViewController extends GetxController {
   final SettledOrderRepo _settledOrderRepo = Get.find<SettledOrderRepo>();
@@ -59,6 +60,8 @@ class OrderViewController extends GetxController {
 
   //? btn controller for settle KOT order
   final RoundedLoadingButtonController btnControllerSettle = RoundedLoadingButtonController();
+  //? btn controler for settled and print
+  final RoundedLoadingButtonController btnControllerSettleAndPrint = RoundedLoadingButtonController();
 
   //? btn controller for cancel KOT order
   final RoundedLoadingButtonController btnControllerCancellKOtOrder = RoundedLoadingButtonController();
@@ -224,12 +227,12 @@ class OrderViewController extends GetxController {
   }
 
   //? this emit will receive in server and emit from server to refresh data
-  refreshDatabaseKot() {
+  refreshDatabaseKot({bool showSnack = true}) {
     if(Get.find<StartupController>().applicationPlan == 1){
       _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
     }
     else{
-      getAllKot();
+      getAllKot(showSnack: showSnack);
     }
 
   }
@@ -394,8 +397,14 @@ class OrderViewController extends GetxController {
 
   //? insert settled to dB bill from kot
   //? this not called here , so there is many progress btn status changing
- Future<bool> insertSettledBill(BuildContext context) async {
+ Future<bool> insertSettledBill(BuildContext context,{bool settleOnly = true}) async {
+   RoundedLoadingButtonController btnCtrl = RoundedLoadingButtonController();
     try {
+      if (settleOnly) {
+        btnCtrl = btnControllerSettle;
+      } else {
+        btnCtrl = btnControllerSettleAndPrint;
+      }
       Map<String, dynamic> settledBill = {
         'fdShopId': Get.find<StartupController>().SHOPE_ID,
         'fdOrder': indexFromKotOrder != -1 ? (_kotBillingItems[indexFromKotOrder].fdOrder ?? []) : [],
@@ -418,32 +427,33 @@ class OrderViewController extends GetxController {
 
       FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
       if (parsedResponse.error ?? true) {
-        btnControllerSettle.error();
+        btnCtrl.error();
         AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
         return false;
       } else {
-        btnControllerSettle.success();
+        btnCtrl.success();
         //? to disable settled and settled and settled&print btn
+        //? refresh report screen data
+        Get.find<ReportController>().refreshSettledOrder(showSnack: false,showLoad: false);
         isClickedSettle.value = true;
-        AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
         return true;
       }
     } on DioError catch (e) {
-      btnControllerSettle.error();
+      btnCtrl.error();
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
       errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'insertSettledBill()');
       return false;
     } catch (e) {
-      btnControllerSettle.error();
+      btnCtrl.error();
       return false;
     } finally {
       await Future.delayed(const Duration(seconds: 1), () {
-        btnControllerSettle.reset();
+        btnCtrl.reset();
       });
       await Future.delayed(const Duration(milliseconds: 300), () {
         //? for refresh kot bill , so after settle it will delete from kot bill from dB
-        refreshDatabaseKot();
+        refreshDatabaseKot(showSnack: false);
         //? refreshing settled order after settling KOT order
         refreshSettledOrder();
         Navigator.pop(context);
@@ -459,7 +469,9 @@ class OrderViewController extends GetxController {
 
       if (response.statusCode == 1 ) {
         //? refreshing after delete settled order
-        refreshSettledOrder(startDate: selectedDateRangeForSettledOrder.start,endTime: selectedDateRangeForSettledOrder.end);
+        refreshSettledOrder(startDate: selectedDateRangeForSettledOrder.start,endTime: selectedDateRangeForSettledOrder.end,showSnack: false);
+        //? refresh report screen data
+        Get.find<ReportController>().refreshSettledOrder(showSnack: false,showLoad: false);
       } else {
         AppSnackBar.errorSnackBar('Error', response.message);
       }
@@ -528,7 +540,9 @@ class OrderViewController extends GetxController {
       } else {
         btnControllerSettle.success();
         //? for refresh settled bill ,
-        refreshSettledOrder();
+        refreshSettledOrder(showSnack: false);
+        //? refresh report screen data
+        Get.find<ReportController>().refreshSettledOrder(showSnack: false,showLoad: false);
         AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
       }
     } on DioError catch (e) {
@@ -716,7 +730,7 @@ class OrderViewController extends GetxController {
            initialEntryMode: DatePickerEntryMode.input,
            initialDateRange: selectedDateRangeForSettledOrder,
            //? user can only select last one month date
-           firstDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day - 31),
+           firstDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day - 1095),
            lastDate: DateTime.now(),
          );
      if (dateRange != null && dateRange != selectedDateRangeForSettledOrder) {

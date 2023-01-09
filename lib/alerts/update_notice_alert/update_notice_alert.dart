@@ -70,7 +70,7 @@ void showNoticeUpdateAlert({
           ],
           content: SizedBox(
               height: 60.sp,
-              width: horizontal ? 0.3.sw : 0.7.sw,
+              width: horizontal ? 0.25.sw : 0.7.sw,
               child: Center(
                   child: Text(
                 message,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -39,9 +40,9 @@ class _PcAddFoodScreenState extends State<PcAddFoodScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
     return Scaffold(
       body: GetBuilder<AddFoodController>(builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
         //? if no category clicked then make default first category
         fdCategory = ctrl.myCategory.isNotEmpty ? ctrl.myCategory.first.catName ?? COMMON_CATEGORY : COMMON_CATEGORY;
         state = ctrl.priceToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
@@ -199,17 +200,17 @@ class _PcAddFoodScreenState extends State<PcAddFoodScreen> {
                                         });
                                       },
                                       choseFileEvent: () {
-                                        TwoBtnBottomSheet.bottomSheet(
-                                          b1Name: 'From Gallery',
-                                          b2Name: 'From Camara',
-                                          b1Function: _getFromGallery,
-                                          b2Function: _getFromCamara,
-                                        );
+                                        _getFromGallery();
                                       },
                                     )
-                                        : InkWell(
+                                        : GestureDetector(
                                       onTap: () {
-                                        TwoBtnBottomSheet.bottomSheet(b1Name: 'From Gallery', b2Name: 'From Camara', b1Function: _getFromGallery, b2Function: _getFromCamara);
+                                        if(Platform.isWindows){
+                                          _getFromGalleryPc();
+                                        }else{
+                                          _getFromGallery();
+                                        }
+
                                       },
                                       child: const ChooseImage(),
                                     ),
@@ -338,41 +339,30 @@ class _PcAddFoodScreenState extends State<PcAddFoodScreen> {
     );
   }
 
+  void _getFromGalleryPc() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['jpg', 'png', 'jpeg'],
+      type: FileType.image
+    );
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      setState(() {
+        imageFile = File(file.path);
+      });
+    } else {
+      // User canceled the picker
+    }
+
+  }
+
   void _getFromGallery() async {
     XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1080, maxHeight: 1080);
-    _cropImage(pickedFile!.path);
-    Navigator.pop(context);
+    setState(() {
+      if(pickedFile != null){
+        imageFile = File(pickedFile.path);
+      }
+    });
   }
 
-  void _getFromCamara() async {
-    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080,imageQuality: 30);
-    _cropImage(pickedFile!.path);
-    Navigator.pop(context);
-  }
 
-  _cropImage(filepath) async {
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: filepath,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.ratio3x2,
-        CropAspectRatioPreset.original,
-        CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.ratio16x9
-      ],
-      uiSettings: [
-        AndroidUiSettings(
-            toolbarTitle: 'Cropper', toolbarColor: Colors.white, toolbarWidgetColor: Colors.black54, initAspectRatio: CropAspectRatioPreset.original, lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        ),
-      ],
-    );
-
-    if (croppedFile != null) {
-      setState(() {
-        imageFile = File(croppedFile.path);
-      });
-    }
-  }
 }

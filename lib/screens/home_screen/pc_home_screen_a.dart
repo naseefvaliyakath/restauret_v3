@@ -96,10 +96,6 @@ class _PcHomeScreenState extends State<PcHomeScreen> {
                       ),
                     ],
                     onDestinationSelected: (selected) {
-                      if (selected == 1) {
-                        //? to refresh report page
-                        Get.find<ReportController>().refreshSettledOrder(showSnack: false, showLoad: false);
-                      }
                       setState(() {
                         pageIndex = selected;
                       });

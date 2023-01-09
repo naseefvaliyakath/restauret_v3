@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +13,7 @@ import '../../widget/all_food_screen/category_drop_down_all.dart';
 import '../../widget/common_widget/food_card.dart';
 import '../../widget/common_widget/food_search_bar.dart';
 import '../../widget/common_widget/loading_page.dart';
+import '../../widget/common_widget/refresh_icon_btn.dart';
 import '../../widget/common_widget/two_button-bottom_sheet.dart';
 import 'controller/all_food_controller.dart';
 
@@ -53,6 +56,7 @@ class AllFoodScreen extends StatelessWidget {
                                 FontAwesomeIcons.bell,
                                 size: 24.sp,
                               )),
+
                         ],
                         leading: BackButton(
                           onPressed: () {
@@ -73,7 +77,18 @@ class AllFoodScreen extends StatelessWidget {
                                     ctrl.searchAllFood();
                                   },
                                 ),
-                                const CategoryDropDownAll()
+                                const CategoryDropDownAll(),
+                                Platform.isWindows ?  5.horizontalSpace : 0.horizontalSpace,
+                                Visibility(
+                                  visible: Platform.isWindows ? true : false,
+                                  child: RefreshIconBtn(
+                                    onTap: () {
+                                      ctrl.refreshAllFood(showSnack: true);
+                                    },
+                                    onLongTap: () {
+                                    },
+                                  ),
+                                ),
                               ],
                             ),
                           ),

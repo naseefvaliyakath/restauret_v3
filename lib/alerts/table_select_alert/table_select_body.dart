@@ -17,9 +17,10 @@ class TableSelectBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
+
     String? selectedValue;
     return GetBuilder<BillingScreenController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return Container(
         width:horizontal ? 0.3.sw : 0.75.sw,
         color: Colors.white,
@@ -122,7 +123,7 @@ class TableSelectBody extends StatelessWidget {
                               iconDisabledColor: Colors.grey,
                               buttonHeight: 50.sp,
                               buttonWidth: 160.sp,
-                              buttonPadding: EdgeInsets.only(left: 14.w, right: 14.w),
+                              buttonPadding: horizontal ?  EdgeInsets.symmetric(horizontal: 2.w) : EdgeInsets.only(left: 14.w, right: 14.w),
                               buttonDecoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(14.r),
                                 border: Border.all(
@@ -212,7 +213,7 @@ class TableSelectBody extends StatelessWidget {
                           iconDisabledColor: Colors.grey,
                           buttonHeight: 40.sp,
                           buttonWidth: 100.sp,
-                          buttonPadding: EdgeInsets.only(left: 14.w, right: 14.w),
+                          buttonPadding:  horizontal ?  EdgeInsets.symmetric(horizontal: 2.w) : EdgeInsets.only(left: 14.w, right: 14.w),
                           buttonDecoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14.r),
                             border: Border.all(
@@ -294,7 +295,7 @@ class TableSelectBody extends StatelessWidget {
                           iconDisabledColor: Colors.grey,
                           buttonHeight: 40.sp,
                           buttonWidth: 100.sp,
-                          buttonPadding: EdgeInsets.only(left: 14.w, right: 14.w),
+                          buttonPadding: horizontal ?  EdgeInsets.symmetric(horizontal: 2.w) : EdgeInsets.only(left: 14.w, right: 14.w),
                           buttonDecoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14.r),
                             border: Border.all(

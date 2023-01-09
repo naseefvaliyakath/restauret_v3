@@ -211,7 +211,8 @@ class BillingScreen extends StatelessWidget {
                           }
 
                           if (ctrl.orderType == DINING) {
-                            tableSelectAlert(context: context);
+                            Get.toNamed(RouteHelper.getCreateTableScreen());
+                          //  tableSelectAlert(context: context);
                           }
                         },
                       ),

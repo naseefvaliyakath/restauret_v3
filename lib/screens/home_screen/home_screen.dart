@@ -175,10 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
       //iconSize: 25.sp,
       rightCornerRadius: 10.r,
       onTap: (index) {
-        if(index == 1){
-          //? to refresh report page
-          Get.find<ReportController>().refreshSettledOrder(showSnack: false,showLoad: false);
-        }
         selectedTab(index);
       }, itemCount: 4, tabBuilder: (int index, bool isActive) {
         return Column(

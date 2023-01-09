@@ -197,7 +197,7 @@ class ReportController extends GetxController {
         initialEntryMode: DatePickerEntryMode.input,
         initialDateRange: selectedDateRangeForSettledOrder,
         //? user can only select last one month date
-        firstDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day - 31),
+        firstDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day - 1095),
         lastDate: DateTime.now(),
       );
       if (dateRange != null && dateRange != selectedDateRangeForSettledOrder) {

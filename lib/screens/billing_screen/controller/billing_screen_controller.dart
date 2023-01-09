@@ -14,6 +14,7 @@ import 'package:rest_verision_3/models/room_response/room.dart';
 import 'package:rest_verision_3/repository/online_app_repository.dart';
 import 'package:rest_verision_3/repository/room_repository.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
+import 'package:rest_verision_3/screens/report_screen/controller/report_controller.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -701,6 +702,8 @@ class BillingScreenController extends GetxController {
           return false;
         } else {
           btnCtrl.success();
+          //? refresh report screen data
+          Get.find<ReportController>().refreshSettledOrder(showSnack: false,showLoad: false);
           //? isClickedSettle will make true to avoid add new items and restrict btn clicks after settled the order
           isClickedSettle.value = true;
           AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');

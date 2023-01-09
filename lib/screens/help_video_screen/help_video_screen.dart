@@ -16,6 +16,7 @@ class HelpVideoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool horizontal = 1.sh < 1.sw ? true : false;
     List<Widget> videoWidgets(List<Tutorial> item)
     {
       List<Widget> list = <Widget>[];
@@ -67,7 +68,7 @@ class HelpVideoScreen extends StatelessWidget {
         body: SafeArea(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(vertical: 20.h),
+            padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: horizontal ? 100.w : 0),
             child: Column(
               children: [
                 20.verticalSpace,

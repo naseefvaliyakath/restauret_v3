@@ -14,8 +14,8 @@ class AddNewComplaintAlertBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<SettingsController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       ctrl.complaintMobTD.text = Get.find<StartupController>().shopNumber.toString();
       String? selectedValue;
       return SizedBox(

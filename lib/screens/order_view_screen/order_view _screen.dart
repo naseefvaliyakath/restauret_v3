@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,6 +38,7 @@ class OrderViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GetBuilder<OrderViewController>(builder: (ctrl) {
+        ScrollController scrollController = ScrollController();
         bool horizontal = 1.sh < 1.sw ? true : false;
         return ctrl.isLoading
             ? const MyLoading()
@@ -115,33 +118,42 @@ class OrderViewScreen extends StatelessWidget {
                                   //? type of order like KOT , SETTLED ,HOLD
                                   height: horizontal ? 75.h : 55.h,
                                   width: double.maxFinite,
-                                  child:Wrap(
-                                    alignment: WrapAlignment.center,
-                                    children:
-                                    categoryCard.map((e)  {
-                                    return  OrderCategory(
-                                        firstLetter:e['text'][0],
-                                        onTap: () async {
-                                          //? for color change
-                                          ctrl.setStatusTappedIndex(categoryCard.indexOf(e));
-                                          // ?for show different orders
-                                          ctrl.updateTappedTabName(e['text'] ?? 'KOT');
-                                          if (ctrl.tappedTabName == 'KOT') {
-                                            //  ctrl.refreshDatabaseKot();
-                                          }
-                                          if (ctrl.tappedTabName == 'SETTLED') {
-                                            //  ctrl.getAllSettledOrder();
-                                          }
-                                          if (ctrl.tappedTabName == 'HOLD') {
-                                            await ctrl.getAllHoldOrder();
-                                          }
-                                        },
-                                        color: ctrl.tappedIndex == categoryCard.indexOf(e) ? AppColors.mainColor_2 : Colors.white,
-                                        circleColor: e['circleColor'],
-                                        text: e['text'] ?? 'KOT',
-                                      );
-                                    }).toList()
-                                  ,),
+                                  child:Center(
+                                    child: Scrollbar(
+                                      thickness: Platform.isWindows ? 10.sp :  0,
+                                      controller: scrollController,
+                                      child: ListView(
+                                        controller: scrollController,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        children: [
+                                         ... categoryCard.map((e)  {
+                                            return  OrderCategory(
+                                              firstLetter:e['text'][0],
+                                              onTap: () async {
+                                                //? for color change
+                                                ctrl.setStatusTappedIndex(categoryCard.indexOf(e));
+                                                // ?for show different orders
+                                                ctrl.updateTappedTabName(e['text'] ?? 'KOT');
+                                                if (ctrl.tappedTabName == 'KOT') {
+                                                  //  ctrl.refreshDatabaseKot();
+                                                }
+                                                if (ctrl.tappedTabName == 'SETTLED') {
+                                                  //  ctrl.getAllSettledOrder();
+                                                }
+                                                if (ctrl.tappedTabName == 'HOLD') {
+                                                  await ctrl.getAllHoldOrder();
+                                                }
+                                              },
+                                              color: ctrl.tappedIndex == categoryCard.indexOf(e) ? AppColors.mainColor_2 : Colors.white,
+                                              circleColor: e['circleColor'],
+                                              text: e['text'] ?? 'KOT',
+                                            );
+                                          }).toList()
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

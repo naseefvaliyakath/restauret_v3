@@ -42,8 +42,7 @@ class VideoPlayScreen extends StatelessWidget {
           ],
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: ListView(
             children: [
               YoutubePlayer(
                 controller: ctrl.controller,

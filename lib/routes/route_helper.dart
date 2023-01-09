@@ -13,12 +13,16 @@ import 'package:rest_verision_3/screens/notification_screen/notification_screen.
 import 'package:rest_verision_3/screens/report_screen/binding/report_binding.dart';
 import 'package:rest_verision_3/screens/report_screen/report_screen.dart';
 import 'package:rest_verision_3/screens/update_food_screen/update_food_screen.dart';
+import '../screens/add_food_screen/add_food_screen_frame.dart';
 import '../screens/add_food_screen/pc_add_food_screen.dart';
 import '../screens/all_food_screen/all_food_screen.dart';
 import '../screens/all_food_screen/binding/all_food_binding.dart';
 import '../screens/billing_screen/billing_screen.dart';
+import '../screens/billing_screen/billing_screen_frame.dart';
 import '../screens/billing_screen/binding/billing_screen_binding.dart';
 import '../screens/billing_screen/pc_billing_screen.dart';
+import '../screens/create_table_screen/binding/create_table_binding.dart';
+import '../screens/create_table_screen/create_table_screen.dart';
 import '../screens/credit_user_screen/binding/credit_user_binding.dart';
 import '../screens/credit_user_screen/credit_book_user_screen.dart';
 import '../screens/general_settings_page/binding/general_settings_binding.dart';
@@ -27,6 +31,7 @@ import '../screens/help_video_screen/binding/help_video_binding.dart';
 import '../screens/help_video_screen/help_video_screen.dart';
 import '../screens/home_screen/binding/home_screen_binding.dart';
 import '../screens/home_screen/home_screen.dart';
+import '../screens/home_screen/home_screen_frame.dart';
 import '../screens/kitchen_mode_screen/kitchen_mode_main/binding/kitchen_mode_main_binding.dart';
 import '../screens/kitchen_mode_screen/kitchen_mode_main/kitchen_mode_main_screen.dart';
 import '../screens/menu_book_screen/menu_book_screen.dart';
@@ -38,6 +43,7 @@ import '../screens/purchase_book_screen/purchase_book_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../screens/home_screen/pc_home_screen_a.dart';
 import '../screens/report_screen/pc_report_screen.dart';
+import '../screens/report_screen/report_screen_frame.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
 
 class RouteHelper {
@@ -61,6 +67,7 @@ class RouteHelper {
   static const String notificationScreen = '/notificationScreen';
   static const String videoTutorialScreen = '/videoTutorialScreen';
   static const String videoPlayScreen = '/videoPlayScreen';
+  static const String createTableScreen = '/createTableScreen';
 
   static String getInitial() => initial;
 
@@ -100,6 +107,8 @@ class RouteHelper {
 
   static String getVideoPlayScreen() => videoPlayScreen;
 
+  static String getCreateTableScreen() => createTableScreen;
+
 
 
   static List<GetPage> routes = [
@@ -112,7 +121,7 @@ class RouteHelper {
     ),
     GetPage(
       name: home,
-      page: () =>  1.sh < 1.sw ? const PcHomeScreen() : const HomeScreen(),
+      page: () =>  const HomeScreenFrame(),
       binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 600),
@@ -126,7 +135,7 @@ class RouteHelper {
     ),
     GetPage(
       name: addFoodScreen,
-      page: () =>1.sh < 1.sw ?  const PcAddFoodScreen() : const AddFoodScreen() ,
+      page: () =>const AddFoodScreenFrame() ,
       binding: AddFoodBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
@@ -140,7 +149,7 @@ class RouteHelper {
     ),
     GetPage(
       name: billingScreen,
-      page: () =>   1.sh < 1.sw ?  const PcBillingScreen() : const BillingScreen(),
+      page: () =>  const BillingScreenFrame(),
       binding: BillingScreenBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
@@ -200,7 +209,7 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 400)),
     GetPage(
         name: reportScreen,
-        page: () =>   1.sh < 1.sw ?  const PcReportScreen() : const ReportScreen(),
+        page: () =>   const ReportScreenFrame(),
         binding: ReportBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
@@ -220,6 +229,12 @@ class RouteHelper {
         name: videoPlayScreen,
         page: () => const VideoPlayScreen(),
         binding: HelpVideoBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+    GetPage(
+        name: createTableScreen,
+        page: () => const CreateTableScreen(),
+        binding: CreateTableBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
   ];

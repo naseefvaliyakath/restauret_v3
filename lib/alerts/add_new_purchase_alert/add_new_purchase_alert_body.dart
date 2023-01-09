@@ -12,8 +12,8 @@ class AddNewPurchaseAlertBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
     return GetBuilder<PurchaseBookCTRL>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return SizedBox(
         width: horizontal ? 0.3.sw : 1.sw * 0.6,
         child: Column(

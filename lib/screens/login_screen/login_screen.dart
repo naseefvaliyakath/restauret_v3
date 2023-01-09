@@ -15,9 +15,10 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
+
     return Scaffold(
       body: GetBuilder<StartupController>(builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
         return SafeArea(
           child: Center(
             child: ctrl.showLogin ? Card(
