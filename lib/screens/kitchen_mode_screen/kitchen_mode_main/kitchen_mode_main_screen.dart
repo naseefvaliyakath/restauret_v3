@@ -29,7 +29,6 @@ class KitchenModeMainScreen extends StatelessWidget {
   ];
 
   final List items = ["Notification", "settings"];
-  bool horizontal = 1.sh < 1.sw ? true : false;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -39,6 +38,7 @@ class KitchenModeMainScreen extends StatelessWidget {
       },
       child: Scaffold(
         body: GetBuilder<KitchenModeMainController>(builder: (ctrl) {
+          bool horizontal = 1.sh < 1.sw ? true : false;
           ScrollController scrollController = ScrollController();
           return RefreshIndicator(
             onRefresh: () async{
@@ -74,7 +74,7 @@ class KitchenModeMainScreen extends StatelessWidget {
                     titleTextStyle: TextStyle(fontSize: 26.sp, color: Colors.black, fontWeight: FontWeight.w600),
                     actions: [SizedBox(height: 50.sp, child: const KitchenModeDropDown()), 15.horizontalSpace],
                     bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(110.h),
+                      preferredSize: horizontal ? Size.fromHeight(150.h) :  Size.fromHeight(110.h),
                       child: Padding(
                         padding: EdgeInsets.only(left: 10.0.w, right: 10.w),
                         child: Column(

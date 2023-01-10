@@ -110,7 +110,7 @@ class _KitchenKotListItemTileState extends State<KitchenKotListItemTile> {
                       width: 1.sw * 0.065,
                       child: FittedBox(
                         alignment: Alignment.centerLeft,
-                        fit: BoxFit.fitWidth,
+                        fit: BoxFit.contain,
                         child: Text(
                           (widget.kotOrder.fdOrder?[widget.index].qnt ?? 0).toString(),
                           maxLines: 1,

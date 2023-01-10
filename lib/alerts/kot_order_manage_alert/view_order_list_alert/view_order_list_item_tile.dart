@@ -115,7 +115,7 @@ class ViewOrderListItemTile extends StatelessWidget {
                 width: 1.sw * 0.08,
                 child: FittedBox(
                   alignment: Alignment.centerLeft,
-                  fit: BoxFit.scaleDown,
+                  fit: BoxFit.contain,
                   child: Text(
                     price.toString(),
                     style: TextStyle(fontSize: 13.sp),
