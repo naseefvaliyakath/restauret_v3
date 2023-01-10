@@ -68,7 +68,7 @@ class _PcAddFoodScreenState extends State<PcAddFoodScreen> {
                       children: [
                         //? heading , notification icon and back btn
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding:  EdgeInsets.all(8.sp),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

@@ -21,8 +21,6 @@ import '../screens/billing_screen/billing_screen.dart';
 import '../screens/billing_screen/billing_screen_frame.dart';
 import '../screens/billing_screen/binding/billing_screen_binding.dart';
 import '../screens/billing_screen/pc_billing_screen.dart';
-import '../screens/create_table_screen/binding/create_table_binding.dart';
-import '../screens/create_table_screen/create_table_screen.dart';
 import '../screens/credit_user_screen/binding/credit_user_binding.dart';
 import '../screens/credit_user_screen/credit_book_user_screen.dart';
 import '../screens/general_settings_page/binding/general_settings_binding.dart';
@@ -45,6 +43,7 @@ import '../screens/home_screen/pc_home_screen_a.dart';
 import '../screens/report_screen/pc_report_screen.dart';
 import '../screens/report_screen/report_screen_frame.dart';
 import '../screens/update_food_screen/binding/update_food_binding.dart';
+import '../screens/update_food_screen/update_food_screen_frame.dart';
 
 class RouteHelper {
   bool horizontal = 1.sh < 1.sw ? true : false;
@@ -67,7 +66,7 @@ class RouteHelper {
   static const String notificationScreen = '/notificationScreen';
   static const String videoTutorialScreen = '/videoTutorialScreen';
   static const String videoPlayScreen = '/videoPlayScreen';
-  static const String createTableScreen = '/createTableScreen';
+
 
   static String getInitial() => initial;
 
@@ -107,7 +106,7 @@ class RouteHelper {
 
   static String getVideoPlayScreen() => videoPlayScreen;
 
-  static String getCreateTableScreen() => createTableScreen;
+
 
 
 
@@ -142,7 +141,7 @@ class RouteHelper {
     ),
     GetPage(
       name: updateFoodScreen,
-      page: () => const UpdateFoodScreen(),
+      page: () => const UpdateFoodScreenFrame(),
       binding: UpdateFoodBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 500),
@@ -231,11 +230,6 @@ class RouteHelper {
         binding: HelpVideoBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
-    GetPage(
-        name: createTableScreen,
-        page: () => const CreateTableScreen(),
-        binding: CreateTableBinding(),
-        transition: Transition.cupertino,
-        transitionDuration: const Duration(milliseconds: 400)),
+
   ];
 }
