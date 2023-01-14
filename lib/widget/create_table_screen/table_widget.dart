@@ -14,8 +14,10 @@ class TableWidget extends StatelessWidget {
   final int tableNumber;
   final Function onTap;
   final bool showOrder;
+  // final bool showLinkButton;
 
-  const TableWidget({Key? key, required this.shapeId, required this.onTap, required this.tableId, this.showOrder=true, required this.tableNumber}) : super(key: key);
+  const TableWidget({Key? key, required this.shapeId, required this.onTap, required this.tableId, this.showOrder = true, required this.tableNumber})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,15 +49,18 @@ class TableWidget extends StatelessWidget {
       radius = 5.r;
     }
     return GetBuilder<TableManageController>(builder: (ctrl) {
+      final GlobalKey _draggableKey = GlobalKey();
+
       //? retrieving array of kot fot this table only
       List<KitchenOrder> orderInTable = [];
       for (var order in ctrl.kotBillingItems) {
         for (var table in order.kotTableChairSet!) {
-          if(table['tableId'] == tableId){
+          if (table['tableId'] == tableId) {
             orderInTable.add(order);
           }
         }
       }
+
       return Container(
         height: width,
         width: height,
@@ -79,30 +84,48 @@ class TableWidget extends StatelessWidget {
             children: [
               Center(
                   child: TableShape(
-                    text: "Table $tableNumber",
-                    width: height - 150.sp,
-                    height: width - 150.sp,
-                    onLongTap: () {},
-                    onTap: onTap,
-                    radius: radius,
-                  )),
-              showOrder?Positioned(
-                top: 0.h,
-                bottom: 0.h,
-                child: SizedBox(
-                  width: 40.sp,
-                  height: height,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: orderInTable.map((order) {
-                      return OrderWidget(text: '${order.Kot_id}',
-                          onTap: (){
-                        viewOrderInTableAlert(context: context,kot: order,tableNumber: tableNumber,tableId: tableId);
-                      });
-                    }).toList(),
-                  ),
-                ),
-              ):const SizedBox(),
+                text: "Table $tableNumber",
+                width: height - 150.sp,
+                height: width - 150.sp,
+                onLongTap: () {},
+                onTap: onTap,
+                radius: radius,
+              )),
+              showOrder
+                  ? Positioned(
+                      top: 0.h,
+                      bottom: 0.h,
+                      child: SizedBox(
+                        width: 40.sp,
+                        height: height,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: orderInTable.map((order) {
+                            return Expanded(
+                              child: LongPressDraggable(
+                                delay: Duration(milliseconds: 500),
+                                data: {
+                                  'tableNumber': tableNumber,
+                                  'tableId': tableId,
+                                  'kotId': order.Kot_id,
+                                },
+                                dragAnchorStrategy: pointerDragAnchorStrategy,
+                                feedback: Card(
+                                  key: _draggableKey,
+                                  child: OrderWidget(text: '${order.Kot_id}', onTap: () {}),
+                                ),
+                                child: OrderWidget(
+                                    text: '${order.Kot_id}',
+                                    onTap: () {
+                                      viewOrderInTableAlert(context: context, kot: order, tableNumber: tableNumber, tableId: tableId);
+                                    }),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
@@ -110,12 +133,3 @@ class TableWidget extends StatelessWidget {
     });
   }
 }
-
-// Column(
-// mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-// children: orderInTable.map((order) {
-// return OrderWidget(text: '${order.Kot_id}',onTap: (){
-// viewOrderInTableAlert(context: context,kot: order,tableNumber: tableNumber,tableId: tableId);
-// });
-// }).toList(),
-// )

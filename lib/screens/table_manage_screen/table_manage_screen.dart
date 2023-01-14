@@ -9,6 +9,7 @@ import '../../alerts/common_alerts.dart';
 import '../../alerts/show_tables_alert/table_shift_select_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
+import '../../models/kitchen_order_response/kitchen_order.dart';
 import '../../widget/common_widget/add_category_card.dart';
 import '../../widget/common_widget/add_catogory_card_text_field.dart';
 import '../../widget/common_widget/catogory_card.dart';
@@ -92,28 +93,39 @@ class PcTableManageScreen extends StatelessWidget {
                                               if (ctrl.myRoom.isNotEmpty) {
                                                 //? category's
                                                 if (index < ctrl.myRoom.length) {
-                                                  return SizedBox(
-                                                    width: horizontal ? 50.w : null,
-                                                    child: CategoryCard(
-                                                      onTap: () {
-                                                        ctrl.setCategoryTappedIndex(index);
-                                                      },
-                                                      color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                                      text: ctrl.myRoom[index].roomName ?? 'Error'.toUpperCase(),
-                                                      onLongTap: () {
-                                                        twoFunctionAlert(
-                                                          context: context,
+
+                                                  return DragTarget(
+                                                    builder: (context, candidateData, rejectedData) {
+                                                      return SizedBox(
+                                                        width: horizontal ? 50.w : null,
+                                                        child: CategoryCard(
                                                           onTap: () {
-                                                            ctrl.deleteRoom(
-                                                                roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                            ctrl.setCategoryTappedIndex(index);
                                                           },
-                                                          onCancelTap: () {},
-                                                          title: 'Delete ?',
-                                                          subTitle: 'do you want to delete thi item ?',
-                                                        );
-                                                      },
-                                                    ),
+                                                          indexForColour: index,
+                                                          color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
+                                                          text: ctrl.myRoom[index].roomName ?? 'Error'.toUpperCase(),
+                                                          onLongTap: () {
+                                                            twoFunctionAlert(
+                                                              context: context,
+                                                              onTap: () {
+                                                                ctrl.deleteRoom(
+                                                                    roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                              },
+                                                              onCancelTap: () {},
+                                                              title: 'Delete ?',
+                                                              subTitle: 'do you want to delete thi item ?',
+                                                            );
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                    onMove: (details) {
+                                                      ctrl.setCategoryTappedIndex(index);
+                                                    },
                                                   );
+
+
                                                 }
                                                 //? add category card
                                                 else {
@@ -204,20 +216,36 @@ class PcTableManageScreen extends StatelessWidget {
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              return TableWidget(
-                                shapeId: ctrl.myTableChairSet[index].tableShape ?? 1,
-                                tableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
-                                tableId: ctrl.myTableChairSet[index].tableId ?? -1,
-                                onTap: () {
-                                  if (ctrl.shiftMode) {
-                                  } else {
-                                    Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
-                                      'roomName': ctrl.myTableChairSet[index].roomName,
-                                      'room_id': ctrl.myTableChairSet[index].room_id,
-                                      'tableId': ctrl.myTableChairSet[index].tableId,
-                                      'tableIndex': ctrl.myTableChairSet[index].tableNumber,
-                                    });
-                                  }
+                              return DragTarget(
+                                builder: (context, candidateData, rejectedData) {
+                                  return TableWidget(
+                                    shapeId: ctrl.myTableChairSet[index].tableShape ?? 1,
+                                    tableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                                    tableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                    onTap: () {
+                                      if (ctrl.shiftMode) {
+                                      } else {
+                                        Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
+                                          'roomName': ctrl.myTableChairSet[index].roomName,
+                                          'room_id': ctrl.myTableChairSet[index].room_id,
+                                          'tableId': ctrl.myTableChairSet[index].tableId,
+                                          'tableIndex': ctrl.myTableChairSet[index].tableNumber,
+                                        });
+                                      }
+                                    },
+                                  );
+                                },
+                                onAccept: (Map data) {
+                                  ctrl.updateShiftMode(true);
+                                  ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
+                                  ctrl.shiftOrLinkTable(
+                                    newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                                    newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                    newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
+                                  );
+                                },
+                                onMove: (details) {
+
                                 },
                               );
                             },
