@@ -90,6 +90,7 @@ class TableManageController extends GetxController {
 
 
   bool isDragStarted = false;
+  bool isDraggableOnLinkButton = false;
 
   @override
   void onInit() async {
@@ -499,7 +500,7 @@ class TableManageController extends GetxController {
         final response = await _httpService.updateData(LINK_TABLE_CHR, tableShiftUpdate);
 
         KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
-        if (parsedResponse.error) {
+        if (parsedResponse.error==false) {
           String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);

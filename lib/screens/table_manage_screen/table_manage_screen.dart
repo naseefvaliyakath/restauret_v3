@@ -237,13 +237,23 @@ class PcTableManageScreen extends StatelessWidget {
                                   );
                                 },
                                 onAccept: (Map data) {
-                                  //TODO make this below 2 methods as one
+                                  //TODO remove below method
                                   ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
-                                  ctrl.shiftTable(
-                                    newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
-                                    newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
-                                    newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
-                                  );
+                                  if(ctrl.isDraggableOnLinkButton){
+                                    ctrl.linkTable(
+                                      newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                                      newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                      newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
+                                    );
+                                  }else{
+
+                                    ctrl.shiftTable(
+                                      newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                                      newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                      newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
+                                    );
+                                  }
+
                                 },
                               );
                             },
