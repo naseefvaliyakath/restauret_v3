@@ -5,7 +5,7 @@ import 'package:rest_verision_3/alerts/table_manage_alert/view_order_in_table_co
 import 'package:rest_verision_3/models/kitchen_order_response/kitchen_order.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
 
-void viewOrderInTableAlert({required context, required KitchenOrder kot}) {
+void viewOrderInTableAlert({required context, required KitchenOrder kot, required int tableNumber ,required int tableId}) {
   showAnimatedDialog(
     context: context,
     barrierDismissible: true,
@@ -19,6 +19,8 @@ void viewOrderInTableAlert({required context, required KitchenOrder kot}) {
           title: const Center(child: BigText(text: 'View Orders')),
           content: SingleChildScrollView(
             child: ViewOrderInTaleContent(
+              tableNumber: tableNumber,
+              tableId: tableId,
               kot: kot,
             ),
           ));

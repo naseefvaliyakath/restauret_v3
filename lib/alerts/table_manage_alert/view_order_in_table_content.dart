@@ -9,12 +9,15 @@ import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../kot_order_manage_alert/view_order_list_alert/view_order_list_item_heading.dart';
 import '../kot_order_manage_alert/view_order_list_alert/view_order_list_item_tile.dart';
+import '../show_tables_alert/table_shift_select_alert.dart';
 
 class ViewOrderInTaleContent extends StatelessWidget {
   final KitchenOrder kot;
+  final int tableNumber;
+  final int tableId;
 
 
-  const ViewOrderInTaleContent({Key? key, required this.kot}) : super(key: key);
+  const ViewOrderInTaleContent({Key? key, required this.kot, required this.tableNumber, required this.tableId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +103,8 @@ class ViewOrderInTaleContent extends StatelessWidget {
                       onTap: () {
                         ctrl.updateShiftMode(true);
                         Navigator.pop(context);
+                        ctrl.saveCurrentTableIdAndTableNumber(tableId: tableId,tableNumber: tableNumber);
+                        selectTableAlert(context: context);
                       },
                     ),
                   ),

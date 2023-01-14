@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import '../../alerts/common_alerts.dart';
+import '../../alerts/show_tables_alert/table_shift_select_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../widget/common_widget/add_category_card.dart';
@@ -29,6 +30,7 @@ class PcTableManageScreen extends StatelessWidget {
       child: Scaffold(
         body: GetBuilder<TableManageController>(builder: (ctrl) {
           bool horizontal = 1.sh < 1.sw ? true : false;
+
           return ctrl.isLoading == true
               ? const MyLoading()
               : SafeArea(
@@ -102,7 +104,8 @@ class PcTableManageScreen extends StatelessWidget {
                                                         twoFunctionAlert(
                                                           context: context,
                                                           onTap: () {
-                                                            ctrl.deleteRoom(roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                            ctrl.deleteRoom(
+                                                                roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
                                                           },
                                                           onCancelTap: () {},
                                                           title: 'Delete ?',
@@ -120,7 +123,8 @@ class PcTableManageScreen extends StatelessWidget {
                                                       child: AddCategoryCard(
                                                         onTap: () {
                                                           ctrl.setAddCategoryToggle(!ctrl.addCategoryToggle);
-                                                          stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                          stateCategory =
+                                                              ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                         },
                                                       ),
                                                     ),
@@ -129,11 +133,13 @@ class PcTableManageScreen extends StatelessWidget {
                                                         : AddCategoryCardTextField(
                                                             onTapAdd: () async {
                                                               await ctrl.insertRoom();
-                                                              stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                              stateCategory =
+                                                                  ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                             },
                                                             onTapBack: () {
                                                               ctrl.setAddCategoryToggle(false);
-                                                              stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                              stateCategory =
+                                                                  ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                             },
                                                             nameController: ctrl.roomNameTD,
                                                             height: 60.h,
@@ -160,11 +166,13 @@ class PcTableManageScreen extends StatelessWidget {
                                                       : AddCategoryCardTextField(
                                                           onTapAdd: () async {
                                                             await ctrl.insertRoom();
-                                                            stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                            stateCategory =
+                                                                ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                           },
                                                           onTapBack: () {
                                                             ctrl.setAddCategoryToggle(false);
-                                                            stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                            stateCategory =
+                                                                ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                           },
                                                           nameController: ctrl.roomNameTD,
                                                           height: 60.h,
@@ -198,17 +206,16 @@ class PcTableManageScreen extends StatelessWidget {
                             (BuildContext context, int index) {
                               return TableWidget(
                                 shapeId: ctrl.myTableChairSet[index].tableShape ?? 1,
-                                tableName: 'Table ${index + 1}',
+                                tableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                 tableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                 onTap: () {
-                                  if(ctrl.shiftMode){
-                                    print('shift mode');
-                                  }else {
+                                  if (ctrl.shiftMode) {
+                                  } else {
                                     Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
                                       'roomName': ctrl.myTableChairSet[index].roomName,
                                       'room_id': ctrl.myTableChairSet[index].room_id,
                                       'tableId': ctrl.myTableChairSet[index].tableId,
-                                      'tableIndex': index + 1,
+                                      'tableIndex': ctrl.myTableChairSet[index].tableNumber,
                                     });
                                   }
                                 },

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
@@ -13,6 +14,7 @@ import '../../../widget/common_widget/snack_bar.dart';
 class CreateTableController extends GetxController {
   final HttpService _httpService = Get.find<HttpService>();
 
+  final TextEditingController tableNumberController = TextEditingController();
 
   int tableShape = 1;
   int roomId = -1;
@@ -40,6 +42,7 @@ class CreateTableController extends GetxController {
         'tableShape': tableShape,
         'room_id': roomId,
         'roomName': roomName,
+        'tableNumber': tableNumberController.text,
         'leftChairCount': 0,
         'rightChairCount': 0,
         'topChairCount': 0,
