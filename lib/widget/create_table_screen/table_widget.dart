@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/models/kitchen_order_response/kitchen_order.dart';
 import '../../alerts/table_manage_alert/table_manage_alert.dart';
@@ -14,9 +15,17 @@ class TableWidget extends StatelessWidget {
   final int tableNumber;
   final Function onTap;
   final bool showOrder;
-  // final bool showLinkButton;
+  final bool showLinkButton;
+  final String roomName;
 
-  const TableWidget({Key? key, required this.shapeId, required this.onTap, required this.tableId, this.showOrder = true, required this.tableNumber})
+  const TableWidget(
+      {Key? key,
+      required this.shapeId,
+      required this.onTap,
+      required this.tableId,
+      this.showOrder = true,
+      required this.tableNumber,
+      this.showLinkButton = false, required this.roomName})
       : super(key: key);
 
   @override
@@ -61,73 +70,87 @@ class TableWidget extends StatelessWidget {
         }
       }
 
-      return Container(
-        height: width,
-        width: height,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.r),
-            boxShadow: [
-              BoxShadow(
-                offset: const Offset(4, 6),
-                blurRadius: 4,
-                color: Colors.black.withOpacity(0.3),
+      // Visibility(
+      //   child: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+      //   maintainSize: true,
+      //   maintainAnimation: true,
+      //   maintainState: true,
+      //   visible: false,
+      // ),
+
+      return Card(
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Stack(
+          children: [
+            if (showLinkButton) ...[
+              DragTarget(
+                builder: (context, candidateData, rejectedData) {
+                  return ShakeWidget(
+                      autoPlay: true,
+                      shakeConstant: ShakeDefaultConstant1(),
+                      enableWebMouseHover: false,
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.add,
+                          size: 30,
+                          color: Colors.red,
+                        ),
+                      ));
+                },
+                onAccept: (Map data) {
+                  print('jjjjjjjjjjjjjjjjjjj');
+                },
               )
             ],
-            border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1.sp)),
-        child: Container(
-          padding: EdgeInsets.all(5.sp),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Stack(
-            children: [
-              Center(
-                  child: TableShape(
-                text: "Table $tableNumber",
-                width: height - 150.sp,
-                height: width - 150.sp,
-                onLongTap: () {},
-                onTap: onTap,
-                radius: radius,
-              )),
-              showOrder
-                  ? Positioned(
-                      top: 0.h,
-                      bottom: 0.h,
-                      child: SizedBox(
-                        width: 40.sp,
-                        height: height,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: orderInTable.map((order) {
-                            return Expanded(
-                              child: LongPressDraggable(
-                                delay: Duration(milliseconds: 500),
-                                data: {
-                                  'tableNumber': tableNumber,
-                                  'tableId': tableId,
-                                  'kotId': order.Kot_id,
-                                },
-                                dragAnchorStrategy: pointerDragAnchorStrategy,
-                                feedback: Card(
-                                  key: _draggableKey,
-                                  child: OrderWidget(text: '${order.Kot_id}', onTap: () {}),
-                                ),
-                                child: OrderWidget(
-                                    text: '${order.Kot_id}',
-                                    onTap: () {
-                                      viewOrderInTableAlert(context: context, kot: order, tableNumber: tableNumber, tableId: tableId);
-                                    }),
+            Center(
+                child: TableShape(
+                  text: "Table $tableNumber",
+                  width: height - 150.sp,
+                  height: width - 150.sp,
+                  onLongTap: () {},
+                  onTap: onTap,
+                  radius: radius,
+                )),
+            showOrder
+                ? Positioned(
+                    top: 0.h,
+                    bottom: 0.h,
+                    child: SizedBox(
+                      width: 40.sp,
+                      height: height,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: orderInTable.map((order) {
+                          return Expanded(
+                            child: LongPressDraggable(
+                              delay: Duration(milliseconds: 500),
+                              data: {
+                                'tableNumber': tableNumber,
+                                'tableId': tableId,
+                                'kotId': order.Kot_id,
+                              },
+                              dragAnchorStrategy: pointerDragAnchorStrategy,
+                              feedback: Card(
+                                key: _draggableKey,
+                                child: OrderWidget(text: '${order.Kot_id}', onTap: () {}),
                               ),
-                            );
-                          }).toList(),
-                        ),
+                              child: OrderWidget(
+                                  text: '${order.Kot_id}',
+                                  onTap: () {
+                                    viewOrderInTableAlert(context: context, kot: order, tableNumber: tableNumber, tableId: tableId);
+                                  }),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    )
-                  : const SizedBox(),
-            ],
-          ),
+                    ),
+                  )
+                : const SizedBox(),
+          ],
         ),
       );
     });

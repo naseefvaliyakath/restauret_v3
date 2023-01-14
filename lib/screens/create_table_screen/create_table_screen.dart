@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
@@ -10,16 +11,13 @@ import '../../widget/create_table_screen/table_widget.dart';
 import '../../widget/create_table_screen/table_shape_drop_down.dart';
 import 'controller/create_table_controller.dart';
 
-
 class CreateTableScreen extends StatelessWidget {
   const CreateTableScreen({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
-      onWillPop: () async{
+      onWillPop: () async {
         Get.offNamed(RouteHelper.getTableManageScreen());
         return true;
       },
@@ -53,21 +51,29 @@ class CreateTableScreen extends StatelessWidget {
                             // heading my restaurant
                             const HeadingRichText(name: 'Create your table'),
                             //notification
-                            NotificationIcon(onTap: (){},),
+                            NotificationIcon(
+                              onTap: () {},
+                            ),
                           ],
                         ),
                       ),
                       Center(
                         child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: horizontal ?  100.w : 0),
+                          margin: EdgeInsets.symmetric(horizontal: horizontal ? 100.w : 0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               10.verticalSpace,
                               SizedBox(
-                                child: TableWidget(showOrder: false,shapeId: ctrl.tableShape, onTap: (){}, tableId: -1,tableNumber: -1,)
-                              ),
+                                  child: TableWidget(
+                                showOrder: false,
+                                shapeId: ctrl.tableShape,
+                                onTap: () {},
+                                tableId: -1,
+                                tableNumber: -1,
+                                roomName: MAIN_ROOM,
+                              )),
                               SizedBox(
                                 height: 1.sh * 0.03,
                               ),
@@ -79,7 +85,7 @@ class CreateTableScreen extends StatelessWidget {
                                 height: 50.sp,
                                 child: TextFieldWidget(
                                   hintText: 'Enter table number',
-                                  hintSize:20.sp,
+                                  hintSize: 20.sp,
                                   isNumberOnly: true,
                                   isDens: true,
                                   textEditingController: ctrl.tableNumberTD,
@@ -90,7 +96,7 @@ class CreateTableScreen extends StatelessWidget {
                               ),
                               5.verticalSpace,
                               SizedBox(
-                                width: horizontal ? 0.2.sw :  1.sw * 0.4,
+                                width: horizontal ? 0.2.sw : 1.sw * 0.4,
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -102,7 +108,8 @@ class CreateTableScreen extends StatelessWidget {
                                         onTap: () async {
                                           await ctrl.insertTable();
                                         },
-                                      ),),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               )
@@ -111,9 +118,7 @@ class CreateTableScreen extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
-
-              ),
+                  )),
             ),
           );
         }),
