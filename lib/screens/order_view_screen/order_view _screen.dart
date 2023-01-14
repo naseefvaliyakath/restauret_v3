@@ -203,7 +203,7 @@ class OrderViewScreen extends StatelessWidget {
                                   orderId: ctrl.kotBillingItems[index].Kot_id ?? -1,
                                   orderStatus: ctrl.kotBillingItems[index].fdOrderStatus ?? PENDING,
                                   orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
-                                  tableName: ctrl.kotBillingItems[index].kotTableChairSet ?? [MAIN_ROOM, -1, -1],
+                                  tableName: ctrl.kotBillingItems[index].kotTableChairSet?[0] ?? {'room':MAIN_ROOM,'table': -1,'chair': -1},
                                   dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
                                   totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0,
                                 );

@@ -48,7 +48,7 @@ class OrderViewController extends GetxController {
   String tappedTabName = 'KOT';
 
   //? this value will fill index of KOT order list when settle button is click in KOT order  when  settleKotBillingCash() is calling for settle btn click
-  //? and with this index retreve the foodOrder from kotBillingList and save in db when calling insertSettledOrder()
+  //? and with this index retrieve the foodOrder from kotBillingList and save in db when calling insertSettledOrder()
   int indexFromKotOrder = -1;
 
   //? this value will fill the index of settledOrder from settledOrderList when update button is click in settledOrder tab  updateSettleBillingCash() is calling
@@ -60,7 +60,7 @@ class OrderViewController extends GetxController {
 
   //? btn controller for settle KOT order
   final RoundedLoadingButtonController btnControllerSettle = RoundedLoadingButtonController();
-  //? btn controler for settled and print
+  //? btn controller for settled and print
   final RoundedLoadingButtonController btnControllerSettleAndPrint = RoundedLoadingButtonController();
 
   //? btn controller for cancel KOT order

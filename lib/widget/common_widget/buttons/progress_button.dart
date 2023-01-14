@@ -31,46 +31,45 @@ class ProgressButton extends StatelessWidget {
         duration: const Duration(milliseconds: 100),
         controller: btnCtrlName == 'addComplaint'
             ? ctrl.btnControllerAddComplaint
-            : btnCtrlName == 'settle'
-                ? ctrl.btnControllerSettle
-                : btnCtrlName == 'addPurchase'
-                    ? ctrl.btnControllerAddPurchase
-                    : btnCtrlName == 'addCreditDebit'
-                        ? ctrl.btnControllerAddCreditDebit
-                        : btnCtrlName == 'addUserName'
-                            ? ctrl.btnControllerAddUser
-                            : btnCtrlName == 'passwordPrompt'
-                                ? ctrl.btnControllerPasswordPrompt
-                                : btnCtrlName == 'settle_print'
-                                    ? ctrl.btnControllerSettle
-                                    : btnCtrlName == 'kot'
-                                        ? ctrl.btnControllerKot
-                                        : btnCtrlName == 'hold'
-                                            ? ctrl.btnControllerHold
-                                            : btnCtrlName == 'CancelOrder'
-                                                ? ctrl.btnControllerCancellKOtOrder
-                                                : btnCtrlName == 'kotUpdate'
-                                                    ? ctrl.btnControllerUpdateKot
-                                                    : btnCtrlName == 'createTable'
-                                                        ? ctrl.btnControllerCreateTable
-                                                        : btnCtrlName == 'CancelOrderInTable'
-                                                            ? ctrl.btnControllerCancelKotOrderInTable
-                                                            : btnCtrlName == 'submitOnlineApp'
-                                                                ? ctrl.btnControllerSubmitOnlineApp
-                                                                : btnCtrlName == 'updateFullProgressOrdStatus'
-                                                                    ? ctrl.btnControllerProgressUpdateFullKotSts
-                                                                    : btnCtrlName == 'updateFullReadyOrdStatus'
-                                                                        ? ctrl.btnControllerReadyUpdateFullKotSts
-                                                                        : btnCtrlName == 'updateFullPendingOrdStatus'
-                                                                            ? ctrl.btnControllerPendingUpdateFullKotSts
-                                                                            : btnCtrlName == 'updateFullRejectOrdStatus'
-                                                                                ? ctrl
-                                                                                    .btnControllerRejectUpdateFullKotSts
-                                                                                : btnCtrlName ==
-                                                                                        'updateSingleProgressOrdStatus'
-                                                                                    ? ctrl
-                                                                                        .btnControllerProgressUpdateSingleKotSts
-                                                                                    : ctrl.btnControllerSettle,
+            : btnCtrlName == 'CancelOrderInTable'
+                ? ctrl.btnControllerCancelKotOrderInTable
+                : btnCtrlName == 'settle'
+                    ? ctrl.btnControllerSettle
+                    : btnCtrlName == 'addPurchase'
+                        ? ctrl.btnControllerAddPurchase
+                        : btnCtrlName == 'addCreditDebit'
+                            ? ctrl.btnControllerAddCreditDebit
+                            : btnCtrlName == 'addUserName'
+                                ? ctrl.btnControllerAddUser
+                                : btnCtrlName == 'passwordPrompt'
+                                    ? ctrl.btnControllerPasswordPrompt
+                                    : btnCtrlName == 'settle_print'
+                                        ? ctrl.btnControllerSettle
+                                        : btnCtrlName == 'kot'
+                                            ? ctrl.btnControllerKot
+                                            : btnCtrlName == 'hold'
+                                                ? ctrl.btnControllerHold
+                                                : btnCtrlName == 'CancelOrder'
+                                                    ? ctrl.btnControllerCancellKOtOrder
+                                                    : btnCtrlName == 'kotUpdate'
+                                                        ? ctrl.btnControllerUpdateKot
+                                                        : btnCtrlName == 'createTable'
+                                                            ? ctrl.btnControllerCreateTable
+                                                            : btnCtrlName == 'CancelOrderInTable'
+                                                                ? ctrl.btnControllerCancelKotOrderInTable
+                                                                : btnCtrlName == 'submitOnlineApp'
+                                                                    ? ctrl.btnControllerSubmitOnlineApp
+                                                                    : btnCtrlName == 'updateFullProgressOrdStatus'
+                                                                        ? ctrl.btnControllerProgressUpdateFullKotSts
+                                                                        : btnCtrlName == 'updateFullReadyOrdStatus'
+                                                                            ? ctrl.btnControllerReadyUpdateFullKotSts
+                                                                            : btnCtrlName == 'updateFullPendingOrdStatus'
+                                                                                ? ctrl.btnControllerPendingUpdateFullKotSts
+                                                                                : btnCtrlName == 'updateFullRejectOrdStatus'
+                                                                                    ? ctrl.btnControllerRejectUpdateFullKotSts
+                                                                                    : btnCtrlName == 'updateSingleProgressOrdStatus'
+                                                                                        ? ctrl.btnControllerProgressUpdateSingleKotSts
+                                                                                        : ctrl.btnControllerSettle,
         onPressed: () async {
           await onTap();
         },

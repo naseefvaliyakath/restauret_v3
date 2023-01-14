@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:rest_verision_3/models/kitchen_order_response/kitchen_order.dart';
 import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 import 'package:ticket_widget/ticket_widget.dart';
-
 import '../../constants/strings/my_strings.dart';
 import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
@@ -26,14 +25,7 @@ class KotBillWidget extends StatelessWidget {
   //? this for order from order view page
   final KitchenOrder fullKot;
 
-  const KotBillWidget(
-      {Key? key,
-      required this.type,
-      required this.billingItems,
-      required this.kotId,
-      this.tableName = '',
-      required this.fullKot})
-      : super(key: key);
+  const KotBillWidget({Key? key, required this.type, required this.billingItems, required this.kotId, this.tableName = '', required this.fullKot}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +37,7 @@ class KotBillWidget extends StatelessWidget {
       }
     }
     return TicketWidget(
-      width: horizontal ? 0.5.sw :  0.8 * 1.sw,
+      width: horizontal ? 0.5.sw : 0.8 * 1.sw,
       height: 0.68 * 1.sh,
       isCornerRounded: true,
       padding: EdgeInsets.symmetric(horizontal: 20.sp),
@@ -89,10 +81,16 @@ class KotBillWidget extends StatelessWidget {
                 ),
                 MidText(
                   text: type == DINING
-                      ? Get.find<BillingScreenController>().selectedTableChairSet[1] == -1 ? 'TABLE : NOT SELECTED':
-                      'TABLE : T-${Get.find<BillingScreenController>().selectedTableChairSet[1]} C-${Get.find<BillingScreenController>().selectedTableChairSet[2]}  (${(Get.find<BillingScreenController>().selectedTableChairSet[0]).toString().toUpperCase()})'
-                      : type == 'ORDER_VIEW'
-                          ? 'TABLE :T-${fullKot.kotTableChairSet?[1] ?? 1} C-${fullKot.kotTableChairSet?[2] ?? 1}  (${(fullKot.kotTableChairSet?[0] ?? MAIN_ROOM).toString().toUpperCase()})' : 'TABLE : ',
+                      ? Get.find<BillingScreenController>().selectedTableChairSet['table'] == -1
+                          ? 'TABLE : NOT SELECTED'
+                          : Get.find<BillingScreenController>().selectedTableChairSet['chair'] == -2
+                              ? 'TABLE : T-${Get.find<BillingScreenController>().selectedTableChairSet['table']} (${(Get.find<BillingScreenController>().selectedTableChairSet['room']).toString().toUpperCase()})'
+                              : 'TABLE : T-${Get.find<BillingScreenController>().selectedTableChairSet['table']} C-${Get.find<BillingScreenController>().selectedTableChairSet['chair']}  (${(Get.find<BillingScreenController>().selectedTableChairSet['room']).toString().toUpperCase()})'
+                      : (type == 'ORDER_VIEW' && fullKot.kotTableChairSet!.isNotEmpty)
+                          ? (fullKot.kotTableChairSet?[0]['chair'] ?? -1) == -2
+                              ? 'TABLE :T-${fullKot.kotTableChairSet?[0]['table'] ?? -1}  (${(fullKot.kotTableChairSet?[0]['room'] ?? MAIN_ROOM).toString().toUpperCase()})'
+                              : 'TABLE :T-${fullKot.kotTableChairSet?[0]['table'] ?? -1} C-${fullKot.kotTableChairSet?[0]['chair'] ?? -1}  (${(fullKot.kotTableChairSet?[0]['room'] ?? MAIN_ROOM).toString().toUpperCase()})'
+                          : 'TABLE : ',
                   size: 13.sp,
                   color: Colors.black,
                 ),

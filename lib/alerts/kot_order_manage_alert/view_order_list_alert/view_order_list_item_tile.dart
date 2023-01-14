@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../constants/app_colors/app_colors.dart';
+import '../../../constants/strings/my_strings.dart';
 
 
 class ViewOrderListItemTile extends StatelessWidget {
@@ -133,7 +134,7 @@ class ViewOrderListItemTile extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     ordStatus,
-                    style: TextStyle(fontSize: 13.sp, color: Colors.red),
+                    style: TextStyle(fontSize: 13.sp, color: ordStatus == READY ? Colors.green : ordStatus == REJECT ? Colors.red : Colors.black),
                   ),
                 ),
               )

@@ -13,6 +13,9 @@ class TableChairSet {
   @JsonKey(name: "room_id")
   int? room_id;
 
+  @JsonKey(name: "roomName")
+  String? roomName;
+
   @JsonKey(name: "leftChairCount")
   int? leftChairCount;
 
@@ -32,6 +35,7 @@ class TableChairSet {
      this.tableId,
      this.tableShape,
      this.room_id,
+      this.roomName,
      this.leftChairCount,
      this.rightChairCount,
      this.topChairCount,

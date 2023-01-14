@@ -44,7 +44,7 @@ class KitchenOrder {
 
 
   @JsonKey(name: "kotTableChairSet")
-  List<dynamic>? kotTableChairSet;
+  List<Map<String,dynamic>>? kotTableChairSet;
 
   @JsonKey(name: "orderColor")
   int? orderColor;

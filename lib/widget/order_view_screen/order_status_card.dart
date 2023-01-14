@@ -15,7 +15,7 @@ class OrderStatusCard extends StatelessWidget {
   final String orderType;
   final Color borderColor;
   final Color cardColor;
-  final List<dynamic> tableName;
+  final Map<String,dynamic> tableName;
 
   final Function onTap;
 
@@ -86,7 +86,9 @@ class OrderStatusCard extends StatelessWidget {
                       5.verticalSpace,
                       FittedBox(
                         child: Text(
-                          orderType == DINING ? ( tableName[1] == -1 ? 'NO TABLE SELECTED' : ('T${tableName[1]} - C${tableName[2]} (${tableName[0].toString().toUpperCase()})') ): '.',
+                          orderType == DINING ? ( tableName['table'] == -1 ? 'NO TABLE SELECTED' :
+                          tableName['chair'] == -2 ?  ('T${tableName['table']} (${tableName['room'].toString().toUpperCase()})') :
+                          ('T${tableName['table']} - C${tableName['chair']} (${tableName['room'].toString().toUpperCase()})') ): '.',
                           softWrap: false,
                           style: TextStyle(
                             fontSize: 12.sp,

@@ -183,7 +183,7 @@ class KitchenModeMainScreen extends StatelessWidget {
                               orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
                               dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
                               totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0,
-                              tableName: ctrl.kotBillingItems[index].kotTableChairSet ?? [MAIN_ROOM, -1, -1],
+                              tableName: ctrl.kotBillingItems[index].kotTableChairSet?[0] ?? {'room':MAIN_ROOM,'table': -1,'chair': -1},
                             );
                           }
                           if (ctrl.tappedTabName == PROGRESS) {
@@ -200,7 +200,8 @@ class KitchenModeMainScreen extends StatelessWidget {
                               orderStatus: ctrl.kotBillingItems[index].fdOrderStatus ?? PENDING,
                               orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
                               dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
-                              totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0, tableName: [],
+                              totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0,
+                              tableName:const {'room':MAIN_ROOM,'table': -1,'chair': -1},
                             );
                           }
                           if (ctrl.tappedTabName == READY) {
@@ -220,7 +221,7 @@ class KitchenModeMainScreen extends StatelessWidget {
                               orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
                               dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
                               totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0,
-                              tableName: ctrl.kotBillingItems[index].kotTableChairSet ?? [MAIN_ROOM, -1, -1],
+                              tableName: ctrl.kotBillingItems[index].kotTableChairSet?[0] ?? {'room':MAIN_ROOM,'table': -1,'chair': -1},
                             );
                           }
 
@@ -239,7 +240,8 @@ class KitchenModeMainScreen extends StatelessWidget {
                               orderStatus: ctrl.kotBillingItems[index].fdOrderStatus ?? PENDING,
                               orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
                               dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
-                              totalItem: ctrl.kotBillingItems[index].fdOrder!.length, tableName: [],
+                              totalItem: ctrl.kotBillingItems[index].fdOrder!.length,
+                              tableName: const {'room':MAIN_ROOM,'table': -1,'chair': -1},
                             );
                           } else {
                             return OrderStatusCard(
@@ -269,7 +271,7 @@ class KitchenModeMainScreen extends StatelessWidget {
                               orderType: ctrl.kotBillingItems[index].fdOrderType ?? TAKEAWAY,
                               dateTime: ctrl.kotBillingItems[index].kotTime ?? DateTime.now(),
                               totalItem: ctrl.kotBillingItems[index].fdOrder?.length ?? 0,
-                              tableName: ctrl.kotBillingItems[index].kotTableChairSet ?? [MAIN_ROOM, -1, -1],
+                              tableName: ctrl.kotBillingItems[index].kotTableChairSet?[0] ?? {'room':MAIN_ROOM,'table': -1,'chair': -1},
                             );
                           }
                         },

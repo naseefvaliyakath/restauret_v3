@@ -158,10 +158,13 @@ class BillingScreenController extends GetxController {
   //? to store the selected room name and showing selected room in drop down
   String selectedRoom = MAIN_ROOM;
 
-  List<dynamic> selectedTableChairSet = [MAIN_ROOM, -1, -1]; //? [room,table,chair]
+  Map<String,dynamic> selectedTableChairSet = {'room':MAIN_ROOM,'table': -1,'chair': -1,'tableId':-1}; //? [room,table,chair]
 
   //? to set white btn text in billing screen
   String selectTableTxt = 'Select table';
+
+  //? to send with Kot
+  int tableId = -1;
 
   bool showAddRoom = false;
 
@@ -224,6 +227,7 @@ class BillingScreenController extends GetxController {
 
   //? to check navigated from kotUpdate bill
   bool isNavigateFromKotUpdate = false;
+  bool isNavigateFromTableManage = false;
 
   //? kot id from orderView screen for update kot item,it will assign in when navigation
   //? from update from orderView screen
@@ -388,13 +392,18 @@ class BillingScreenController extends GetxController {
         AppSnackBar.errorSnackBar('Something wrong', 'something went to wrong this order !! ');
         _billingItems.clear();
       } else {
-        //? from other pages than overview screen (when come from other page kotItem will be empty)
+        //? from other pages than overview screen or table manage screen  (when come from other page kotItem will be empty)
         if (orderBill.isEmpty) {
           //? normal working will happened that's it direct open from home page
           _billingItems.clear();
         }
-        //? if navigated from orderView page
+        //? if navigated from orderView page or table manage screen
         else {
+          var args = Get.arguments ?? {'fromTableManage': 'false'};
+          if(args['fromTableManage'] == 'true'){
+            //? to hide select table button
+            isNavigateFromTableManage = true; //? to make select table option disable if its from table mange screen
+          }
           isNavigateFromKotUpdate = true; //? to make kot update button in UI
           //? clearing hive bill
           clearBillInHive();
@@ -487,8 +496,7 @@ class BillingScreenController extends GetxController {
       KitchenOrder emptyKotOrder = EMPTY_KITCHEN_ORDER;
       //? receiving argument  from orderView page
       //? if its null we make a new args with empty kotItem and holdItem  {'holdItem': [], 'kotItem': emptyKotOrder}; to handle error
-      //?
-      var args = Get.arguments ?? {'holdItem': [], 'kotItem': emptyKotOrder, 'billingPage': 'FROM_OTHER'};
+      var args = Get.arguments ?? {'holdItem': [], 'kotItem': emptyKotOrder, 'billingPage': 'FROM_OTHER','roomName':'error'};
       //? taking kotOrder from args
       KitchenOrder? kotOrder = args['kotItem'] ?? emptyKotOrder;
       //? taking OrderBill fro kotOrder
@@ -497,6 +505,8 @@ class BillingScreenController extends GetxController {
       List<dynamic>? holdItem = args['holdItem'] ?? [];
       //? to handle the page from dashboard screen or main screen
       String billingPageType = args['billingPage'] ?? 'FROM_OTHER';
+      //? to handle the page from table manage screen
+      String roomName = args['roomName'] ?? 'error';
       //? to handle quick bill , if item from quick bill icon then fdId should not be -2
       Map<String, dynamic> quickItem = args['quickBill'] ??
           {
@@ -539,17 +549,17 @@ class BillingScreenController extends GetxController {
         selectOnlineApp(kotOrder?.fdOnlineApp ?? NO_ONLINE_APP);
         //? setting up table if its Dining
         //? checking array is not empty and order type is Dining
-        if ((kotOrder?.kotTableChairSet?.isNotEmpty ?? [].isNotEmpty) &&
+        if (((kotOrder?.kotTableChairSet ?? []).isNotEmpty) &&
             (kotOrder?.fdOrderType ?? TAKEAWAY) == DINING) {
           //? check if its not table selected dining order
-          if (kotOrder?.kotTableChairSet?[1] != -1) {
-            updateSelectedRoom(kotOrder?.kotTableChairSet?[0] ?? MAIN_ROOM);
-            updateSelectedTable(kotOrder?.kotTableChairSet?[1] ?? 1);
-            updateSelectedChair(kotOrder?.kotTableChairSet?[2] ?? 1);
+          if ((kotOrder?.kotTableChairSet ?? []).isNotEmpty && kotOrder?.kotTableChairSet?[0]['table'] != -1) {
+            updateSelectedRoom(kotOrder?.kotTableChairSet?[0]['room'] ?? MAIN_ROOM);
+            updateSelectedTable(kotOrder?.kotTableChairSet?[0]['table'] ?? 1);
+            updateSelectedChair(kotOrder?.kotTableChairSet?[0]['chair'] ?? 1);
             updateTableChairSet(
-              room: kotOrder?.kotTableChairSet?[0] ?? MAIN_ROOM,
-              table: kotOrder?.kotTableChairSet?[1] ?? 1,
-              chair: kotOrder?.kotTableChairSet?[2] ?? 1,
+              room: kotOrder?.kotTableChairSet?[0]['room'] ?? MAIN_ROOM,
+              table: kotOrder?.kotTableChairSet?[0]['table'] ?? 1,
+              chair: kotOrder?.kotTableChairSet?[0]['chair'] ?? 1,
             );
           }
         }
@@ -567,7 +577,18 @@ class BillingScreenController extends GetxController {
       else if (holdItem!.isNotEmpty) {
         //? calling method to handle this event (un holding)
         unHoldBillingItem();
-      } else {
+      }
+      //? checking order is from table manage screen
+      else if(roomName != 'error'){
+        int tableIndex = args['tableIndex'] ?? -1;
+        int tableId_ = args['tableId'] ?? -1;
+        String roomName = args['roomName'] ?? 'error';
+        tableId = tableId_;
+        receivingBillingScreenType(DINING);
+        updateTableChairSet(room: roomName, table: tableIndex, chair: -2);
+        await initialLoadingBillFromHive();
+      }
+      else {
         _billingItems.clear;
       }
     } catch (e) {
@@ -1856,9 +1877,10 @@ class BillingScreenController extends GetxController {
   //? to store data in array to send to server
   updateTableChairSet({required String room, required int table, required int chair}) {
     try {
-      List<dynamic> tableChairSet = [room, table, chair];
+      Map<String,dynamic> tableChairSet ={'room':room,'table': table,'chair': chair,'tableId':tableId};
       selectedTableChairSet = tableChairSet;
-      selectTableTxt = 'T-$table C-$chair';
+      //? check chair is -2 then show only table number (in advanced table managment)
+      selectTableTxt = chair == -2 ? 'T-$table' : 'T-$table C-$chair';
       update();
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
@@ -1875,7 +1897,7 @@ class BillingScreenController extends GetxController {
       selectedTable = 1;
       selectedChair = 1;
       //? to set array to server
-      selectedTableChairSet = [MAIN_ROOM, -1, -1];
+      selectedTableChairSet = {'room':MAIN_ROOM,'table': -1,'chair': -1,'tableId':-1};
       //? to set white btn text
       selectTableTxt = 'Select table';
       update();

@@ -13,6 +13,7 @@ import '../../widget/dash_bord_screen/dash_bord_card.dart';
 import '../login_screen/controller/startup_controller.dart';
 import '../report_screen/components/orderType_table.dart';
 import '../report_screen/controller/report_controller.dart';
+import '../table_manage_screen/table_manage_screen.dart';
 
 class PcDashboardScreen extends StatelessWidget {
   const PcDashboardScreen({Key? key}) : super(key: key);
@@ -27,6 +28,7 @@ class PcDashboardScreen extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
+                  Get.toNamed(RouteHelper.getTableManageScreen());
                   //let's trigger the navigation expansion
                 },
                 icon: Icon(Icons.menu, size: 24.sp),

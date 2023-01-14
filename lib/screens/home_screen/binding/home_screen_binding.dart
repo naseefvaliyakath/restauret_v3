@@ -12,7 +12,9 @@ import 'package:rest_verision_3/repository/tutorial_repository.dart';
 import 'package:rest_verision_3/screens/today_food_screen/controller/today_food_controller.dart';
 
 import '../../../api_data_loader/food_data.dart';
+import '../../../api_data_loader/room_data.dart';
 import '../../../api_data_loader/settled_order_data.dart';
+import '../../../api_data_loader/table_chair_data.dart';
 import '../../../repository/category_repository.dart';
 import '../../../socket/socket_controller.dart';
 import '../../report_screen/controller/report_controller.dart';
@@ -45,6 +47,7 @@ class HomeBinding implements Bindings {
     Get.put<FoodData>(FoodData(), permanent: true);
     Get.put<CategoryData>(CategoryData(), permanent: true);
     Get.put<SettledOrderData>(SettledOrderData(), permanent: true);
+    Get.put<RoomData>(RoomData(), permanent: true);
 
 
     //?screen binding

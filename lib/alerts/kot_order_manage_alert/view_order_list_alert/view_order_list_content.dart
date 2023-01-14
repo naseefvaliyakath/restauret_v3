@@ -26,6 +26,7 @@ class ViewOrderListContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            //? for horizontal view (in PC)
            horizontal ?  DataTable(
              headingRowColor: MaterialStateProperty.resolveWith((states) => Colors.grey.shade200),
              columns: const [
@@ -46,7 +47,7 @@ class ViewOrderListContent extends StatelessWidget {
                  DataCell(Text((e.qnt ?? 0).toString())),
                  DataCell(Text((e.price ?? 0).toString())),
                  DataCell(ListTile(
-                   title: Text(e.ordStatus.toString()),
+                   title: Text(e.ordStatus.toString(),style: TextStyle(fontSize: 13.sp, color: e.ordStatus == READY ? Colors.green : e.ordStatus == REJECT ? Colors.red : Colors.black),),
                  )),
                ]);
              }).toList(),

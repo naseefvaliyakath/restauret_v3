@@ -202,7 +202,7 @@ class BillingScreen extends StatelessWidget {
                             ? (ctrl.selectedOnlineAppNameTxt.length > 12 ? ctrl.selectedOnlineAppNameTxt.substring(0, 13) : ctrl.selectedOnlineAppNameTxt)
                             : 'Take away',
                         icon: Icons.edit,
-                        onTap: () {
+                        onTap: () async {
                           if (ctrl.orderType == HOME_DELEVERY) {
                             deliveryAddressAlert(context: context, ctrl: ctrl);
                           }
@@ -211,8 +211,16 @@ class BillingScreen extends StatelessWidget {
                           }
 
                           if (ctrl.orderType == DINING) {
-                            tableSelectAlert(context: context);
-                            //new
+                            //tableSelectAlert(context: context);
+                            if (ctrl.billingItems.isNotEmpty) {
+                              await Get.find<BillingScreenController>().saveBillInHive();
+                            }
+                            if(ctrl.isNavigateFromTableManage){
+                              AppSnackBar.errorSnackBar('Cant change table', 'You cannot change table !!');
+                            }else{
+                              Get.offNamed(RouteHelper.getTableManageScreen());
+                            }
+
                           }
                         },
                       ),

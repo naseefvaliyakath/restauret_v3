@@ -22,7 +22,9 @@ KitchenOrder _$KitchenOrderFromJson(Map<String, dynamic> json) => KitchenOrder(
       orderColor: json['orderColor'] as int?,
     )
       ..fdOnlineApp = json['fdOnlineApp'] as String?
-      ..kotTableChairSet = json['kotTableChairSet'] as List<dynamic>?
+      ..kotTableChairSet = (json['kotTableChairSet'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList()
       ..kotTime = json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String);

@@ -44,7 +44,7 @@ class KitchenModeMainController extends GetxController {
   List<KitchenOrder> get kotBillingItems => _kotBillingItems;
 
   //? this one to showing  store all KOT in ALL KOT TAB
-  List<KitchenOrder> _allKotBillingItems = [];
+  final List<KitchenOrder> _allKotBillingItems = [];
   List<KitchenOrder> get allKotBillingItems => _allKotBillingItems;
 
   //? to set kot ring sound silent or general

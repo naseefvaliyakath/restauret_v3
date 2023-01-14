@@ -32,7 +32,7 @@ const String ONLINE_SCREEN_NAME = 'Online delivery';
 const String DINING_SCREEN_NAME = 'Dining billing';
 
 const String NO_ONLINE_APP = 'no_app';
-const String MAIN_ROOM = 'main_room';
+const String MAIN_ROOM = 'Main room';
 
 const String CASH = 'cash';
 const String CARD = 'card';
