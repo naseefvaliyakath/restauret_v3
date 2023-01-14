@@ -93,7 +93,6 @@ class PcTableManageScreen extends StatelessWidget {
                                               if (ctrl.myRoom.isNotEmpty) {
                                                 //? category's
                                                 if (index < ctrl.myRoom.length) {
-
                                                   return DragTarget(
                                                     builder: (context, candidateData, rejectedData) {
                                                       return SizedBox(
@@ -110,7 +109,8 @@ class PcTableManageScreen extends StatelessWidget {
                                                               context: context,
                                                               onTap: () {
                                                                 ctrl.deleteRoom(
-                                                                    roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                                    roomId: ctrl.myRoom[index].room_id ?? -1,
+                                                                    roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
                                                               },
                                                               onCancelTap: () {},
                                                               title: 'Delete ?',
@@ -124,8 +124,6 @@ class PcTableManageScreen extends StatelessWidget {
                                                       ctrl.setCategoryTappedIndex(index);
                                                     },
                                                   );
-
-
                                                 }
                                                 //? add category card
                                                 else {
@@ -217,11 +215,17 @@ class PcTableManageScreen extends StatelessWidget {
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
                               return DragTarget(
-                                builder: (context, candidateData, rejectedData) {
+                                builder: (context, List<Map?> candidateData, rejectedData) {
+                                  bool showLinkButton = false;
+                                  if (candidateData.isNotEmpty && ctrl.myTableChairSet[index].tableId != candidateData[0]!['tableId']) {
+                                    showLinkButton = true;
+                                  }
                                   return TableWidget(
+                                    showLinkButton: showLinkButton,
                                     shapeId: ctrl.myTableChairSet[index].tableShape ?? 1,
                                     tableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                     tableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                    roomName: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                     onTap: () {
                                       if (ctrl.shiftMode) {
                                       } else {
@@ -243,9 +247,6 @@ class PcTableManageScreen extends StatelessWidget {
                                     newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                     newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                   );
-                                },
-                                onMove: (details) {
-
                                 },
                               );
                             },
