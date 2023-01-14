@@ -102,10 +102,10 @@ class TableWidget extends StatelessWidget {
                       ));
                 },
                 onMove: (details) {
-                  print('qqqqqqqqqqqqqq');
+                  ctrl.isDraggableOnLinkButton=true;
                 },
                 onLeave: (data) {
-                  print('rrrrrrrrrrr');
+                  ctrl.isDraggableOnLinkButton=false;
                 },
                 onWillAccept: (data) {
                   return false;
