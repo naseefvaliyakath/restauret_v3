@@ -64,6 +64,8 @@ class TableManageController extends GetxController {
   //? kot orders only containing tables
   final List<KitchenOrder> tableOrders = [];
 
+
+
   int _tappedIndex = 0;
 
   //? to pass create table screen
