@@ -98,7 +98,6 @@ class ViewOrderInTaleContent extends StatelessWidget {
                       color: Colors.teal,
                       text: 'Shift',
                       onTap: () {
-                        ctrl.updateShiftMode(true);
                         Navigator.pop(context);
                         ctrl.saveCurrentTableIdAndTableNumber(
                           tableId: tableId,
@@ -122,8 +121,6 @@ class ViewOrderInTaleContent extends StatelessWidget {
                       color: Colors.blueAccent,
                       text: 'unLink',
                       onTap: () {
-
-                        ctrl.updateUnLinkMode(true);
                         Navigator.pop(context);
                         ctrl.saveCurrentTableIdAndTableNumber(
                           tableId: tableId,
@@ -141,7 +138,6 @@ class ViewOrderInTaleContent extends StatelessWidget {
                       color: Colors.purpleAccent,
                       text: 'Link Chair',
                       onTap: () {
-                        ctrl.updateLinkMode(true);
                         Navigator.pop(context);
                         ctrl.saveCurrentTableIdAndTableNumber(
                           tableId: tableId,

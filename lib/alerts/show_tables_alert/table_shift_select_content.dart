@@ -50,7 +50,7 @@ class TableShiftSelectContent extends StatelessWidget {
                               tableId: ctrl.myTableChairSet[index].tableId ?? -1,
                               roomName: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                               onTap: () {
-                                ctrl.shiftOrLinkOrUnLinkTable(
+                                ctrl.shiftTable(
                                   newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                   newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                   newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
