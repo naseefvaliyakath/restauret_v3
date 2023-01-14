@@ -93,28 +93,39 @@ class PcTableManageScreen extends StatelessWidget {
                                               if (ctrl.myRoom.isNotEmpty) {
                                                 //? category's
                                                 if (index < ctrl.myRoom.length) {
-                                                  return SizedBox(
-                                                    width: horizontal ? 50.w : null,
-                                                    child: CategoryCard(
-                                                      onTap: () {
-                                                        ctrl.setCategoryTappedIndex(index);
-                                                      },
-                                                      color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                                      text: ctrl.myRoom[index].roomName ?? 'Error'.toUpperCase(),
-                                                      onLongTap: () {
-                                                        twoFunctionAlert(
-                                                          context: context,
+
+                                                  return DragTarget(
+                                                    builder: (context, candidateData, rejectedData) {
+                                                      return SizedBox(
+                                                        width: horizontal ? 50.w : null,
+                                                        child: CategoryCard(
                                                           onTap: () {
-                                                            ctrl.deleteRoom(
-                                                                roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                            ctrl.setCategoryTappedIndex(index);
                                                           },
-                                                          onCancelTap: () {},
-                                                          title: 'Delete ?',
-                                                          subTitle: 'do you want to delete thi item ?',
-                                                        );
-                                                      },
-                                                    ),
+                                                          indexForColour: index,
+                                                          color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
+                                                          text: ctrl.myRoom[index].roomName ?? 'Error'.toUpperCase(),
+                                                          onLongTap: () {
+                                                            twoFunctionAlert(
+                                                              context: context,
+                                                              onTap: () {
+                                                                ctrl.deleteRoom(
+                                                                    roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                              },
+                                                              onCancelTap: () {},
+                                                              title: 'Delete ?',
+                                                              subTitle: 'do you want to delete thi item ?',
+                                                            );
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                    onMove: (details) {
+                                                      ctrl.setCategoryTappedIndex(index);
+                                                    },
                                                   );
+
+
                                                 }
                                                 //? add category card
                                                 else {
@@ -232,6 +243,8 @@ class PcTableManageScreen extends StatelessWidget {
                                     newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                     newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                   );
+                                },
+                                onMove: (details) {
 
                                 },
                               );

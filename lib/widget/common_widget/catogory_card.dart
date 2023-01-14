@@ -12,8 +12,9 @@ class CategoryCard
   final String text;
   final Function onTap;
   final Function onLongTap;
+  final int indexForColour;
 
-  const CategoryCard({Key? key, required this.color, required this.text, required this.onTap, required this.onLongTap}) : super(key: key);
+  const CategoryCard({Key? key, required this.color, required this.text, required this.onTap, required this.onLongTap, this.indexForColour=0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class CategoryCard
                   ClipRRect(
                       borderRadius: BorderRadius.circular(20.r),
                       child: Container(
-                        color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                        color: Colors.primaries[indexForColour],
                         width: 30.h,
                         height: 30.h,
                         child: Center(

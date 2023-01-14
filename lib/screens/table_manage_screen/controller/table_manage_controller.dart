@@ -459,7 +459,7 @@ class TableManageController extends GetxController {
         final response = await _httpService.updateData(SHIFT_TABLE_CHR, tableShiftUpdate);
 
         KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
-        if (parsedResponse.error) {
+        if (parsedResponse.error==false) {
           String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
@@ -470,7 +470,7 @@ class TableManageController extends GetxController {
           kotIdForShiftTable = -1;
         } else {
           String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
-          AppSnackBar.successSnackBar('Error', myMessage);
+          AppSnackBar.errorSnackBar('Error', myMessage);
         }
       } else {
         AppSnackBar.errorSnackBar('Error !', 'Something wrong');

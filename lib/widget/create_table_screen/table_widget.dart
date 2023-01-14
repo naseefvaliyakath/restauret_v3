@@ -14,6 +14,7 @@ class TableWidget extends StatelessWidget {
   final int tableNumber;
   final Function onTap;
   final bool showOrder;
+  // final bool showLinkButton;
 
   const TableWidget({Key? key, required this.shapeId, required this.onTap, required this.tableId, this.showOrder = true, required this.tableNumber})
       : super(key: key);
@@ -100,29 +101,9 @@ class TableWidget extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: orderInTable.map((order) {
-                            return OrderWidget(
-                                text: '${order.Kot_id}',
-                                onTap: () {
-                                  viewOrderInTableAlert(context: context, kot: order, tableNumber: tableNumber, tableId: tableId);
-                                });
-                          }).toList(),
-                        ),
-                      ),
-                    )
-                  : const SizedBox(),
-              showOrder
-                  ? Positioned(
-                      right: 0.h,
-                      bottom: 0.h,
-                      child: SizedBox(
-                        width: 40.sp,
-                        height: height,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: orderInTable.map((order) {
-
                             return Expanded(
                               child: LongPressDraggable(
+                                delay: Duration(milliseconds: 500),
                                 data: {
                                   'tableNumber': tableNumber,
                                   'tableId': tableId,
@@ -140,8 +121,6 @@ class TableWidget extends StatelessWidget {
                                     }),
                               ),
                             );
-
-
                           }).toList(),
                         ),
                       ),
@@ -154,5 +133,3 @@ class TableWidget extends StatelessWidget {
     });
   }
 }
-
-
