@@ -16,7 +16,6 @@ class ViewOrderInTaleContent extends StatelessWidget {
   final int tableNumber;
   final int tableId;
 
-
   const ViewOrderInTaleContent({Key? key, required this.kot, required this.tableNumber, required this.tableId}) : super(key: key);
 
   @override
@@ -64,9 +63,7 @@ class ViewOrderInTaleContent extends StatelessWidget {
                 ),
               ),
               10.verticalSpace,
-              Align(
-                alignment: Alignment.center,
-                  child: BigText(text: 'Total Price : ${kot.totalPrice}',size: 20.sp)),
+              Align(alignment: Alignment.center, child: BigText(text: 'Total Price : ${kot.totalPrice}', size: 20.sp)),
               10.verticalSpace,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -103,7 +100,11 @@ class ViewOrderInTaleContent extends StatelessWidget {
                       onTap: () {
                         ctrl.updateShiftMode(true);
                         Navigator.pop(context);
-                        ctrl.saveCurrentTableIdAndTableNumber(tableId: tableId,tableNumber: tableNumber);
+                        ctrl.saveCurrentTableIdAndTableNumber(
+                          tableId: tableId,
+                          tableNumber: tableNumber,
+                          kotId: kot.Kot_id ?? -1,
+                        );
                         selectTableAlert(context: context);
                       },
                     ),
@@ -132,7 +133,14 @@ class ViewOrderInTaleContent extends StatelessWidget {
                       color: Colors.purpleAccent,
                       text: 'Link Chair',
                       onTap: () {
+                        ctrl.updateLinkMode(true);
                         Navigator.pop(context);
+                        ctrl.saveCurrentTableIdAndTableNumber(
+                          tableId: tableId,
+                          tableNumber: tableNumber,
+                          kotId: kot.Kot_id ?? -1,
+                        );
+                        selectTableAlert(context: context);
                       },
                     ),
                   ),

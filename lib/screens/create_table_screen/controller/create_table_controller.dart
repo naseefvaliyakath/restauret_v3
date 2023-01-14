@@ -14,7 +14,7 @@ import '../../../widget/common_widget/snack_bar.dart';
 class CreateTableController extends GetxController {
   final HttpService _httpService = Get.find<HttpService>();
 
-  final TextEditingController tableNumberController = TextEditingController();
+  final TextEditingController tableNumberTD = TextEditingController();
 
   int tableShape = 1;
   int roomId = -1;
@@ -35,31 +35,35 @@ class CreateTableController extends GetxController {
   //insert table chair set
   Future insertTable() async {
     try {
-      Map<String, dynamic> tableChairSet = {
-        'fdShopId': Get
-            .find<StartupController>()
-            .SHOPE_ID,
-        'tableShape': tableShape,
-        'room_id': roomId,
-        'roomName': roomName,
-        'tableNumber': tableNumberController.text,
-        'leftChairCount': 0,
-        'rightChairCount': 0,
-        'topChairCount': 0,
-        'bottomChairCount': 0,
-      };
+      if(tableNumberTD.text != '') {
+        Map<String, dynamic> tableChairSet = {
+          'fdShopId': Get
+              .find<StartupController>()
+              .SHOPE_ID,
+          'tableShape': tableShape,
+          'room_id': roomId,
+          'roomName': roomName,
+          'tableNumber': tableNumberTD.text,
+          'leftChairCount': 0,
+          'rightChairCount': 0,
+          'topChairCount': 0,
+          'bottomChairCount': 0,
+        };
 
-      final response = await _httpService.insertWithBody(INSERT_TABLE, tableChairSet);
+        final response = await _httpService.insertWithBody(INSERT_TABLE, tableChairSet);
 
-      TableChairSetResponse parsedResponse = TableChairSetResponse.fromJson(response.data);
-      if (parsedResponse.error ?? true) {
+        TableChairSetResponse parsedResponse = TableChairSetResponse.fromJson(response.data);
+        if (parsedResponse.error ?? true) {
+          btnControllerCreateTable.error();
+        } else {
+          btnControllerCreateTable.success();
+          Get.find<TableChairSetData>().getAllTableChairSet();
+          update();
+        }
+      }else{
         btnControllerCreateTable.error();
-      } else {
-        btnControllerCreateTable.success();
-        Get.find<TableChairSetData>().getAllTableChairSet();
-        update();
+        AppSnackBar.errorSnackBar('Pleas fill', 'Pleas enter table number !!');
       }
-
 
     } on DioError catch (e) {
       btnControllerCreateTable.error();

@@ -22,52 +22,49 @@ class TableShiftSelectContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CrossFadeState stateCategory = CrossFadeState.showFirst;
-    return WillPopScope(
-      onWillPop: () async {
-        Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": DINING});
-        return false;
-      },
-      child: Scaffold(
-        body: GetBuilder<TableManageController>(builder: (ctrl) {
-          bool horizontal = 1.sh < 1.sw ? true : false;
+    return Scaffold(
+      body: GetBuilder<TableManageController>(builder: (ctrl) {
+        bool horizontal = 1.sh < 1.sw ? true : false;
 
-          return ctrl.isLoading == true
-              ? const MyLoading()
-              : SafeArea(
-                  child: CustomScrollView(
-                    primary: false,
-                    slivers: <Widget>[
-                      SliverPadding(
-                        padding: EdgeInsets.all(20.sp),
-                        sliver: SliverGrid(
-                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200.sp,
-                            mainAxisSpacing: 18.sp,
-                            crossAxisSpacing: 18.sp,
-                            childAspectRatio: 2 / 2.8,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              return TableWidget(
-                                showOrder: false,
-                                shapeId: ctrl.myTableChairSet[index].tableShape ?? 1,
-                                tableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
-                                tableId: ctrl.myTableChairSet[index].tableId ?? -1,
-                                onTap: () {
-                                  ctrl.shiftTable(
-                                      newTableId: ctrl.myTableChairSet[index].tableId ?? -1, newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1);
-                                },
-                              );
-                            },
-                            childCount: ctrl.myTableChairSet.length,
-                          ),
+        return ctrl.isLoading == true
+            ? const MyLoading()
+            : SafeArea(
+                child: CustomScrollView(
+                  primary: false,
+                  slivers: <Widget>[
+                    SliverPadding(
+                      padding: EdgeInsets.all(20.sp),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200.sp,
+                          mainAxisSpacing: 18.sp,
+                          crossAxisSpacing: 18.sp,
+                          childAspectRatio: 2 / 2.8,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            return TableWidget(
+                              showOrder: false,
+                              shapeId: ctrl.myTableChairSet[index].tableShape ?? 1,
+                              tableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                              tableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                              onTap: () {
+                                ctrl.shiftOrLinkTable(
+                                  newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                  newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                                  newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
+                                );
+                              },
+                            );
+                          },
+                          childCount: ctrl.myTableChairSet.length,
                         ),
                       ),
-                    ],
-                  ),
-                );
-        }),
-      ),
+                    ),
+                  ],
+                ),
+              );
+      }),
     );
   }
 }

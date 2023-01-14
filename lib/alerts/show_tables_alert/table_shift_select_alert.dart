@@ -18,13 +18,13 @@ void selectTableAlert({required context}) {
     builder: (BuildContext context) {
       return GetBuilder<TableManageController>(builder: (ctrl) {
         return AlertDialog(
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            shape:  RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0.r))),
             insetPadding: EdgeInsets.symmetric(horizontal: 5.sp),
             titlePadding: EdgeInsets.only(left: 5.sp, right: 5.sp, top: 10.sp),
             contentPadding: EdgeInsets.symmetric(horizontal: 5.sp),
             actionsAlignment: MainAxisAlignment.center,
             title: const Center(child: BigText(text: 'Select Table')),
-            content: SizedBox(width: 0.9.sw,height: 0.7.sh,child: TableShiftSelectContent()));
+            content: SizedBox(width: 0.9.sw,height: 0.7.sh,child: const TableShiftSelectContent()));
       });
     },
     animationType: DialogTransitionType.scale,

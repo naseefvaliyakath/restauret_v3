@@ -82,7 +82,7 @@ class CreateTableScreen extends StatelessWidget {
                                   hintSize:20.sp,
                                   isNumberOnly: true,
                                   isDens: true,
-                                  textEditingController: ctrl.tableNumberController,
+                                  textEditingController: ctrl.tableNumberTD,
                                   borderRadius: 15.r,
                                   txtLength: 3,
                                   onChange: (_) {},

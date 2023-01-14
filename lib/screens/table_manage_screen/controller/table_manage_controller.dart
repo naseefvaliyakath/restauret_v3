@@ -8,6 +8,7 @@ import '../../../alerts/show_tables_alert/table_shift_select_alert.dart';
 import '../../../api_data_loader/room_data.dart';
 import '../../../api_data_loader/table_chair_data.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../../../constants/api_link/api_link.dart';
 import '../../../error_handler/error_handler.dart';
 import '../../../models/kitchen_order_response/kitchen_order.dart';
 import '../../../models/kitchen_order_response/kitchen_order_array.dart';
@@ -17,6 +18,8 @@ import '../../../models/table_chair_response/table_chair_set.dart';
 import '../../../repository/kot_repository.dart';
 import '../../../repository/room_repository.dart';
 import '../../../routes/route_helper.dart';
+import '../../../services/dio_error.dart';
+import '../../../services/service.dart';
 import '../../../socket/socket_controller.dart';
 import '../../../widget/common_widget/snack_bar.dart';
 import '../../login_screen/controller/startup_controller.dart';
@@ -30,6 +33,7 @@ class TableManageController extends GetxController {
   final KotRepo _kotRepo = Get.find<KotRepo>();
   final TableChairSetData _tableChairSetData = Get.find<TableChairSetData>();
   final IO.Socket _socket = Get.find<SocketController>().socket;
+  final HttpService _httpService = Get.find<HttpService>();
 
   bool addCategoryToggle = false; // to show add category or room card and text field
   bool addCategoryLoading = false; // to show progress while adding new category or room
@@ -75,13 +79,16 @@ class TableManageController extends GetxController {
 
   //? to enable shift mode when click shift mode
   bool shiftMode = false;
+  //? to enable link mode when click shift mode
+  bool linkMode = false;
 
   //? to add room name
   late TextEditingController roomNameTD;
 
-  //saving tableId and tableNumber for shifting.
+  //? saving tableId and tableNumber for shifting.
   int currentTableId = -1;
   int currentTableNumber = -1;
+  int kotIdForShiftTable = -1;
 
   @override
   void onInit() async {
@@ -332,6 +339,17 @@ class TableManageController extends GetxController {
     }
   }
 
+  //? this emit will receive in server and emit from server to refresh data
+  refreshDatabaseKot({bool showSnack = true}) {
+    if(Get.find<StartupController>().applicationPlan == 1){
+      _socket.emit('refresh-database-order',Get.find<StartupController>().SHOPE_ID);
+    }
+    else{
+      getAllKot(showSnack: showSnack);
+    }
+
+  }
+
   getAllKot({bool showSnack = false}) async {
     try {
       MyResponse response = await _kotRepo.getAllKot();
@@ -393,18 +411,124 @@ class TableManageController extends GetxController {
 
   updateShiftMode(bool isShiftMode) {
     shiftMode = isShiftMode;
-    if (shiftMode) {}
     update();
   }
 
-  saveCurrentTableIdAndTableNumber({required int tableId, required int tableNumber}) {
-    currentTableId = tableId;
-    currentTableNumber = tableNumber;
+
+  updateLinkMode(bool isLinkMode) {
+    linkMode = isLinkMode;
+    update();
   }
 
-  shiftTable({required int newTableId, required int newTableNumber}) {
-    print(newTableId);
+  saveCurrentTableIdAndTableNumber({
+    required int tableId,
+    required int tableNumber,
+    required int kotId,
+  }) {
+    currentTableId = tableId;
+    currentTableNumber = tableNumber;
+    kotIdForShiftTable = kotId;
+  }
 
+  shiftOrLinkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
+    if(linkMode){
+      updateLinkChair(newTableId: newTableId,newTableNumber: newTableNumber, newRoom: newRoom);
+    }else {
+      updateShiftedChair(newTableId: newTableId, newTableNumber: newTableNumber, newRoom: newRoom);
+    }
+  }
+
+  Future updateShiftedChair({
+    required int newTableId,
+    required int newTableNumber,
+    required String newRoom,
+  }) async {
+    try {
+      if (kotIdForShiftTable != -1 && currentTableId != -1 && currentTableNumber != -1) {
+        Map<String, dynamic> tableShiftUpdate = {
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
+          'Kot_id': kotIdForShiftTable,
+          'currentTable': currentTableNumber,
+          'currentTableId': currentTableId,
+          'newTable': newTableNumber,
+          'newTableId': newTableId,
+          'newRoom': newRoom,
+        };
+        final response = await _httpService.updateData(SHIFT_TABLE_CHR, tableShiftUpdate);
+
+        KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
+        if (parsedResponse.error) {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+          AppSnackBar.successSnackBar('Success', myMessage);
+          refreshDatabaseKot(showSnack: false);
+          getInitialTableChairSet();
+          updateShiftMode(false);
+          currentTableNumber = -1;
+          currentTableId = -1;
+          kotIdForShiftTable = -1;
+        } else {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+          AppSnackBar.successSnackBar('Error', myMessage);
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error !', 'Something wrong');
+      }
+    } on DioError catch (e) {
+      String myMessage = showErr ? MyDioError.dioError(e) : MyDioError.dioError(e);
+      AppSnackBar.errorSnackBar('Error', myMessage);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'shiftChair()');
+    } finally {
+      update();
+    }
+  }
+
+
+  Future updateLinkChair({
+    required int newTableId,
+    required int newTableNumber,
+    required String newRoom,
+  }) async {
+    try {
+      if (kotIdForShiftTable != -1 && currentTableId != -1 && currentTableNumber != -1) {
+        Map<String, dynamic> tableShiftUpdate = {
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
+          'Kot_id': kotIdForShiftTable,
+          'newTable': newTableNumber,
+          'newTableId': newTableId,
+          'newRoom': newRoom,
+        };
+        final response = await _httpService.updateData(LINK_TABLE_CHR, tableShiftUpdate);
+
+        KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
+        if (parsedResponse.error) {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+          AppSnackBar.successSnackBar('Success', myMessage);
+          refreshDatabaseKot(showSnack: false);
+          getInitialTableChairSet();
+          updateShiftMode(false);
+          currentTableNumber = -1;
+          currentTableId = -1;
+          kotIdForShiftTable = -1;
+        } else {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+          AppSnackBar.successSnackBar('Error', myMessage);
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error !', 'Something wrong');
+      }
+    } on DioError catch (e) {
+      String myMessage = showErr ? MyDioError.dioError(e) : MyDioError.dioError(e);
+      AppSnackBar.errorSnackBar('Error', myMessage);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'shiftChair()');
+    } finally {
+      update();
+    }
   }
 
   showLoading() {

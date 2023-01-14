@@ -95,7 +95,8 @@ class TableWidget extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: orderInTable.map((order) {
-                      return OrderWidget(text: '${order.Kot_id}',onTap: (){
+                      return OrderWidget(text: '${order.Kot_id}',
+                          onTap: (){
                         viewOrderInTableAlert(context: context,kot: order,tableNumber: tableNumber,tableId: tableId);
                       });
                     }).toList(),
