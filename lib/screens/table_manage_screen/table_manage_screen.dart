@@ -227,22 +227,19 @@ class PcTableManageScreen extends StatelessWidget {
                                     tableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                     roomName: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                     onTap: () {
-                                      if (ctrl.shiftMode) {
-                                      } else {
-                                        Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
-                                          'roomName': ctrl.myTableChairSet[index].roomName,
-                                          'room_id': ctrl.myTableChairSet[index].room_id,
-                                          'tableId': ctrl.myTableChairSet[index].tableId,
-                                          'tableIndex': ctrl.myTableChairSet[index].tableNumber,
-                                        });
-                                      }
+                                      Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
+                                        'roomName': ctrl.myTableChairSet[index].roomName,
+                                        'room_id': ctrl.myTableChairSet[index].room_id,
+                                        'tableId': ctrl.myTableChairSet[index].tableId,
+                                        'tableIndex': ctrl.myTableChairSet[index].tableNumber,
+                                      });
                                     },
                                   );
                                 },
                                 onAccept: (Map data) {
-                                  ctrl.updateShiftMode(true);
+                                  //TODO make this below 2 methods as one
                                   ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
-                                  ctrl.shiftOrLinkOrUnLinkTable(
+                                  ctrl.shiftTable(
                                     newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                     newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                     newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
@@ -259,11 +256,29 @@ class PcTableManageScreen extends StatelessWidget {
                 );
         }),
         floatingActionButton: GetBuilder<TableManageController>(builder: (ctrl) {
-          return FloatingActionButton(
-              child: Icon(Icons.add, size: 24.sp, color: Colors.white),
-              onPressed: () {
-                Get.offNamed(RouteHelper.getCreateTableScreen(), arguments: {'roomId': ctrl.selectedRoomId, 'roomName': ctrl.selectedRoomName});
-              });
+          if (ctrl.isDragStarted) {
+            return DragTarget(
+              builder: (context, candidateData, rejectedData) {
+                return FloatingActionButton(
+                    backgroundColor: Colors.red,
+                    child: Icon(Icons.delete_outline, size: 24.sp, color: Colors.white),
+                    onPressed: () {
+                      Get.offNamed(RouteHelper.getCreateTableScreen(), arguments: {'roomId': ctrl.selectedRoomId, 'roomName': ctrl.selectedRoomName});
+                    });
+              },
+              onAccept: (Map data) {
+                //TODO make this below 2 methods as one
+                ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
+                ctrl.unLinkChair(currentTableId: ctrl.currentTableId);
+              },
+            );
+          } else {
+            return FloatingActionButton(
+                child: Icon(Icons.add, size: 24.sp, color: Colors.white),
+                onPressed: () {
+                  Get.offNamed(RouteHelper.getCreateTableScreen(), arguments: {'roomId': ctrl.selectedRoomId, 'roomName': ctrl.selectedRoomName});
+                });
+          }
         }),
       ),
     );

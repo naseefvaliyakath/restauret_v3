@@ -79,13 +79,6 @@ class TableManageController extends GetxController {
   //? for room update need other loader , so after catch isLoading become false so in ctr.list.length may course error
   bool isLoadingRoom = false;
 
-  //? to enable shift mode when click shift mode
-  bool shiftMode = false;
-  //? to enable link mode when click shift mode
-  bool linkMode = false;
-
-  //? to enable Unlink mode when click shift mode
-  bool unLinkMode = false;
 
   //? to add room name
   late TextEditingController roomNameTD;
@@ -94,6 +87,9 @@ class TableManageController extends GetxController {
   int currentTableId = -1;
   int currentTableNumber = -1;
   int kotIdForShiftTable = -1;
+
+
+  bool isDragStarted = false;
 
   @override
   void onInit() async {
@@ -414,22 +410,6 @@ class TableManageController extends GetxController {
     Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder, 'fromTableManage': 'true'});
   }
 
-  updateShiftMode(bool isShiftMode) {
-    shiftMode = isShiftMode;
-    update();
-  }
-
-
-  updateLinkMode(bool isLinkMode) {
-    linkMode = isLinkMode;
-    update();
-  }
-
-  updateUnLinkMode(bool isUnLinkMode) {
-    unLinkMode = isUnLinkMode;
-    update();
-  }
-
   saveCurrentTableIdAndTableNumber({
     required int tableId,
     required int tableNumber,
@@ -440,15 +420,19 @@ class TableManageController extends GetxController {
     kotIdForShiftTable = kotId;
   }
 
-  shiftOrLinkOrUnLinkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
-    if(linkMode){
-      updateLinkChair(newTableId: newTableId,newTableNumber: newTableNumber, newRoom: newRoom);
-    }else if(unLinkMode){
-      unLinkChair(currentTableId: currentTableId);
-    }
-    else {
-      updateShiftedChair(newTableId: newTableId, newTableNumber: newTableNumber, newRoom: newRoom);
-    }
+  shiftTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
+    updateShiftedChair(newTableId: newTableId, newTableNumber: newTableNumber, newRoom: newRoom);
+  }
+  linkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
+    updateLinkChair(newTableId: newTableId,newTableNumber: newTableNumber, newRoom: newRoom);
+  }
+  unlinkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
+    unLinkChair(currentTableId: currentTableId);
+  }
+
+  updateDragStarted(bool flag){
+    isDragStarted = flag;
+    update();
   }
 
   Future updateShiftedChair({
@@ -475,7 +459,6 @@ class TableManageController extends GetxController {
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
           getInitialTableChairSet();
-          updateShiftMode(false);
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;
@@ -521,7 +504,6 @@ class TableManageController extends GetxController {
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
           getInitialTableChairSet();
-          updateLinkMode(false);
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;
@@ -565,7 +547,6 @@ class TableManageController extends GetxController {
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
           getInitialTableChairSet();
-          updateUnLinkMode(false);
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;

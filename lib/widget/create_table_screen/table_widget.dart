@@ -101,8 +101,14 @@ class TableWidget extends StatelessWidget {
                         ),
                       ));
                 },
-                onAccept: (Map data) {
-                  print('jjjjjjjjjjjjjjjjjjj');
+                onMove: (details) {
+                  print('qqqqqqqqqqqqqq');
+                },
+                onLeave: (data) {
+                  print('rrrrrrrrrrr');
+                },
+                onWillAccept: (data) {
+                  return false;
                 },
               )
             ],
@@ -127,16 +133,25 @@ class TableWidget extends StatelessWidget {
                         children: orderInTable.map((order) {
                           return Expanded(
                             child: LongPressDraggable(
+                              onDragStarted: () {
+                                ctrl.updateDragStarted(true);
+                              },
+                              onDragEnd: (details) {
+                                ctrl.updateDragStarted(false);
+                              },
                               delay: Duration(milliseconds: 500),
                               data: {
                                 'tableNumber': tableNumber,
                                 'tableId': tableId,
                                 'kotId': order.Kot_id,
                               },
-                              dragAnchorStrategy: pointerDragAnchorStrategy,
+                              dragAnchorStrategy: (draggable, context, position) {
+                                return  const Offset(25, 60);
+                              },
+                              feedbackOffset: const Offset(0, -30),
                               feedback: Card(
                                 key: _draggableKey,
-                                child: OrderWidget(text: '${order.Kot_id}', onTap: () {}),
+                                child: SizedBox(width: 50,height: 50, child: OrderWidget(text: '${order.Kot_id}', onTap: () {})),
                               ),
                               child: OrderWidget(
                                   text: '${order.Kot_id}',
