@@ -84,6 +84,9 @@ class TableManageController extends GetxController {
   //? to enable link mode when click shift mode
   bool linkMode = false;
 
+  //? to enable Unlink mode when click shift mode
+  bool unLinkMode = false;
+
   //? to add room name
   late TextEditingController roomNameTD;
 
@@ -422,6 +425,11 @@ class TableManageController extends GetxController {
     update();
   }
 
+  updateUnLinkMode(bool isUnLinkMode) {
+    unLinkMode = isUnLinkMode;
+    update();
+  }
+
   saveCurrentTableIdAndTableNumber({
     required int tableId,
     required int tableNumber,
@@ -432,10 +440,13 @@ class TableManageController extends GetxController {
     kotIdForShiftTable = kotId;
   }
 
-  shiftOrLinkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
+  shiftOrLinkOrUnLinkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
     if(linkMode){
       updateLinkChair(newTableId: newTableId,newTableNumber: newTableNumber, newRoom: newRoom);
-    }else {
+    }else if(unLinkMode){
+      unLinkChair(currentTableId: currentTableId);
+    }
+    else {
       updateShiftedChair(newTableId: newTableId, newTableNumber: newTableNumber, newRoom: newRoom);
     }
   }
@@ -481,7 +492,7 @@ class TableManageController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'shiftChair()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'updateShiftedChair()');
     } finally {
       update();
     }
@@ -510,7 +521,7 @@ class TableManageController extends GetxController {
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
           getInitialTableChairSet();
-          updateShiftMode(false);
+          updateLinkMode(false);
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;
@@ -527,7 +538,51 @@ class TableManageController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'shiftChair()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'updateLinkChair()');
+    } finally {
+      update();
+    }
+  }
+
+
+  Future unLinkChair({
+    required int currentTableId,
+
+  }) async {
+    try {
+      if (kotIdForShiftTable != -1 && currentTableId != -1 && currentTableNumber != -1) {
+        Map<String, dynamic> tableShiftUpdate = {
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
+          'Kot_id': kotIdForShiftTable,
+          'currentTableId': currentTableId,
+
+        };
+        final response = await _httpService.updateData(UN_LINK_TABLE_CHR, tableShiftUpdate);
+
+        KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
+        if (parsedResponse.error==false) {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+          AppSnackBar.successSnackBar('Success', myMessage);
+          refreshDatabaseKot(showSnack: false);
+          getInitialTableChairSet();
+          updateUnLinkMode(false);
+          currentTableNumber = -1;
+          currentTableId = -1;
+          kotIdForShiftTable = -1;
+        } else {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+          AppSnackBar.errorSnackBar('Error', myMessage);
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error !', 'Something wrong');
+      }
+    } on DioError catch (e) {
+      String myMessage = showErr ? MyDioError.dioError(e) : MyDioError.dioError(e);
+      AppSnackBar.errorSnackBar('Error', myMessage);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'updateShiftedChair()');
     } finally {
       update();
     }

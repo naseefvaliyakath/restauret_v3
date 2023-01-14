@@ -120,9 +120,17 @@ class ViewOrderInTaleContent extends StatelessWidget {
                     width: 1.sw * 0.25,
                     child: AppMiniButton(
                       color: Colors.blueAccent,
-                      text: 'Shift',
+                      text: 'unLink',
                       onTap: () {
+
+                        ctrl.updateUnLinkMode(true);
                         Navigator.pop(context);
+                        ctrl.saveCurrentTableIdAndTableNumber(
+                          tableId: tableId,
+                          tableNumber: tableNumber,
+                          kotId: kot.Kot_id ?? -1,
+                        );
+                        selectTableAlert(context: context);
                       },
                     ),
                   ),

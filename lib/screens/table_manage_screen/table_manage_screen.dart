@@ -242,7 +242,7 @@ class PcTableManageScreen extends StatelessWidget {
                                 onAccept: (Map data) {
                                   ctrl.updateShiftMode(true);
                                   ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
-                                  ctrl.shiftOrLinkTable(
+                                  ctrl.shiftOrLinkOrUnLinkTable(
                                     newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                     newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                     newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,

@@ -35,6 +35,7 @@ const String INSERT_TABLE = 'table_manage/addTable/';
 const String GET_TABLE_SET = 'table_manage/getTableSet/';
 const String SHIFT_TABLE_CHR = 'table_manage/shiftTable/';
 const String LINK_TABLE_CHR = 'table_manage/linkChair/';
+const String UN_LINK_TABLE_CHR = 'table_manage/unLinkTable/';
 const String ADD_CHR_TO_KOT = 'table_manage/addedChairToKot/';
 const String DELETE_TABLE = 'table_manage/deleteTable/';
 
