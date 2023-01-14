@@ -5,6 +5,7 @@ import '../../routes/route_helper.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/common_widget/notification_icon.dart';
+import '../../widget/common_widget/text_field_widget.dart';
 import '../../widget/create_table_screen/table_widget.dart';
 import '../../widget/create_table_screen/table_shape_drop_down.dart';
 import 'controller/create_table_controller.dart';
@@ -65,13 +66,28 @@ class CreateTableScreen extends StatelessWidget {
                             children: [
                               10.verticalSpace,
                               SizedBox(
-                                child: TableWidget(shapeId: ctrl.tableShape, tableName: '', onTap: (){}, tableId: -1,)
+                                child: TableWidget(showOrder: false,shapeId: ctrl.tableShape, onTap: (){}, tableId: -1,tableNumber: -1,)
                               ),
                               SizedBox(
                                 height: 1.sh * 0.03,
                               ),
                               5.verticalSpace,
                               const TableShapeDropDown(),
+                              5.verticalSpace,
+                              SizedBox(
+                                width: 280.sp,
+                                height: 50.sp,
+                                child: TextFieldWidget(
+                                  hintText: 'Enter table number',
+                                  hintSize:20.sp,
+                                  isNumberOnly: true,
+                                  isDens: true,
+                                  textEditingController: ctrl.tableNumberController,
+                                  borderRadius: 15.r,
+                                  txtLength: 3,
+                                  onChange: (_) {},
+                                ),
+                              ),
                               5.verticalSpace,
                               SizedBox(
                                 width: horizontal ? 0.2.sw :  1.sw * 0.4,

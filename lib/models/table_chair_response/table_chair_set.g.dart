@@ -17,7 +17,7 @@ TableChairSet _$TableChairSetFromJson(Map<String, dynamic> json) =>
       topChairCount: json['topChairCount'] as int?,
       bottomChairCount: json['bottomChairCount'] as int?,
       createdAt: json['createdAt'] as String?,
-    );
+    )..tableNumber = json['tableNumber'] as int?;
 
 Map<String, dynamic> _$TableChairSetToJson(TableChairSet instance) =>
     <String, dynamic>{
@@ -25,6 +25,7 @@ Map<String, dynamic> _$TableChairSetToJson(TableChairSet instance) =>
       'tableShape': instance.tableShape,
       'room_id': instance.room_id,
       'roomName': instance.roomName,
+      'tableNumber': instance.tableNumber,
       'leftChairCount': instance.leftChairCount,
       'rightChairCount': instance.rightChairCount,
       'topChairCount': instance.topChairCount,

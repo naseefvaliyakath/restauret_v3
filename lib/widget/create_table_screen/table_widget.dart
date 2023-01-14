@@ -11,10 +11,11 @@ import 'table_shape.dart';
 class TableWidget extends StatelessWidget {
   final int shapeId;
   final int tableId;
-  final String tableName;
+  final int tableNumber;
   final Function onTap;
+  final bool showOrder;
 
-  const TableWidget({Key? key, required this.shapeId, required this.tableName, required this.onTap, required this.tableId}) : super(key: key);
+  const TableWidget({Key? key, required this.shapeId, required this.onTap, required this.tableId, this.showOrder=true, required this.tableNumber}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,14 +79,14 @@ class TableWidget extends StatelessWidget {
             children: [
               Center(
                   child: TableShape(
-                    text: tableName,
+                    text: "Table $tableNumber",
                     width: height - 150.sp,
                     height: width - 150.sp,
                     onLongTap: () {},
                     onTap: onTap,
                     radius: radius,
                   )),
-              Positioned(
+              showOrder?Positioned(
                 top: 0.h,
                 bottom: 0.h,
                 child: SizedBox(
@@ -95,12 +96,12 @@ class TableWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: orderInTable.map((order) {
                       return OrderWidget(text: '${order.Kot_id}',onTap: (){
-                        viewOrderInTableAlert(context: context,kot: order);
+                        viewOrderInTableAlert(context: context,kot: order,tableNumber: tableNumber,tableId: tableId);
                       });
                     }).toList(),
                   ),
                 ),
-              ),
+              ):const SizedBox(),
             ],
           ),
         ),
@@ -108,3 +109,12 @@ class TableWidget extends StatelessWidget {
     });
   }
 }
+
+// Column(
+// mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+// children: orderInTable.map((order) {
+// return OrderWidget(text: '${order.Kot_id}',onTap: (){
+// viewOrderInTableAlert(context: context,kot: order,tableNumber: tableNumber,tableId: tableId);
+// });
+// }).toList(),
+// )

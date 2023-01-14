@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import '../../../alerts/show_tables_alert/table_shift_select_alert.dart';
 import '../../../api_data_loader/room_data.dart';
 import '../../../api_data_loader/table_chair_data.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -53,6 +54,7 @@ class TableManageController extends GetxController {
   List<TableChairSet> get myTableChairSet => _myTableChairSet;
 
   final List<KitchenOrder> _kotBillingItems = [];
+
   List<KitchenOrder> get kotBillingItems => _kotBillingItems;
 
   //? kot orders only containing tables
@@ -70,11 +72,16 @@ class TableManageController extends GetxController {
 
   //? for room update need other loader , so after catch isLoading become false so in ctr.list.length may course error
   bool isLoadingRoom = false;
+
   //? to enable shift mode when click shift mode
   bool shiftMode = false;
 
   //? to add room name
   late TextEditingController roomNameTD;
+
+  //saving tableId and tableNumber for shifting.
+  int currentTableId = -1;
+  int currentTableNumber = -1;
 
   @override
   void onInit() async {
@@ -352,8 +359,6 @@ class TableManageController extends GetxController {
     }
   }
 
-
-
   //to add category widget show and hide
   setAddCategoryToggle(bool val) {
     addCategoryToggle = val;
@@ -369,7 +374,6 @@ class TableManageController extends GetxController {
     update();
   }
 
-
   sortTableByRoom(int roomId_) {
     List<TableChairSet> sorterTable = [];
     for (var element in _storedTableChairSet) {
@@ -382,15 +386,25 @@ class TableManageController extends GetxController {
     update();
   }
 
-
   updateKotOrder({required kotBillingOrder}) {
     //? fromTableManage is to check update kot is from table mange screen , then select table option will disable
-    Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder,'fromTableManage':'true'});
+    Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {'kotItem': kotBillingOrder, 'fromTableManage': 'true'});
   }
 
-  updateShiftMode(bool isShiftMode){
+  updateShiftMode(bool isShiftMode) {
     shiftMode = isShiftMode;
+    if (shiftMode) {}
     update();
+  }
+
+  saveCurrentTableIdAndTableNumber({required int tableId, required int tableNumber}) {
+    currentTableId = tableId;
+    currentTableNumber = tableNumber;
+  }
+
+  shiftTable({required int newTableId, required int newTableNumber}) {
+    print(newTableId);
+
   }
 
   showLoading() {

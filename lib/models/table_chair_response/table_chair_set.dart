@@ -16,6 +16,9 @@ class TableChairSet {
   @JsonKey(name: "roomName")
   String? roomName;
 
+  @JsonKey(name: "tableNumber")
+  int? tableNumber;
+
   @JsonKey(name: "leftChairCount")
   int? leftChairCount;
 
