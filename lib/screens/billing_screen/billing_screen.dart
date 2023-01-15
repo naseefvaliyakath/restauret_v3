@@ -167,7 +167,7 @@ class BillingScreen extends StatelessWidget {
                               priceHalf: ctrl.myTodayFoods[index].fdHalfPrice ?? 0,
                               priceQuarter: ctrl.myTodayFoods[index].fdQtrPrice ?? 0,
                               fdIsLoos: ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
-                              onSwipeDown: () {
+                              onSwipe: () {
                                 ctrl.addFoodToBill(
                                     ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
                                     ctrl.myTodayFoods[index].fdId ?? 0,

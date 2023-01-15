@@ -16,23 +16,32 @@ class BillingFoodCard extends StatelessWidget {
   final String fdIsLoos;
   final Function onTap;
   final Function onLongTap;
-  final Function onSwipeDown;
+  final Function onSwipe;
 
-  const BillingFoodCard({Key? key, required this.img, required this.name, required this.price, required this.onTap, required this.onLongTap, required this.onSwipeDown, required this.priceThreeByTwo, required this.priceHalf, required this.priceQuarter, required this.fdIsLoos}) : super(key: key);
+
+  const BillingFoodCard(
+      {Key? key, required this.img, required this.name, required this.price, required this.onTap, required this.onLongTap, required this.onSwipe, required this.priceThreeByTwo, required this.priceHalf, required this.priceQuarter, required this.fdIsLoos,})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     bool horizontal = 1.sh < 1.sw ? true : false;
     return GestureDetector(
-      onVerticalDragEnd: (detals){
-        int sensitivity = 8;
-        if(detals.primaryVelocity! > 0){
-          onSwipeDown();
+      onVerticalDragEnd: !horizontal ? (dat) {
+        if (dat.primaryVelocity! > 0) {
+          onSwipe();
           return;
         }
-      },
-      onLongPress: ()=>onLongTap(),
-      onTap: ()=>onTap(),
+      } : null,
+      onHorizontalDragEnd: horizontal ? (dat) {
+        if (dat.primaryVelocity! > 0) {
+          onSwipe();
+
+          return;
+        }
+      } : null,
+      onLongPress: () => onLongTap(),
+      onTap: () => onTap(),
       child: Container(
         margin: EdgeInsets.only(right: 6.sp),
         width: 0.23.sw,
@@ -54,17 +63,19 @@ class BillingFoodCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
                 child: CachedNetworkImage(
                   imageUrl: img,
-                  placeholder: (context, url) => Lottie.asset(
-                    'assets/lottie/img_holder.json',
-                    width: 50.sp,
-                    height: 50.sp,
-                    fit: BoxFit.fill,
-                  ),
-                  errorWidget: (context, url, error) => Lottie.asset(
-                    'assets/lottie/error.json',
-                    width: 10.sp,
-                    height: 10.sp,
-                  ),
+                  placeholder: (context, url) =>
+                      Lottie.asset(
+                        'assets/lottie/img_holder.json',
+                        width: 50.sp,
+                        height: 50.sp,
+                        fit: BoxFit.fill,
+                      ),
+                  errorWidget: (context, url, error) =>
+                      Lottie.asset(
+                        'assets/lottie/error.json',
+                        width: 10.sp,
+                        height: 10.sp,
+                      ),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -129,14 +140,14 @@ class BillingFoodCard extends StatelessWidget {
                             Text('Half        : $priceHalf',
                                 softWrap: false,
                                 style: TextStyle(
-                                  fontSize:horizontal ? 1.sh / 59 :  1.sh / 99,
+                                  fontSize: horizontal ? 1.sh / 59 : 1.sh / 99,
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,
                                 )),
                             Text('Quarter : $priceQuarter',
                                 softWrap: false,
                                 style: TextStyle(
-                                  fontSize:horizontal ? 1.sh / 59 : 1.sh / 99,
+                                  fontSize: horizontal ? 1.sh / 59 : 1.sh / 99,
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,
                                 )),
