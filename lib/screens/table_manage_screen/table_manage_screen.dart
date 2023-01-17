@@ -24,7 +24,7 @@ class PcTableManageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     CrossFadeState stateCategory = CrossFadeState.showFirst;
     return WillPopScope(
-      onWillPop: () async {
+      onWillPop: Platform.isIOS ? null :  () async {
         Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": DINING});
         return false;
       },

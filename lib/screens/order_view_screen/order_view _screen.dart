@@ -40,7 +40,7 @@ class OrderViewScreen extends StatelessWidget {
       ScrollController scrollController = ScrollController();
       bool horizontal = 1.sh < 1.sw ? true : false;
       return WillPopScope(
-        onWillPop: () async {
+        onWillPop: Platform.isIOS ? null : () async {
           Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {"billingPage": ctrl.fromBillingScreenName});
           return false;
         },
