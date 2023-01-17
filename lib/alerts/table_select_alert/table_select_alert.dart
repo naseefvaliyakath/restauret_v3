@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:rest_verision_3/alerts/table_select_alert/table_select_body.dart';
 import 'package:rest_verision_3/screens/billing_screen/controller/billing_screen_controller.dart';
 

@@ -54,6 +54,7 @@ dependencies:
   youtube_player_flutter: ^8.1.1
   file_picker: ^5.2.4
   flutter_shake_animated: ^0.0.5
+  animated_flip_counter: ^0.2.5
   flutter: 
     sdk: flutter
 

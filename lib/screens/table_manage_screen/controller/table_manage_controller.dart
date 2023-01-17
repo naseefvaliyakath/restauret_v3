@@ -4,12 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/strings/my_strings.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import '../../../alerts/show_tables_alert/table_shift_select_alert.dart';
 import '../../../api_data_loader/room_data.dart';
 import '../../../api_data_loader/table_chair_data.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../constants/api_link/api_link.dart';
 import '../../../error_handler/error_handler.dart';
+import '../../../models/foods_response/food_response.dart';
 import '../../../models/kitchen_order_response/kitchen_order.dart';
 import '../../../models/kitchen_order_response/kitchen_order_array.dart';
 import '../../../models/my_response.dart';
@@ -92,9 +92,13 @@ class TableManageController extends GetxController {
   bool isDragStarted = false;
   bool isDraggableOnLinkButton = false;
 
+  //? to save kot id from order view screen when click add table btn
+  int kotIdFromOrderView = -1;
+
   @override
   void onInit() async {
     roomNameTD = TextEditingController();
+    getxArgumentReceive();
     await getInitialRoom();
     await getInitialTableChairSet();
     //? for full feature application
@@ -422,13 +426,13 @@ class TableManageController extends GetxController {
   }
 
   shiftTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
-    updateShiftedChair(newTableId: newTableId, newTableNumber: newTableNumber, newRoom: newRoom);
+    updateShiftedTable(newTableId: newTableId, newTableNumber: newTableNumber, newRoom: newRoom);
   }
   linkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
-    updateLinkChair(newTableId: newTableId,newTableNumber: newTableNumber, newRoom: newRoom);
+    updateLinkTable(newTableId: newTableId,newTableNumber: newTableNumber, newRoom: newRoom);
   }
-  unlinkTable({required int newTableId, required int newTableNumber, required String newRoom,}) {
-    unLinkChair(currentTableId: currentTableId);
+  unlinkTable() {
+    updateUnLinkTable(currentTableId: currentTableId);
   }
 
   updateDragStarted(bool flag){
@@ -436,7 +440,7 @@ class TableManageController extends GetxController {
     update();
   }
 
-  Future updateShiftedChair({
+  Future updateShiftedTable({
     required int newTableId,
     required int newTableNumber,
     required String newRoom,
@@ -459,7 +463,6 @@ class TableManageController extends GetxController {
           String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
-          getInitialTableChairSet();
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;
@@ -483,7 +486,7 @@ class TableManageController extends GetxController {
   }
 
 
-  Future updateLinkChair({
+  Future updateLinkTable({
     required int newTableId,
     required int newTableNumber,
     required String newRoom,
@@ -504,7 +507,6 @@ class TableManageController extends GetxController {
           String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
-          getInitialTableChairSet();
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;
@@ -528,7 +530,7 @@ class TableManageController extends GetxController {
   }
 
 
-  Future unLinkChair({
+  Future updateUnLinkTable({
     required int currentTableId,
 
   }) async {
@@ -543,11 +545,10 @@ class TableManageController extends GetxController {
         final response = await _httpService.updateData(UN_LINK_TABLE_CHR, tableShiftUpdate);
 
         KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
-        if (parsedResponse.error==false) {
+        if (parsedResponse.error == false) {
           String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
           AppSnackBar.successSnackBar('Success', myMessage);
           refreshDatabaseKot(showSnack: false);
-          getInitialTableChairSet();
           currentTableNumber = -1;
           currentTableId = -1;
           kotIdForShiftTable = -1;
@@ -568,6 +569,107 @@ class TableManageController extends GetxController {
     } finally {
       update();
     }
+  }
+
+
+  Future addKotToTable({
+    required String newRoom,
+    required int newTable,
+    required int newTableId,
+  }) async {
+    try {
+      if (kotIdFromOrderView != -1) {
+        Map<String, dynamic> tableShiftUpdate = {
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
+          'Kot_id': kotIdFromOrderView,
+          'newRoom': newRoom,
+          'newTable': newTable,
+          'newTableId': newTableId,
+        };
+        final response = await _httpService.updateData(ADD_CHR_TO_KOT, tableShiftUpdate);
+
+        KitchenOrderArray parsedResponse = KitchenOrderArray.fromJson(response.data);
+        if (parsedResponse.error == false) {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+          AppSnackBar.successSnackBar('Success', myMessage);
+          refreshDatabaseKot(showSnack: false);
+        } else {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+          AppSnackBar.errorSnackBar('Error', myMessage);
+        }
+      } else {
+        AppSnackBar.errorSnackBar('Error !', 'Something wrong');
+      }
+    } on DioError catch (e) {
+      String myMessage = showErr ? MyDioError.dioError(e) : MyDioError.dioError(e);
+      AppSnackBar.errorSnackBar('Error', myMessage);
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'table_manage_controller', methodName: 'addKotToTable()');
+    } finally {
+      update();
+    }
+  }
+
+  //? this emit will receive server and emit from server to with kotID to ring order
+  //? used when ring btn click in KOT order manage alert
+  ringKot(int kotId) {
+    _socket.emit('for-ring-to-kitchen', kotId);
+  }
+
+  //? to delete / cancel kot order
+  deleteKotOrder(int kotId) async {
+    try {
+      if (kotId != -1) {
+        Map<String, dynamic> data = {
+          'fdShopId': Get.find<StartupController>().SHOPE_ID,
+          'Kot_id': kotId,
+        };
+        final response = await _httpService.delete(DELETE_KOT_ORDER, data);
+        FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
+        if (parsedResponse.error ?? true) {
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+          btnControllerCancelKotOrderInTable.error();
+          AppSnackBar.errorSnackBar('Error', myMessage);
+        } else {
+          btnControllerCancelKotOrderInTable.success();
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+          refreshDatabaseKot(showSnack: false);
+          AppSnackBar.successSnackBar('Success', myMessage);
+        }
+      }
+    } on DioError catch (e) {
+      btnControllerCancelKotOrderInTable.error();
+      AppSnackBar.errorSnackBar('Error', MyDioError.dioError(e));
+    } catch (e) {
+      btnControllerCancelKotOrderInTable.error();
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'table_Manage_controller',methodName: 'deleteKotOrder()');
+      return;
+    } finally {
+      Future.delayed(const Duration(seconds: 1), () {
+        btnControllerCancelKotOrderInTable.reset();
+        Navigator.pop(Get.context!);
+      });
+      update();
+    }
+  }
+
+
+  getxArgumentReceive(){
+    var args = Get.arguments ?? {'kotId':-1};
+    if(args['kotId'] != -1){
+      //? if navigated from overview screen socket will not correctly connected (so in order view controller socket is using)
+      //? to solve the issue first disposing and connecting
+      _socket.close();
+      _socket.dispose();
+      _socket.connect();
+      kotIdFromOrderView = int.parse(args['kotId']);
+    }
+
+    update();
   }
 
   showLoading() {

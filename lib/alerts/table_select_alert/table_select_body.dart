@@ -40,115 +40,115 @@ class TableSelectBody extends StatelessWidget {
                   duration: const Duration(seconds: 1),
                   child: ctrl.showAddRoom
                       ? ctrl.addRoomLoading
-                          ? const MyLoading()
-                          : AddCategoryCardTextField(
-                              onTapAdd: () {
-                                ctrl.insertRoom();
-                              },
-                              onTapBack: () => ctrl.updateShowAddRoom(false),
-                              nameController: ctrl.roomNameTD,
-                              height: 42.h,
-                            )
+                      ? const MyLoading()
+                      : AddCategoryCardTextField(
+                    onTapAdd: () {
+                      ctrl.insertRoom();
+                    },
+                    onTapBack: () => ctrl.updateShowAddRoom(false),
+                    nameController: ctrl.roomNameTD,
+                    height: 42.h,
+                  )
                       : Center(
-                          key: const Key('2'),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2(
-                              alignment: AlignmentDirectional.center,
-                              isExpanded: true,
-                              hint: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.room_outlined,
-                                    size: 16.sp,
-                                    color: Colors.black,
-                                  ),
-                                  4.horizontalSpace,
-                                  Expanded(
-                                    child: Text(
-                                      ctrl.selectedRoom.toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              items: ctrl.myRoom
-                                  .map((item) => DropdownMenuItem<Room>(
-                                        alignment: AlignmentDirectional.centerEnd,
-                                        value: item,
-                                        child: GestureDetector(
-                                          onLongPress: () {
-                                            twoFunctionAlert(
-                                              context: context,
-                                              onTap: () {
-                                                ctrl.deleteRoom(roomId: item.room_id ?? -1, roomName: item.roomName ?? MAIN_ROOM);
-                                              },
-                                              onCancelTap: () {},
-                                              title: 'Delete ?',
-                                              subTitle: 'do you want to delete thi item ?',
-                                            );
-                                          },
-                                          child: SizedBox(
-                                            height: double.maxFinite,
-                                            width: double.maxFinite,
-                                            child: Text(
-                                              (item.roomName ?? MAIN_ROOM).toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              value: selectedValue,
-                              onChanged: (value) {
-                                //? casting object to Room
-                                Room room = value as Room;
-                                ctrl.updateSelectedRoom(room.roomName ?? MAIN_ROOM);
-                              },
-                              icon: const Icon(
-                                Icons.arrow_forward_ios_outlined,
-                              ),
-                              iconSize: 14.sp,
-                              iconEnabledColor: Colors.black,
-                              iconDisabledColor: Colors.grey,
-                              buttonHeight: 50.sp,
-                              buttonWidth: 160.sp,
-                              buttonPadding: horizontal ?  EdgeInsets.symmetric(horizontal: 2.w) : EdgeInsets.only(left: 14.w, right: 14.w),
-                              buttonDecoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14.r),
-                                border: Border.all(
-                                  color: Colors.black26,
+                    key: const Key('2'),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2(
+                        alignment: AlignmentDirectional.center,
+                        isExpanded: true,
+                        hint: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.room_outlined,
+                              size: 16.sp,
+                              color: Colors.black,
+                            ),
+                            4.horizontalSpace,
+                            Expanded(
+                              child: Text(
+                                ctrl.selectedRoom.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
-                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              buttonElevation: 2,
-                              itemHeight: 40.sp,
-                              itemPadding: EdgeInsets.only(left: 14.w, right: 14.w),
-                              dropdownMaxHeight: 200.sp,
-                              dropdownWidth: 200.sp,
-                              dropdownPadding: null,
-                              dropdownDecoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                color: Colors.white,
+                            ),
+                          ],
+                        ),
+                        items: ctrl.myRoom
+                            .map((item) => DropdownMenuItem<Room>(
+                          alignment: AlignmentDirectional.centerEnd,
+                          value: item,
+                          child: GestureDetector(
+                            onLongPress: () {
+                              twoFunctionAlert(
+                                context: context,
+                                onTap: () {
+                                  ctrl.deleteRoom(roomId: item.room_id ?? -1, roomName: item.roomName ?? MAIN_ROOM);
+                                },
+                                onCancelTap: () {},
+                                title: 'Delete ?',
+                                subTitle: 'do you want to delete thi item ?',
+                              );
+                            },
+                            child: SizedBox(
+                              height: double.maxFinite,
+                              width: double.maxFinite,
+                              child: Text(
+                                (item.roomName ?? MAIN_ROOM).toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              dropdownElevation: 8,
-                              scrollbarRadius: Radius.circular(40.r),
-                              scrollbarThickness: 0,
-                              scrollbarAlwaysShow: true,
-                              offset: const Offset(-20, 0),
                             ),
                           ),
+                        ))
+                            .toList(),
+                        value: selectedValue,
+                        onChanged: (value) {
+                          //? casting object to Room
+                          Room room = value as Room;
+                          ctrl.updateSelectedRoom(room.roomName ?? MAIN_ROOM);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_forward_ios_outlined,
                         ),
+                        iconSize: 14.sp,
+                        iconEnabledColor: Colors.black,
+                        iconDisabledColor: Colors.grey,
+                        buttonHeight: 50.sp,
+                        buttonWidth: 160.sp,
+                        buttonPadding: horizontal ?  EdgeInsets.symmetric(horizontal: 2.w) : EdgeInsets.only(left: 14.w, right: 14.w),
+                        buttonDecoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14.r),
+                          border: Border.all(
+                            color: Colors.black26,
+                          ),
+                          color: Colors.white,
+                        ),
+                        buttonElevation: 2,
+                        itemHeight: 40.sp,
+                        itemPadding: EdgeInsets.only(left: 14.w, right: 14.w),
+                        dropdownMaxHeight: 200.sp,
+                        dropdownWidth: 200.sp,
+                        dropdownPadding: null,
+                        dropdownDecoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: Colors.white,
+                        ),
+                        dropdownElevation: 8,
+                        scrollbarRadius: Radius.circular(40.r),
+                        scrollbarThickness: 0,
+                        scrollbarAlwaysShow: true,
+                        offset: const Offset(-20, 0),
+                      ),
+                    ),
+                  ),
                 ),
                 TextButton(
                     onPressed: () => ctrl.updateShowAddRoom(true),
@@ -192,17 +192,17 @@ class TableSelectBody extends StatelessWidget {
                           ),
                           items: ctrl.tableNumber
                               .map((item) => DropdownMenuItem<int>(
-                                    value: item,
-                                    child: Text(
-                                      'T - $item',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ))
+                            value: item,
+                            child: Text(
+                              'T - $item',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
                               .toList(),
                           value: selectedValue,
                           onChanged: (value) {
@@ -274,17 +274,17 @@ class TableSelectBody extends StatelessWidget {
                           ),
                           items: ctrl.chairNumber
                               .map((item) => DropdownMenuItem<int>(
-                                    value: item,
-                                    child: Text(
-                                      'C-$item',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ))
+                            value: item,
+                            child: Text(
+                              'C-$item',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
                               .toList(),
                           value: selectedValue,
                           onChanged: (value) {

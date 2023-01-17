@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_verision_3/models/kitchen_order_response/kitchen_order.dart';
 import 'package:get/get.dart';
+import '../../constants/strings/my_strings.dart';
 import '../../screens/table_manage_screen/controller/table_manage_controller.dart';
 import '../../widget/common_widget/buttons/app_min_button.dart';
 import '../../widget/common_widget/buttons/progress_button.dart';
@@ -9,7 +10,7 @@ import '../../widget/common_widget/common_text/big_text.dart';
 import '../../widget/common_widget/common_text/mid_text.dart';
 import '../kot_order_manage_alert/view_order_list_alert/view_order_list_item_heading.dart';
 import '../kot_order_manage_alert/view_order_list_alert/view_order_list_item_tile.dart';
-import '../show_tables_alert/table_shift_select_alert.dart';
+
 
 class ViewOrderInTaleContent extends StatelessWidget {
   final KitchenOrder kot;
@@ -21,9 +22,10 @@ class ViewOrderInTaleContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TableManageController>(builder: (ctrl) {
+      bool horizontal = 1.sh < 1.sw ? true : false;
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 5.sp),
-        width: 0.8.sw,
+        width: horizontal ? 0.5.sw :  0.8.sw,
         child: MediaQuery.removePadding(
           removeBottom: true,
           removeTop: true,
@@ -34,133 +36,113 @@ class ViewOrderInTaleContent extends StatelessWidget {
             children: [
               MidText(text: 'KOT ID : ${kot.Kot_id}'),
               5.verticalSpace,
-              ListView.builder(
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return const ViewOrderListItemHeading();
-                },
-                itemCount: 1,
-              ),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 1.sh * 0.7),
-                child: SizedBox(
-                  child: ListView.builder(
+              horizontal ?  Flexible(
+                child: DataTable(
+                  headingRowColor: MaterialStateProperty.resolveWith((states) => Colors.grey.shade200),
+                  columns: const [
+                    DataColumn(label: Text("Name")),
+                    DataColumn(label: Text("Quantity")),
+                    DataColumn(label: Text("Price")),
+                    DataColumn(label: Text("Status")),
+                  ],
+                  rows: (kot.fdOrder ?? []).map((e) {
+                    return DataRow(cells: [
+                      DataCell(
+                        ListTile(
+                          title: Text(e.name ?? 'error',softWrap: true,maxLines: 1,),
+                          subtitle:Text(e.ktNote ?? 'error'),
+                          dense: true,
+                        ),
+                      ),
+                      DataCell(Text((e.qnt ?? 0).toString())),
+                      DataCell(Text((e.price ?? 0).toString())),
+                      DataCell(ListTile(
+                        title: Text(e.ordStatus.toString(),style: TextStyle(fontSize: 13.sp, color: e.ordStatus == READY ? Colors.green : e.ordStatus == REJECT ? Colors.red : Colors.black),),
+                      )),
+                    ]);
+                  }).toList(),
+                ),
+              ) :  Column(
+                children: [
+                  ListView.builder(
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return ViewOrderListItemTile(
-                        index: index,
-                        slNumber: index + 1,
-                        itemName: kot.fdOrder?[index].name ?? 'Error',
-                        qnt: kot.fdOrder?[index].qnt ?? 0,
-                        kitchenNote: kot.fdOrder?[index].ktNote ?? 'Error',
-                        price: (kot.fdOrder?[index].price ?? 0).toDouble(),
-                        ordStatus: kot.fdOrder?[index].ordStatus ?? 'pending',
-                        onLongTap: () {},
-                      );
+                      return const ViewOrderListItemHeading();
                     },
-                    itemCount: kot.fdOrder?.length ?? 0,
+                    itemCount: 1,
                   ),
-                ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 1.sh * 0.7),
+                    child: SizedBox(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ViewOrderListItemTile(
+                            index: index,
+                            slNumber: index + 1,
+                            itemName: kot.fdOrder?[index].name ?? 'Error',
+                            qnt: kot.fdOrder?[index].qnt ?? 0,
+                            kitchenNote: kot.fdOrder?[index].ktNote ?? 'Error',
+                            price: (kot.fdOrder?[index].price ?? 0).toDouble(),
+                            ordStatus: kot.fdOrder?[index].ordStatus ?? 'pending',
+                            onLongTap: () {},
+                          );
+                        },
+                        itemCount: kot.fdOrder?.length ?? 0,
+                      ),
+                    ),
+                  ),
+                ],
               ),
+
               10.verticalSpace,
               Align(alignment: Alignment.center, child: BigText(text: 'Total Price : ${kot.totalPrice}', size: 20.sp)),
               10.verticalSpace,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                    height: 30.h,
-                    width: 1.sw * 0.25,
-                    child: AppMiniButton(
-                      color: Colors.cyan,
-                      text: 'Ring',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                  Flexible(
+                    child: SizedBox(
+                      height: 30.h,
+                      width: 1.sw * 0.25,
+                      child: AppMiniButton(
+                        color: Colors.cyan,
+                        text: 'Ring',
+                        onTap: () {
+                          ctrl.ringKot(kot.Kot_id ?? -1);
+                        },
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 30.h,
-                    width: 1.sw * 0.25,
-                    child: AppMiniButton(
-                      color: Colors.green,
-                      text: 'Edit',
-                      onTap: () {
-                        Navigator.pop(context); //this not add then page note kill
-                        ctrl.updateKotOrder(kotBillingOrder: kot);
-                      },
+                  5.horizontalSpace,
+                  Flexible(
+                    child: SizedBox(
+                      height: 30.h,
+                      width: 1.sw * 0.25,
+                      child: AppMiniButton(
+                        color: Colors.green,
+                        text: 'Edit',
+                        onTap: () {
+                          Navigator.pop(context); //this not add then page note kill
+                          ctrl.updateKotOrder(kotBillingOrder: kot);
+                        },
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 30.h,
-                    width: 1.sw * 0.25,
-                    child: AppMiniButton(
-                      color: Colors.teal,
-                      text: 'Shift',
-                      onTap: () {
-                        Navigator.pop(context);
-                        ctrl.saveCurrentTableIdAndTableNumber(
-                          tableId: tableId,
-                          tableNumber: tableNumber,
-                          kotId: kot.Kot_id ?? -1,
-                        );
-                        selectTableAlert(context: context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              8.verticalSpace,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    height: 30.h,
-                    width: 1.sw * 0.25,
-                    child: AppMiniButton(
-                      color: Colors.blueAccent,
-                      text: 'unLink',
-                      onTap: () {
-                        Navigator.pop(context);
-                        ctrl.saveCurrentTableIdAndTableNumber(
-                          tableId: tableId,
-                          tableNumber: tableNumber,
-                          kotId: kot.Kot_id ?? -1,
-                        );
-                        selectTableAlert(context: context);
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                    width: 1.sw * 0.25,
-                    child: AppMiniButton(
-                      color: Colors.purpleAccent,
-                      text: 'Link Chair',
-                      onTap: () {
-                        Navigator.pop(context);
-                        ctrl.saveCurrentTableIdAndTableNumber(
-                          tableId: tableId,
-                          tableNumber: tableNumber,
-                          kotId: kot.Kot_id ?? -1,
-                        );
-                        selectTableAlert(context: context);
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                    width: 1.sw * 0.25,
-                    child: ProgressButton(
-                      btnCtrlName: 'CancelOrderInTable',
-                      text: 'Cancel',
-                      ctrl: ctrl,
-                      color: const Color(0xffef2f28),
-                      onTap: () async {
-                        Future.delayed(const Duration(seconds: 1), () {
-                          Navigator.pop(context);
-                        });
-                      },
+                  5.horizontalSpace,
+                  Flexible(
+                    child: SizedBox(
+                      height: 30.h,
+                      width: 1.sw * 0.25,
+                      child: ProgressButton(
+                        btnCtrlName: 'CancelOrderInTable',
+                        text: 'Cancel',
+                        ctrl: ctrl,
+                        color: const Color(0xffef2f28),
+                        onTap: () async {
+                          ctrl.deleteKotOrder(kot.Kot_id ?? -1);
+                        },
+                      ),
                     ),
                   ),
                 ],

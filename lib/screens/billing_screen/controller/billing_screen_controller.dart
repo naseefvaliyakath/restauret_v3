@@ -296,6 +296,7 @@ class BillingScreenController extends GetxController {
     //? assigning screen name as per billing page
     settingUpScreenName(orderType);
     getHiveKey();
+    update();
   }
 
   //? to handle quickBill

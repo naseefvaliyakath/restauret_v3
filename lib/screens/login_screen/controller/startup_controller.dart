@@ -77,6 +77,9 @@ class StartupController extends GetxController {
   //? to set toggle btn as per saved data
   bool setAllowPurchaseBookToWaiterToggle = false;
 
+  //? advanced table management mode
+  bool advancedTableManagementToggle = true;
+
   @override
   void onInit() async {
     subIdTD = TextEditingController();

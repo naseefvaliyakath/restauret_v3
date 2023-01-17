@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
 import '../../alerts/common_alerts.dart';
-import '../../alerts/show_tables_alert/table_shift_select_alert.dart';
 import '../../constants/app_colors/app_colors.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../models/kitchen_order_response/kitchen_order.dart';
@@ -70,7 +70,7 @@ class PcTableManageScreen extends StatelessWidget {
                           ),
                         ],
                         bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(60.h),
+                          preferredSize: Size.fromHeight(horizontal ? 90.h : 60.h),
                           child: Padding(
                             padding: EdgeInsets.only(left: 10.0.w, right: 10.w),
                             child: Column(
@@ -108,9 +108,7 @@ class PcTableManageScreen extends StatelessWidget {
                                                             twoFunctionAlert(
                                                               context: context,
                                                               onTap: () {
-                                                                ctrl.deleteRoom(
-                                                                    roomId: ctrl.myRoom[index].room_id ?? -1,
-                                                                    roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
+                                                                ctrl.deleteRoom(roomId: ctrl.myRoom[index].room_id ?? -1, roomName: ctrl.myRoom[index].roomName ?? MAIN_ROOM);
                                                               },
                                                               onCancelTap: () {},
                                                               title: 'Delete ?',
@@ -133,8 +131,7 @@ class PcTableManageScreen extends StatelessWidget {
                                                       child: AddCategoryCard(
                                                         onTap: () {
                                                           ctrl.setAddCategoryToggle(!ctrl.addCategoryToggle);
-                                                          stateCategory =
-                                                              ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                          stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                         },
                                                       ),
                                                     ),
@@ -143,13 +140,11 @@ class PcTableManageScreen extends StatelessWidget {
                                                         : AddCategoryCardTextField(
                                                             onTapAdd: () async {
                                                               await ctrl.insertRoom();
-                                                              stateCategory =
-                                                                  ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                              stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                             },
                                                             onTapBack: () {
                                                               ctrl.setAddCategoryToggle(false);
-                                                              stateCategory =
-                                                                  ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                              stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                             },
                                                             nameController: ctrl.roomNameTD,
                                                             height: 60.h,
@@ -176,13 +171,11 @@ class PcTableManageScreen extends StatelessWidget {
                                                       : AddCategoryCardTextField(
                                                           onTapAdd: () async {
                                                             await ctrl.insertRoom();
-                                                            stateCategory =
-                                                                ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                            stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                           },
                                                           onTapBack: () {
                                                             ctrl.setAddCategoryToggle(false);
-                                                            stateCategory =
-                                                                ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
+                                                            stateCategory = ctrl.addCategoryToggle == false ? CrossFadeState.showFirst : CrossFadeState.showSecond;
                                                           },
                                                           nameController: ctrl.roomNameTD,
                                                           height: 60.h,
@@ -227,33 +220,47 @@ class PcTableManageScreen extends StatelessWidget {
                                     tableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                     roomName: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                     onTap: () {
-                                      Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
-                                        'roomName': ctrl.myTableChairSet[index].roomName,
-                                        'room_id': ctrl.myTableChairSet[index].room_id,
-                                        'tableId': ctrl.myTableChairSet[index].tableId,
-                                        'tableIndex': ctrl.myTableChairSet[index].tableNumber,
-                                      });
+                                      if (ctrl.kotIdFromOrderView != -1) {
+                                        twoFunctionAlert(
+                                          context: context,
+                                          onTap: () {
+                                            ctrl.addKotToTable(
+                                              newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
+                                              newTable: ctrl.myTableChairSet[index].tableNumber ?? -1,
+                                              newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
+                                            );
+                                          },
+                                          onCancelTap: () {},
+                                          title: 'Add this table ? ',
+                                          subTitle: 'Do you want to add this table ? ',
+                                        );
+                                      } else {
+                                        Get.offNamed(RouteHelper.getBillingScreenScreen(), arguments: {
+                                          'roomName': ctrl.myTableChairSet[index].roomName,
+                                          'room_id': ctrl.myTableChairSet[index].room_id,
+                                          'tableId': ctrl.myTableChairSet[index].tableId,
+                                          'tableIndex': ctrl.myTableChairSet[index].tableNumber,
+                                        });
+                                      }
                                     },
                                   );
                                 },
                                 onAccept: (Map data) {
                                   //TODO remove below method
                                   ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
-                                  if(ctrl.isDraggableOnLinkButton){
+                                  if (ctrl.isDraggableOnLinkButton) {
                                     ctrl.linkTable(
                                       newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                       newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                       newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                     );
-                                  }else{
-
+                                  } else {
                                     ctrl.shiftTable(
                                       newTableNumber: ctrl.myTableChairSet[index].tableNumber ?? -1,
                                       newTableId: ctrl.myTableChairSet[index].tableId ?? -1,
                                       newRoom: ctrl.myTableChairSet[index].roomName ?? MAIN_ROOM,
                                     );
                                   }
-
                                 },
                               );
                             },
@@ -269,17 +276,23 @@ class PcTableManageScreen extends StatelessWidget {
           if (ctrl.isDragStarted) {
             return DragTarget(
               builder: (context, candidateData, rejectedData) {
-                return FloatingActionButton(
-                    backgroundColor: Colors.red,
-                    child: Icon(Icons.delete_outline, size: 24.sp, color: Colors.white),
-                    onPressed: () {
-                      Get.offNamed(RouteHelper.getCreateTableScreen(), arguments: {'roomId': ctrl.selectedRoomId, 'roomName': ctrl.selectedRoomName});
-                    });
+                return ShakeWidget(
+                  autoPlay: true,
+                  duration: const Duration(milliseconds: 1000),
+                  shakeConstant: ShakeDefaultConstant2(),
+                  enableWebMouseHover: false,
+                  child: FloatingActionButton(
+                      backgroundColor: Colors.red,
+                      child: Icon(Icons.delete_outline, size: 24.sp, color: Colors.white),
+                      onPressed: () {
+                        Get.offNamed(RouteHelper.getCreateTableScreen(), arguments: {'roomId': ctrl.selectedRoomId, 'roomName': ctrl.selectedRoomName});
+                      }),
+                );
               },
               onAccept: (Map data) {
                 //TODO make this below 2 methods as one
                 ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
-                ctrl.unLinkChair(currentTableId: ctrl.currentTableId);
+                ctrl.unlinkTable();
               },
             );
           } else {

@@ -40,6 +40,10 @@ class OrderViewController extends GetxController {
   bool showErr  = Get.find<StartupController>().showErr;
   final ErrorHandler errHandler = Get.find<ErrorHandler>();
 
+  //? storing billing screen name to return back to previous billing screen
+  //? (Get.back() not used so socket dispose issue)
+  String fromBillingScreenName = HOME_DELEVERY;
+
   //? to show and hide loading
   bool isLoading = false;
 
@@ -138,6 +142,7 @@ class OrderViewController extends GetxController {
 
   @override
   void onInit() async {
+    getxArgumentReceive();
     initTxtController();
     checkInternetConnection();
     //? for full feature application
@@ -156,9 +161,18 @@ class OrderViewController extends GetxController {
   @override
   void onClose() {
     _socket.close();
-    _socket.dispose();
+   _socket.dispose();
     disposeTxtController();
     super.onClose();
+  }
+
+
+  getxArgumentReceive(){
+    var args = Get.arguments ?? {'from':TAKEAWAY};
+    //? storing billing screen name to return back to previous billing screen
+    //? (Get.back() not used so socket dispose issue)
+    fromBillingScreenName = args['from'];
+    update();
   }
 
 
@@ -640,10 +654,12 @@ class OrderViewController extends GetxController {
         FoodResponse parsedResponse = FoodResponse.fromJson(response.data);
         if (parsedResponse.error ?? true) {
           btnControllerCancellKOtOrder.error();
-          AppSnackBar.errorSnackBar('Error', parsedResponse.errorCode ?? 'Error');
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Something wrong !!';
+          AppSnackBar.errorSnackBar('Error',myMessage);
         } else {
           btnControllerCancellKOtOrder.success();
-          AppSnackBar.successSnackBar('Success', parsedResponse.errorCode ?? 'Error');
+          String myMessage = showErr ? (parsedResponse.errorCode ?? 'error') : 'Updated successfully';
+          AppSnackBar.successSnackBar('Success', myMessage);
         }
       }
     } on DioError catch (e) {

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:rest_verision_3/alerts/kot_order_manage_alert/view_order_list_alert/view_order_list_alert.dart';
+import 'package:rest_verision_3/routes/route_helper.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 
 import '../../constants/app_colors/app_colors.dart';
@@ -38,8 +39,8 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                 children: [
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 20.h),
-                    width:horizontal ? 0.4.sw : 0.8.sw,
-                    height: Get.find<StartupController>().applicationPlan == 1 ?  330.h : 280.h,
+                    width: horizontal ? 0.4.sw : 0.8.sw,
+                    height: Get.find<StartupController>().applicationPlan == 1 ? 330.h : 280.h,
                     child: Stack(
                       alignment: AlignmentDirectional.topCenter,
                       children: [
@@ -47,7 +48,7 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                           top: 45.h,
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 10.sp),
-                            width:horizontal ? 0.4.sw : 0.8.sw,
+                            width: horizontal ? 0.4.sw : 0.8.sw,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.r),
                               color: Colors.white,
@@ -60,8 +61,7 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                   ctrl.kotBillingItems.isNotEmpty
                                       ? ('${ctrl.kotBillingItems[index].fdOrder?.first.name ?? ''} and other ${ctrl.kotBillingItems[index].fdOrder!.length - 1} items')
                                       : '',
-                                  style: TextStyle(
-                                      fontSize: 20.sp, color: AppColors.titleColor, fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 20.sp, color: AppColors.titleColor, fontWeight: FontWeight.w600),
                                   textAlign: TextAlign.center,
                                 ),
                                 10.verticalSpace,
@@ -108,11 +108,7 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                                   });
                                                 }
                                                 Navigator.pop(context);
-                                                ctrl.kotDialogBox(
-                                                    context,
-                                                    billingItems,
-                                                    ctrl.kotBillingItems[index].Kot_id ?? -1,
-                                                    ctrl.kotBillingItems[index]);
+                                                ctrl.kotDialogBox(context, billingItems, ctrl.kotBillingItems[index].Kot_id ?? -1, ctrl.kotBillingItems[index]);
                                               }
                                             },
                                           ),
@@ -226,8 +222,20 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                               color: Colors.pinkAccent,
                                               text: 'Add Table',
                                               onTap: () {
-                                                AppSnackBar.errorSnackBar(
-                                                    'Not available', 'this feature is currently not available');
+                                                //? checking if advancedTableManagementToggle & order is DINING and first object in kotTableChairSet has table is -1
+                                                //? table is -1 is when  no table is selected
+                                                if (Get.find<StartupController>().advancedTableManagementToggle) {
+                                                  if ((ctrl.kotBillingItems[index].kotTableChairSet ?? []).isNotEmpty) {
+                                                    if ((ctrl.kotBillingItems[index].kotTableChairSet?.first['table'] ?? -2) == -1) {
+                                                      Get.back();
+                                                      Get.toNamed(RouteHelper.getTableManageScreen(), arguments: {'kotId': '${ctrl.kotBillingItems[index].Kot_id ?? -1}'});
+                                                    }else{
+                                                      AppSnackBar.errorSnackBar('Already added!', 'table already added for this order !!');
+                                                    }
+                                                  }
+                                                }else{
+                                                  AppSnackBar.errorSnackBar('Not available !', 'this feature is not available !!');
+                                                }
                                               },
                                             ),
                                           ),
@@ -237,8 +245,7 @@ kotOrderManageAlert({required BuildContext context, required OrderViewController
                                               color: const Color(0xff62c5ce),
                                               text: 'Add Chair',
                                               onTap: () {
-                                                AppSnackBar.errorSnackBar(
-                                                    'Not available', 'this feature is currently not available');
+                                                AppSnackBar.errorSnackBar('Not available', 'this feature is currently not available');
                                               },
                                             ),
                                           ),

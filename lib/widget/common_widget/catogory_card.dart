@@ -46,7 +46,7 @@ class CategoryCard
                         height: 30.h,
                         child: Center(
                           child: BigText(
-                            text: text[0],
+                            text: text[0].toUpperCase(),
                             size: 20.h,
                             color:Colors.white,
                           ),

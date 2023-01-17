@@ -32,6 +32,7 @@ import '../../widget/common_widget/food_card.dart';
 import '../../widget/common_widget/food_search_bar.dart';
 import '../../widget/common_widget/refresh_icon_btn.dart';
 import '../../widget/common_widget/snack_bar.dart';
+import '../login_screen/controller/startup_controller.dart';
 import 'controller/billing_screen_controller.dart';
 
 class PcBillingScreen extends StatelessWidget {
@@ -49,6 +50,7 @@ class PcBillingScreen extends StatelessWidget {
           },
           child: SafeArea(
               child: Container(
+                height: 1.sh,
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Column(
               children: [
@@ -117,332 +119,339 @@ class PcBillingScreen extends StatelessWidget {
                     const CategoryDropDownBilling()
                   ],
                 ),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Column(
-                        children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                            //? Items Ordered text
-                            BigText(
-                              text: 'Available foods ',
-                              size: 30.sp,
-                            ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Column(
+                          children: [
+                            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                              //? Items Ordered text
+                              BigText(
+                                text: 'Available foods ',
+                                size: 30.sp,
+                              ),
 
-                            10.horizontalSpace,
-                            //? this will change if homeDelivery it will select address
-                            //? if its dining it will select table
-                            ctrl.orderType == TAKEAWAY ? const SizedBox() : WhiteButtonWithIcon(
-                              text: ctrl.orderType == HOME_DELEVERY
-                                  ? (ctrl.selectDeliveryAddrTxt.length > 12 ? ctrl.selectDeliveryAddrTxt.substring(0, 13) : ctrl.selectDeliveryAddrTxt)
-                                  : ctrl.orderType == DINING
-                                  ? ctrl.selectTableTxt
-                                  : ctrl.orderType == ONLINE
-                                  ? (ctrl.selectedOnlineAppNameTxt.length > 12 ? ctrl.selectedOnlineAppNameTxt.substring(0, 13) : ctrl.selectedOnlineAppNameTxt)
-                                  : 'Take away',
-                              icon: Icons.edit,
-                              onTap: () async {
-                                if (ctrl.orderType == HOME_DELEVERY) {
-                                  deliveryAddressAlert(context: context, ctrl: ctrl);
-                                }
-                                if (ctrl.orderType == ONLINE) {
-                                  selectOnlineAppAlert(context: context);
-                                }
-
-                                if (ctrl.orderType == DINING) {
-                                  //tableSelectAlert(context: context);
-                                  if (ctrl.billingItems.isNotEmpty) {
-                                    await Get.find<BillingScreenController>().saveBillInHive();
+                              10.horizontalSpace,
+                              //? this will change if homeDelivery it will select address
+                              //? if its dining it will select table
+                              ctrl.orderType == TAKEAWAY ? const SizedBox() : WhiteButtonWithIcon(
+                                text: ctrl.orderType == HOME_DELEVERY
+                                    ? (ctrl.selectDeliveryAddrTxt.length > 12 ? ctrl.selectDeliveryAddrTxt.substring(0, 13) : ctrl.selectDeliveryAddrTxt)
+                                    : ctrl.orderType == DINING
+                                    ? ctrl.selectTableTxt
+                                    : ctrl.orderType == ONLINE
+                                    ? (ctrl.selectedOnlineAppNameTxt.length > 12 ? ctrl.selectedOnlineAppNameTxt.substring(0, 13) : ctrl.selectedOnlineAppNameTxt)
+                                    : 'Take away',
+                                icon: Icons.edit,
+                                onTap: () async {
+                                  if (ctrl.orderType == HOME_DELEVERY) {
+                                    deliveryAddressAlert(context: context, ctrl: ctrl);
                                   }
-                                  if(ctrl.isNavigateFromTableManage){
-                                    AppSnackBar.errorSnackBar('Cant change table', 'You cannot change table !!');
-                                  }else{
-                                    Get.offNamed(RouteHelper.getTableManageScreen());
+                                  if (ctrl.orderType == ONLINE) {
+                                    selectOnlineAppAlert(context: context);
                                   }
-                                }
-                              },
-                            ),
 
-                            //? clear bill btn
-                            ClearAllBill(onTap: () {
-                              //? if settled button clicked cant clear item
-                              if (ctrl.isClickedSettle.value) {
-                                AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
-                              } else {
-                                ctrl.clearAllBillItems();
-                              }
-                            }),
-                          ]),
-                          SizedBox(
-                              height: 450,
-                              child: SafeArea(
-                                child: CustomScrollView(
-                                  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                                  primary: false,
-                                  slivers: <Widget>[
-                                    //? body section
-                                    SliverPadding(
-                                      padding: EdgeInsets.all(20.sp),
-                                      sliver: SliverGrid(
-                                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 200.0.sp,
-                                          mainAxisSpacing: 18.sp,
-                                          crossAxisSpacing: 18.sp,
-                                          childAspectRatio: 3 / 3.5,
-                                        ),
-                                        delegate: SliverChildBuilderDelegate(
-                                          (BuildContext context, int index) {
-                                            return ctrl.isLoading
-                                                ? const BillingFoodErrCard()
-                                                : BillingFoodCard(
-                                              onTap: () {
-                                                // ? if settled button clicked cant add new item
-                                                if (ctrl.isClickedSettle.value) {
-                                                  AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
-                                                } else {
-                                                  //? billing alert popup
-                                                  foodBillingAlert(
-                                                    context,
-                                                    index: index,
-                                                    price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
-                                                    img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
-                                                    name: ctrl.myTodayFoods[index].fdName ?? '',
-                                                    fdIsLoos: ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
-                                                    fdId: ctrl.myTodayFoods[index].fdId ?? -1,
-                                                  );
-                                                }
-                                                //? to close key bord on outside touch
-                                                FocusScope.of(context).requestFocus(FocusNode());
-                                              },
-                                              onLongTap: () {
-                                                // ? if settled button clicked cant add new item
-                                                if (ctrl.isClickedSettle.value) {
-                                                  AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
-                                                } else {
-                                                  //? check billing item is empty , direct billing only foe 1 item
-                                                  if (ctrl.billingItems.isEmpty) {
-                                                    //? adding the item with qnt 1 and price default to billing
+                                  if (ctrl.orderType == DINING) {
+                                    //tableSelectAlert(context: context);
+                                    if (ctrl.billingItems.isNotEmpty) {
+                                      await Get.find<BillingScreenController>().saveBillInHive();
+                                    }
+                                    if(ctrl.isNavigateFromTableManage){
+                                      AppSnackBar.errorSnackBar('Cant change table', 'You cannot change table !!');
+                                    }else{
+                                      if(Get.find<StartupController>().advancedTableManagementToggle){
+                                        Get.offNamed(RouteHelper.getTableManageScreen());
+                                      }else{
+                                        tableSelectAlert(context: context);
+                                      }
+                                    }
+                                  }
+                                },
+                              ),
+
+                              //? clear bill btn
+                              ClearAllBill(onTap: () {
+                                //? if settled button clicked cant clear item
+                                if (ctrl.isClickedSettle.value) {
+                                  AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
+                                } else {
+                                  ctrl.clearAllBillItems();
+                                }
+                              }),
+                            ]),
+                            Flexible(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 20.sp),
+                                  child: SafeArea(
+                                    child: CustomScrollView(
+                                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                                      primary: false,
+                                      slivers: <Widget>[
+                                        //? body section
+                                        SliverPadding(
+                                          padding: EdgeInsets.all(20.sp),
+                                          sliver: SliverGrid(
+                                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                              maxCrossAxisExtent: 200.0.sp,
+                                              mainAxisSpacing: 18.sp,
+                                              crossAxisSpacing: 18.sp,
+                                              childAspectRatio: 3 / 3.5,
+                                            ),
+                                            delegate: SliverChildBuilderDelegate(
+                                              (BuildContext context, int index) {
+                                                return ctrl.isLoading
+                                                    ? const BillingFoodErrCard()
+                                                    : BillingFoodCard(
+                                                  onTap: () {
+                                                    // ? if settled button clicked cant add new item
+                                                    if (ctrl.isClickedSettle.value) {
+                                                      AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
+                                                    } else {
+                                                      //? billing alert popup
+                                                      foodBillingAlert(
+                                                        context,
+                                                        index: index,
+                                                        price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
+                                                        img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
+                                                        name: ctrl.myTodayFoods[index].fdName ?? '',
+                                                        fdIsLoos: ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
+                                                        fdId: ctrl.myTodayFoods[index].fdId ?? -1,
+                                                      );
+                                                    }
+                                                    //? to close key bord on outside touch
+                                                    FocusScope.of(context).requestFocus(FocusNode());
+                                                  },
+                                                  onLongTap: () {
+                                                    // ? if settled button clicked cant add new item
+                                                    if (ctrl.isClickedSettle.value) {
+                                                      AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
+                                                    } else {
+                                                      //? check billing item is empty , direct billing only foe 1 item
+                                                      if (ctrl.billingItems.isEmpty) {
+                                                        //? adding the item with qnt 1 and price default to billing
+                                                        ctrl.addFoodToBill(
+                                                            ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
+                                                            ctrl.myTodayFoods[index].fdId ?? 0,
+                                                            ctrl.myTodayFoods[index].fdName ?? '',
+                                                            1,
+                                                            ctrl.myTodayFoods[index].fdFullPrice,
+                                                            '' //? no kitchen note for direct billing item ,
+                                                        );
+                                                        //? billing alert popup
+                                                        ctrl.settleBillingCashAlertShowing(context, ctrl);
+                                                      } else {
+                                                        AppSnackBar.errorSnackBar('Clear bill first', 'direct bill only available for single item');
+                                                      }
+                                                    }
+                                                    //? to close key bord on outside touch
+                                                    FocusScope.of(context).requestFocus(FocusNode());
+                                                  },
+                                                  img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
+                                                  name: ctrl.myTodayFoods[index].fdName ?? '',
+                                                  price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
+                                                  priceThreeByTwo: ctrl.myTodayFoods[index].fdThreeBiTwoPrsPrice ?? 0,
+                                                  priceHalf: ctrl.myTodayFoods[index].fdHalfPrice ?? 0,
+                                                  priceQuarter: ctrl.myTodayFoods[index].fdQtrPrice ?? 0,
+                                                  fdIsLoos: ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
+                                                  onSwipe: () {
                                                     ctrl.addFoodToBill(
                                                         ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
                                                         ctrl.myTodayFoods[index].fdId ?? 0,
                                                         ctrl.myTodayFoods[index].fdName ?? '',
                                                         1,
                                                         ctrl.myTodayFoods[index].fdFullPrice,
-                                                        '' //? no kitchen note for direct billing item ,
+                                                        '' //? no kitchen note for swipe adding item  to bill,
                                                     );
-                                                    //? billing alert popup
-                                                    ctrl.settleBillingCashAlertShowing(context, ctrl);
-                                                  } else {
-                                                    AppSnackBar.errorSnackBar('Clear bill first', 'direct bill only available for single item');
-                                                  }
-                                                }
-                                                //? to close key bord on outside touch
-                                                FocusScope.of(context).requestFocus(FocusNode());
-                                              },
-                                              img: ctrl.myTodayFoods[index].fdImg ?? IMG_LINK,
-                                              name: ctrl.myTodayFoods[index].fdName ?? '',
-                                              price: ctrl.myTodayFoods[index].fdFullPrice ?? 0,
-                                              priceThreeByTwo: ctrl.myTodayFoods[index].fdThreeBiTwoPrsPrice ?? 0,
-                                              priceHalf: ctrl.myTodayFoods[index].fdHalfPrice ?? 0,
-                                              priceQuarter: ctrl.myTodayFoods[index].fdQtrPrice ?? 0,
-                                              fdIsLoos: ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
-                                              onSwipe: () {
-                                                ctrl.addFoodToBill(
-                                                    ctrl.myTodayFoods[index].fdIsLoos ?? 'no',
-                                                    ctrl.myTodayFoods[index].fdId ?? 0,
-                                                    ctrl.myTodayFoods[index].fdName ?? '',
-                                                    1,
-                                                    ctrl.myTodayFoods[index].fdFullPrice,
-                                                    '' //? no kitchen note for swipe adding item  to bill,
+                                                  },
                                                 );
                                               },
-                                            );
-                                          },
-                                          childCount:ctrl.isLoading ? 8 : ctrl.myTodayFoods.length,
+                                              childCount:ctrl.isLoading ? 8 : ctrl.myTodayFoods.length,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        child: SizedBox(
+                          child: Column(
+                            children: [
+                              //? billing table
+                              Expanded(
+                                  child: Container(
+                                decoration: BoxDecoration(border: Border.all(color: AppColors.mainColor), borderRadius: BorderRadius.circular(5.r)),
+                                padding: EdgeInsets.all(3.sp),
+                                width: double.maxFinite,
+                                child: ListView(
+                                  children: [
+                                    //? billing table heading
+                                    DataTable(
+                                      headingRowColor: MaterialStateProperty.resolveWith((states) => Colors.grey.shade200),
+                                      columns: const [
+                                        DataColumn(label: Text("Name")),
+                                        DataColumn(label: Text("Quantity")),
+                                        DataColumn(label: Text("Price")),
+                                      ],
+                                      rows: ctrl.billingItems.map((e) {
+                                        return DataRow(cells: [
+                                          DataCell(
+                                            ListTile(
+                                              title: Text((e['name'] ?? '')),
+                                              subtitle: Text((e['ktNote'] ?? '')),
+                                              dense: true,
+                                            ),
+                                          ),
+                                          DataCell(Text((e['qnt'] ?? 0).toString())),
+                                          DataCell(ListTile(
+                                            title: Text((e['price'] ?? 0).toString()),
+                                            trailing: IconButton(
+                                              onPressed: () {
+                                                deleteItemFromBillAlert(context, ctrl.billingItems.indexOf(e));
+                                              },
+                                              icon: Icon(Icons.edit,size: 24.sp,),
+                                            ),
+                                          )),
+                                        ]);
+                                      }).toList(),
                                     ),
                                   ],
                                 ),
                               )),
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      child: SizedBox(
-                        height: 450,
-                        child: Column(
-                          children: [
-                            //? billing table
-                            Expanded(
-                                child: Container(
-                              decoration: BoxDecoration(border: Border.all(color: AppColors.mainColor), borderRadius: BorderRadius.circular(5.r)),
-                              padding: EdgeInsets.all(3.sp),
-                              width: double.maxFinite,
-                              child: ListView(
-                                children: [
-                                  //? billing table heading
-                                  DataTable(
-                                    headingRowColor: MaterialStateProperty.resolveWith((states) => Colors.grey.shade200),
-                                    columns: const [
-                                      DataColumn(label: Text("Name")),
-                                      DataColumn(label: Text("Quantity")),
-                                      DataColumn(label: Text("Price")),
-                                    ],
-                                    rows: ctrl.billingItems.map((e) {
-                                      return DataRow(cells: [
-                                        DataCell(
-                                          ListTile(
-                                            title: Text((e['name'] ?? '')),
-                                            subtitle: Text((e['ktNote'] ?? '')),
-                                            dense: true,
-                                          ),
+                              TotalPriceTxt(price: ctrl.totalPrice),
+                              //?  controller buttons
+                              //? if navigate from orderViewScreen for updating order
+                              //? then it only showing update order and cancel btn
+                              ctrl.isNavigateFromKotUpdate
+                                  ? Container(
+                                      width: double.maxFinite,
+                                      padding: EdgeInsets.symmetric(vertical: 3.h),
+                                      height: 40.h,
+                                      child: IntrinsicHeight(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Flexible(
+                                              child: ProgressButton(
+                                                btnCtrlName: 'kotUpdate',
+                                                text: 'Update KOT Order',
+                                                ctrl: ctrl,
+                                                color: Colors.green,
+                                                onTap: () async {
+                                                  ctrl.updateKotOrder();
+                                                },
+                                              ),
+                                            ),
+                                            3.horizontalSpace,
+                                            Flexible(
+                                              child: AppMiniButton(
+                                                color: Colors.redAccent,
+                                                text: 'Cancel Update',
+                                                onTap: () {
+                                                  Get.offNamed(RouteHelper.getOrderViewScreen());
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        DataCell(Text((e['qnt'] ?? 0).toString())),
-                                        DataCell(ListTile(
-                                          title: Text((e['price'] ?? 0).toString()),
-                                          trailing: IconButton(
-                                            onPressed: () {
-                                              deleteItemFromBillAlert(context, ctrl.billingItems.indexOf(e));
-                                            },
-                                            icon: Icon(Icons.edit,size: 24.sp,),
-                                          ),
-                                        )),
-                                      ]);
-                                    }).toList(),
-                                  ),
-                                ],
-                              ),
-                            )),
-                            TotalPriceTxt(price: ctrl.totalPrice),
-                            //?  controller buttons
-                            //? if navigate from orderViewScreen for updating order
-                            //? then it only showing update order and cancel btn
-                            ctrl.isNavigateFromKotUpdate
-                                ? Container(
-                                    width: double.maxFinite,
-                                    padding: EdgeInsets.symmetric(vertical: 3.h),
-                                    height: 40.h,
-                                    child: IntrinsicHeight(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: [
-                                          Flexible(
-                                            child: ProgressButton(
-                                              btnCtrlName: 'kotUpdate',
-                                              text: 'Update KOT Order',
-                                              ctrl: ctrl,
-                                              color: Colors.green,
-                                              onTap: () async {
-                                                ctrl.updateKotOrder();
-                                              },
+                                      ))
+                                  : Container(
+                                      width: double.maxFinite,
+                                      padding: EdgeInsets.symmetric(vertical: 3.h),
+                                      height: 40.h,
+                                      child: IntrinsicHeight(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Flexible(
+                                              child: ProgressButton(
+                                                btnCtrlName: 'kot',
+                                                text: 'Order',
+                                                ctrl: ctrl,
+                                                color: Colors.green,
+                                                onTap: () async {
+                                                  //? if settled button clicked cant add new item
+                                                  if (ctrl.isClickedSettle.value) {
+                                                    AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
+                                                    ctrl.btnControllerKot.error();
+                                                    await Future.delayed(const Duration(milliseconds: 500), () {
+                                                      ctrl.btnControllerKot.reset();
+                                                    });
+                                                  } else {
+                                                    await ctrl.sendKotOrder();
+                                                  }
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          3.horizontalSpace,
-                                          Flexible(
-                                            child: AppMiniButton(
-                                              color: Colors.redAccent,
-                                              text: 'Cancel Update',
-                                              onTap: () {
-                                                Get.offNamed(RouteHelper.getOrderViewScreen());
-                                              },
+                                            3.horizontalSpace,
+                                            Flexible(
+                                              child: AppMiniButton(
+                                                color: const Color(0xffee588f),
+                                                text: 'Settle',
+                                                onTap: () async {
+                                                  ctrl.settleBillingCashAlertShowing(context, ctrl);
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ))
-                                : Container(
-                                    width: double.maxFinite,
-                                    padding: EdgeInsets.symmetric(vertical: 3.h),
-                                    height: 40.h,
-                                    child: IntrinsicHeight(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: [
-                                          Flexible(
-                                            child: ProgressButton(
-                                              btnCtrlName: 'kot',
-                                              text: 'Order',
-                                              ctrl: ctrl,
-                                              color: Colors.green,
-                                              onTap: () async {
-                                                //? if settled button clicked cant add new item
-                                                if (ctrl.isClickedSettle.value) {
-                                                  AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
-                                                  ctrl.btnControllerKot.error();
-                                                  await Future.delayed(const Duration(milliseconds: 500), () {
-                                                    ctrl.btnControllerKot.reset();
-                                                  });
-                                                } else {
-                                                  await ctrl.sendKotOrder();
-                                                }
-                                              },
+                                            3.horizontalSpace,
+                                            Flexible(
+                                              child: ProgressButton(
+                                                btnCtrlName: 'hold',
+                                                text: 'Hold',
+                                                ctrl: ctrl,
+                                                color: AppColors.mainColor_2,
+                                                onTap: () async {
+                                                  await ctrl.addHoldBillItem();
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          3.horizontalSpace,
-                                          Flexible(
-                                            child: AppMiniButton(
-                                              color: const Color(0xffee588f),
-                                              text: 'Settle',
-                                              onTap: () async {
-                                                ctrl.settleBillingCashAlertShowing(context, ctrl);
-                                              },
+                                            3.horizontalSpace,
+                                            Flexible(
+                                              child: AppMiniButton(
+                                                color: AppColors.mainColor,
+                                                text: 'KOT',
+                                                onTap: () {
+                                                  ctrl.kotDialogBox(context);
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          3.horizontalSpace,
-                                          Flexible(
-                                            child: ProgressButton(
-                                              btnCtrlName: 'hold',
-                                              text: 'Hold',
-                                              ctrl: ctrl,
-                                              color: AppColors.mainColor_2,
-                                              onTap: () async {
-                                                await ctrl.addHoldBillItem();
-                                              },
+                                            3.horizontalSpace,
+                                            Flexible(
+                                              child: AppMiniButton(
+                                                color: AppColors.mainColor,
+                                                text: 'New Order',
+                                                onTap: () async {
+                                                  //Get.find<HiveHoldBillController>().clearBill(index: 1);
+                                                  ctrl.enableNewOrder();
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          3.horizontalSpace,
-                                          Flexible(
-                                            child: AppMiniButton(
-                                              color: AppColors.mainColor,
-                                              text: 'KOT',
-                                              onTap: () {
-                                                ctrl.kotDialogBox(context);
-                                              },
+                                            3.horizontalSpace,
+                                            Flexible(
+                                              child: AppMiniButton(
+                                                color: const Color(0xff62c5ce),
+                                                text: 'All Order',
+                                                onTap: () {
+                                                  Get.offNamed(RouteHelper.getOrderViewScreen(),arguments: {'from':ctrl.orderType});
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          3.horizontalSpace,
-                                          Flexible(
-                                            child: AppMiniButton(
-                                              color: AppColors.mainColor,
-                                              text: 'New Order',
-                                              onTap: () async {
-                                                //Get.find<HiveHoldBillController>().clearBill(index: 1);
-                                                ctrl.enableNewOrder();
-                                              },
-                                            ),
-                                          ),
-                                          3.horizontalSpace,
-                                          Flexible(
-                                            child: AppMiniButton(
-                                              color: const Color(0xff62c5ce),
-                                              text: 'All Order',
-                                              onTap: () {
-                                                Get.offNamed(RouteHelper.getOrderViewScreen());
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
-                            10.verticalSpace,
-                          ],
+                                          ],
+                                        ),
+                                      )),
+                              10.verticalSpace,
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               ],
             ),

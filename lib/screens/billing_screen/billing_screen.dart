@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import '../../alerts/common_alerts.dart';
 import '../../alerts/delivery_address_alert/delivery_address_alert.dart';
 import '../../alerts/food_billing_alert/food_billing_alert.dart';
@@ -211,14 +212,18 @@ class BillingScreen extends StatelessWidget {
                           }
 
                           if (ctrl.orderType == DINING) {
-                            //tableSelectAlert(context: context);
                             if (ctrl.billingItems.isNotEmpty) {
                               await Get.find<BillingScreenController>().saveBillInHive();
                             }
                             if(ctrl.isNavigateFromTableManage){
                               AppSnackBar.errorSnackBar('Cant change table', 'You cannot change table !!');
                             }else{
-                              Get.offNamed(RouteHelper.getTableManageScreen());
+                              if(Get.find<StartupController>().advancedTableManagementToggle){
+                                Get.offNamed(RouteHelper.getTableManageScreen());
+                              }else{
+                                tableSelectAlert(context: context);
+                              }
+
                             }
 
                           }
@@ -383,7 +388,8 @@ class BillingScreen extends StatelessWidget {
                                   color: const Color(0xff62c5ce),
                                   text: 'All Order',
                                   onTap: () {
-                                    Get.offNamed(RouteHelper.getOrderViewScreen());
+                                    //? passing from to return back to that same screen
+                                    Get.offNamed(RouteHelper.getOrderViewScreen(),arguments: {'from':ctrl.orderType});
                                   },
                                 ),
                               ),
