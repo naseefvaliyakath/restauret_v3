@@ -16,7 +16,7 @@ class MyHiveInit {
       await Hive.initFlutter();
     } else {
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
+      String appDocPath = '${appDocDir.path}/RestaurantPos';
       await Hive.initFlutter(appDocPath);
     }
     Hive.registerAdapter(HiveHoldItemAdapter());

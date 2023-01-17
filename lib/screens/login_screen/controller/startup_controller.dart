@@ -91,6 +91,7 @@ class StartupController extends GetxController {
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
     await readShowErrorFromHive();
+    await  readAdvancedTableManagementFromHive();
     checkNoticeAndUpdate();
     checkSubscriptionStatusToLogout();
     _initBtPrinter();
@@ -492,6 +493,20 @@ class StartupController extends GetxController {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
       errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readShowErrorFromHive()');
+      return false;
+    }
+  }
+
+  Future<bool> readAdvancedTableManagementFromHive() async {
+    try {
+      bool result = await _myLocalStorage.readData(ADVANCED_TABLE_MANAGEMENT) ?? false;
+      advancedTableManagementToggle = result;
+      update();
+      return result;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readAdvancedTableManagementFromHive()');
       return false;
     }
   }

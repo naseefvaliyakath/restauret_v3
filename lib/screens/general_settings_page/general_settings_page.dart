@@ -95,6 +95,20 @@ class GeneralSettingsScreen extends StatelessWidget {
                           ),
                         ),
                         ProfileMenu(
+                          text: "Advanced table management",
+                          icon: Icons.shop,
+                          press: () {},
+                          actionWidget: FlutterSwitch(
+                            width: 50.sp,
+                            height: 30.sp,
+                            activeColor: AppColors.mainColor,
+                            value: ctrl.advancedTableManagement,
+                            onToggle: (bool value) {
+                              ctrl.setAdvancedTableManagement(value);
+                            },
+                          ),
+                        ),
+                        ProfileMenu(
                           text: "Show Error",
                           icon: Icons.shop,
                           press: () {},

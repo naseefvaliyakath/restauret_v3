@@ -23,12 +23,16 @@ class GeneralSettingsController extends GetxController {
   //? to set toggle btn as per saved data
   bool setShowErrorToggle = false;
 
+  //? to set toggle btn to enable and disable advancedTableManagement
+  bool advancedTableManagement = false;
+
   @override
   void onInit() async {
     await readShowDeliveryAddressInBillFromHive();
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
     await readShowError();
+    await readAdvancedTableManagement();
     super.onInit();
   }
 
@@ -67,6 +71,8 @@ class GeneralSettingsController extends GetxController {
     try {
       await _myLocalStorage.setData(ALLOW_CREDIT_BOOK_TO_WAITER, allowCreditBook);
       setAllowCreditBookToWaiterToggle = allowCreditBook;
+      //? to update globe variable
+      Get.find<StartupController>().readAllowCreditBookToWaiterFromHive();
       update();
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
@@ -95,6 +101,8 @@ class GeneralSettingsController extends GetxController {
     try {
       await _myLocalStorage.setData(ALLOW_CREDIT_BOOK_TO_WAITER, allowPurchaseBook);
       setAllowPurchaseBookToWaiterToggle = allowPurchaseBook;
+      //? to update globe variable
+      Get.find<StartupController>().readAllowPurchaseBookToWaiterFromHive();
       update();
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
@@ -124,6 +132,7 @@ class GeneralSettingsController extends GetxController {
     try {
       await _myLocalStorage.setData(SHOW_ERROR, showError);
       setShowErrorToggle = showError;
+      Get.find<StartupController>().readShowErrorFromHive();
       update();
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
@@ -143,6 +152,36 @@ class GeneralSettingsController extends GetxController {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
       errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'readShowError()');
+      return false;
+    }
+  }
+
+  //? to set advancedTableManagement mode in hive
+  Future setAdvancedTableManagement(bool tableManagement) async {
+    try {
+      await _myLocalStorage.setData(ADVANCED_TABLE_MANAGEMENT, tableManagement);
+      advancedTableManagement = tableManagement;
+      //? to update global variable
+      Get.find<StartupController>().readAdvancedTableManagementFromHive();
+      update();
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setAdvancedTableManagement()');
+      return;
+    }
+  }
+
+  Future<bool> readAdvancedTableManagement() async {
+    try {
+      bool result = await _myLocalStorage.readData(ADVANCED_TABLE_MANAGEMENT) ?? false;
+      advancedTableManagement = result;
+      update();
+      return result;
+    } catch (e) {
+      String myMessage = showErr ? e.toString() : 'Something wrong !!';
+      AppSnackBar.errorSnackBar('Error', myMessage);
+      errHandler.myResponseHandler(error: e.toString(),pageName: 'general_settings_ctrl',methodName: 'setAdvancedTableManagement()');
       return false;
     }
   }

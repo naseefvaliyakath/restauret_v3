@@ -43,12 +43,12 @@ class TableWidget extends StatelessWidget {
     }
     //? square
     else if (shapeId == 2) {
-      width = 260.sp;
-      height = 260.sp;
+      width = 230.sp;
+      height = 230.sp;
       radius = 5.r;
     } else if (shapeId == 3) {
-      width = 260.sp;
-      height = 260.sp;
+      width = 230.sp;
+      height = 230.sp;
       radius = 100.r;
     } else if (shapeId == 4) {
       width = 260.sp;
