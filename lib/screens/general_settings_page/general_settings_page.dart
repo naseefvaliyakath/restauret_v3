@@ -42,7 +42,7 @@ class GeneralSettingsScreen extends StatelessWidget {
                           visible: Get.find<StartupController>().applicationPlan == 1 ? true : false,
                           child: ProfileMenu(
                             text: "Change password",
-                            icon: Icons.account_circle_rounded,
+                            icon: Icons.password,
                             press: () => {
                               changePasswordPromptToCashierMode(context: context)
                             },
@@ -82,7 +82,7 @@ class GeneralSettingsScreen extends StatelessWidget {
                         ),
                         ProfileMenu(
                           text: "Allow purchase book to waiter",
-                          icon: Icons.shop,
+                          icon: Icons.store_outlined,
                           press: () {},
                           actionWidget: FlutterSwitch(
                             width: 50.sp,
@@ -96,7 +96,7 @@ class GeneralSettingsScreen extends StatelessWidget {
                         ),
                         ProfileMenu(
                           text: "Advanced table management",
-                          icon: Icons.shop,
+                          icon: Icons.table_bar_sharp,
                           press: () {},
                           actionWidget: FlutterSwitch(
                             width: 50.sp,
@@ -110,7 +110,7 @@ class GeneralSettingsScreen extends StatelessWidget {
                         ),
                         ProfileMenu(
                           text: "Show Error",
-                          icon: Icons.shop,
+                          icon: Icons.error_outline,
                           press: () {},
                           actionWidget: FlutterSwitch(
                             width: 50.sp,

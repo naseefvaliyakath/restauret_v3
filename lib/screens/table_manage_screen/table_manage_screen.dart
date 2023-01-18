@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -291,6 +292,7 @@ class PcTableManageScreen extends StatelessWidget {
               },
               onAccept: (Map data) {
                 //TODO make this below 2 methods as one
+                HapticFeedback.mediumImpact();
                 ctrl.saveCurrentTableIdAndTableNumber(tableNumber: data['tableNumber'], tableId: data['tableId'], kotId: data['kotId']);
                 ctrl.unlinkTable();
               },

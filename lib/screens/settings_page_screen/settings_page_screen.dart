@@ -3,10 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/alerts/message_alert.dart';
 import 'package:rest_verision_3/routes/route_helper.dart';
-import 'package:rest_verision_3/screens/help_video_screen/help_video_screen.dart';
 import 'package:rest_verision_3/screens/login_screen/controller/startup_controller.dart';
 import 'package:rest_verision_3/screens/settings_page_screen/controller/settings_controller.dart';
-
 import '../../alerts/add_new_complaint_alert/add_new_complaint_alert.dart';
 import '../../alerts/change_mode_of_alert/change_mode_of_alert.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
@@ -74,6 +72,14 @@ class SettingsPageScreen extends StatelessWidget {
                       },
                     ),
                   ),
+
+                  ProfileMenu(
+                    text: "Printer settings",
+                    icon: Icons.print_outlined,
+                    press: () {
+                      Get.toNamed(RouteHelper.getPrinterSettingsScreen());
+                    },
+                  ),
                   ProfileMenu(
                     text: "Help Center",
                     icon: Icons.help,
@@ -96,7 +102,7 @@ class SettingsPageScreen extends StatelessWidget {
                   ),
                   ProfileMenu(
                     text: "Tutorials",
-                    icon: Icons.logout,
+                    icon: Icons.cast_for_education,
                     press: () {
                       Get.toNamed(RouteHelper.getVideoTutorialScreen());
                     },

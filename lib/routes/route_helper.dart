@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:rest_verision_3/screens/add_food_screen/add_food_screen.dart';
 import 'package:rest_verision_3/screens/add_food_screen/binding/add_food_binding.dart';
 import 'package:rest_verision_3/screens/credit_debit_screen/binding/credit_book_binding.dart';
 import 'package:rest_verision_3/screens/credit_debit_screen/credit_debit_screen.dart';
@@ -31,6 +30,8 @@ import '../screens/kitchen_mode_screen/kitchen_mode_main/kitchen_mode_main_scree
 import '../screens/menu_book_screen/menu_book_screen.dart';
 import '../screens/order_view_screen/binding/order_view_binding.dart';
 import '../screens/order_view_screen/order_view _screen.dart';
+import '../screens/printer_settings_page/binding/printer_settings_binding.dart';
+import '../screens/printer_settings_page/printer_settings_page.dart';
 import '../screens/profile_page/profile_screen.dart';
 import '../screens/purchase_book_screen/binding/purchase_book_binding.dart';
 import '../screens/purchase_book_screen/purchase_book_screen.dart';
@@ -62,6 +63,7 @@ class RouteHelper {
   static const String videoPlayScreen = '/videoPlayScreen';
   static const String tableManageScreen = '/tableManageScreen';
   static const String createTableScreen = '/createTableScreen';
+  static const String printerSettingsScreen = '/printerSettingsScreen';
 
 
   static String getInitial() => initial;
@@ -105,6 +107,8 @@ class RouteHelper {
   static String getTableManageScreen() => tableManageScreen;
 
   static String getCreateTableScreen() => createTableScreen;
+
+  static String getPrinterSettingsScreen() => printerSettingsScreen;
 
 
 
@@ -241,6 +245,13 @@ class RouteHelper {
         name: createTableScreen,
         page: () => const CreateTableScreen(),
         binding: CreateTableBinding(),
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 400)),
+
+    GetPage(
+        name: printerSettingsScreen,
+        page: () => const PrinterSettingsScreen(),
+        binding: PrinterSettingsBinding(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400)),
 

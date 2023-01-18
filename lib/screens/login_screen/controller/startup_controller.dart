@@ -306,7 +306,7 @@ class StartupController extends GetxController {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
       if(SHOPE_ID != -1){
-            if(difference <= 3){
+            if(difference > 0 && difference < 5){
               showNoticeUpdateAlert(
                 message: 'Your plan will expired on \n ${formatter.format(expiryDate)}',
                 context: Get.context!,
@@ -314,7 +314,7 @@ class StartupController extends GetxController {
                 dismissible: true,
               );
             }
-            else if(difference < 0){
+            else if(difference < 0) {
               showNoticeUpdateAlert(
                 message: 'Your plan is expired \n contact your agent to recharge',
                 context: Get.context!,
