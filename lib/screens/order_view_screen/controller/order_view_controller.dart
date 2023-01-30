@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
@@ -137,8 +136,9 @@ class OrderViewController extends GetxController {
     end: DateTime.now(),
   );
 
-  final player = AudioPlayer();
-  final cache = AudioCache();
+  //AudioComment
+  // final player = AudioPlayer();
+  // final cache = AudioCache();
 
   @override
   void onInit() async {
@@ -726,8 +726,10 @@ class OrderViewController extends GetxController {
       if (kDebugMode) {
             print('ring sound');
           }
-      await player.setSource(AssetSource('sounds/ring_two.mp3'));
-      await player.resume();
+
+      //AudioComment
+      // await player.setSource(AssetSource('sounds/ring_two.mp3'));
+      // await player.resume();
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);

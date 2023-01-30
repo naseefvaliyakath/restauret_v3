@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,8 +59,9 @@ class KitchenModeMainController extends GetxController {
   RoundedLoadingButtonController btnControllerRejectUpdateFullKotSts = RoundedLoadingButtonController();
 
 
-  final player = AudioPlayer();
-  final cache = AudioCache();
+  //AudioComment
+  // final player = AudioPlayer();
+  // final cache = AudioCache();
 
   @override
   void onInit() async {
@@ -307,8 +307,9 @@ class KitchenModeMainController extends GetxController {
       if (kDebugMode) {
         print('ring sound');
       }
-      await player.setSource(AssetSource('sounds/ring_two.mp3'));
-      await player.resume();
+      //AudioComment
+      // await player.setSource(AssetSource('sounds/ring_two.mp3'));
+      // await player.resume();
     }
   }
 
@@ -319,8 +320,9 @@ class KitchenModeMainController extends GetxController {
       if (kDebugMode) {
         print('ring remember sound');
       }
-      await player.setSource(AssetSource('sounds/alert.mp3'));
-      await player.resume();
+      //AudioComment
+      // await player.setSource(AssetSource('sounds/alert.mp3'));
+      // await player.resume();
     }
   }
 

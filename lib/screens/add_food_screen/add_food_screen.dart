@@ -326,7 +326,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
   void _getFromCamara() async {
     XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080,imageQuality: 30);
     if(pickedFile != null){
-      _cropImage(pickedFile!.path);
+      _cropImage(pickedFile.path);
     }
     Navigator.pop(context);
   }

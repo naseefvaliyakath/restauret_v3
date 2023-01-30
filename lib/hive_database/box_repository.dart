@@ -1,6 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rest_verision_3/hive_database/hive_model/frequent_food/frequent_food.dart';
-
 import '../constants/hive_constants/hive_costants.dart';
 import 'hive_model/delivery_address/hive_delivery_address_item.dart';
 import 'hive_model/hold_item/hive_hold_item.dart';
@@ -30,6 +29,8 @@ class BoxRepository {
   static Box getFrequentFoodBox() => Hive.box<FrequentFood>(HIVE_DATABASE_FREQUENT_ITEMS);
 
   static closeFrequentFoodBox() async => await Hive.box(HIVE_DATABASE_FREQUENT_ITEMS).close();
+
+
 
 
 }

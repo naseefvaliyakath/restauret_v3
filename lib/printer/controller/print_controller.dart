@@ -13,86 +13,11 @@ import '../../screens/billing_screen/controller/billing_screen_controller.dart';
 import 'library/iosWinPrint.dart';
 import 'library/iosWinPrintMethods.dart';
 import 'library/print_responce.dart';
+import 'library/printer_config.dart';
 
-class PrintCTRL extends GetxController {
+class PrintCTRL {
   final ErrorHandler errHandler = Get.find<ErrorHandler>();
   IosWinPrint iOSWinPrintInstance = IosWinPrint();
-
-  @override
-  Future<void> onInit() async {
-    super.onInit();
-  }
-
-  printKotTest({required List<dynamic> order, required String orderType, required String orderStatus}) async {
-    if (Platform.isAndroid || Platform.isWindows || Platform.isIOS) {
-      if (IosWinPrint.getSelectedDevice() == null) {
-        await iOSWinPrintInstance.getDevices();
-      }
-      _testPrintForIosWin();
-    }
-  }
-
-  Future _testPrintForIosWin() async {
-    List<int> bytes = [];
-    final generator = await IosWinPrintMethods.getGenerator();
-    bytes += generator.setGlobalCodeTable('CP1252');
-    bytes += generator.text('Print Test',
-        styles: const PosStyles(
-          bold: true,
-          align: PosAlign.center,
-          width: PosTextSize.size2,
-          height: PosTextSize.size1,
-        ));
-    bytes += generator.text('================================', styles: const PosStyles(align: PosAlign.center));
-
-    bytes += IosWinPrintMethods.printRows(
-      width: [5, 3, 1, 3],
-      bold: true,
-      columns: [
-        ['Name', 'Price', 'Qty', 'Status']
-      ],
-      generator: generator,
-    );
-
-    bytes += generator.text('--------------------------------', styles: const PosStyles(align: PosAlign.center));
-    bytes += IosWinPrintMethods.printRows(
-      width: [6, 2, 1, 3],
-      columns: [
-        ['Al-Faham fullwith and thirsd line printed stestn complete', '250', '1', 'Pending'],
-        ['Kuzhi Manthi Quater', '310', '2', 'Pending'],
-        ['Al-Faham full with', '250', '1', 'Pending'],
-        ['Chilli Chicken Half', '1100', '10', 'Pending'],
-      ],
-      generator: generator,
-    );
-    bytes += generator.text('--------------------------------', styles: const PosStyles(align: PosAlign.center));
-    bytes += IosWinPrintMethods.printRows(
-      width: [6, 6],
-      bold: true,
-      columns: [
-        ['Sub-Total:', 'Rs: 3000'],
-        ['Discount:', 'Rs: 500'],
-        ['Total:', 'Rs: 2501'],
-      ],
-      generator: generator,
-    );
-    bytes += generator.text('________________________________', styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text(
-      'Thank You',
-      styles: const PosStyles(
-        bold: true,
-        align: PosAlign.center,
-      ),
-    );
-    bytes += generator.text('________________________________', styles: const PosStyles(align: PosAlign.center));
-    // bytes += generator.text('********************************', styles: const PosStyles(align: PosAlign.center));
-
-    PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator);
-    if (printerResponse.status) {
-    } else {
-      AppSnackBar.myFlutterToast(message: printerResponse.message, bgColor: Colors.red);
-    }
-  }
 
   printInVoice({
     required List<dynamic> billingItems,
@@ -206,10 +131,7 @@ class PrintCTRL extends GetxController {
 
       bytes += IosWinPrintMethods.printHeading(generator: generator, heading: 'Thank You', bold: false);
 
-      if (IosWinPrint.getSelectedDevice() == null) {
-        await iOSWinPrintInstance.getDevices();
-      }
-      PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator);
+      PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator, pOSPrinterType: POSPrinterType.billingPrinter);
       if (printerResponse.status) {
       } else {
         if (!Platform.isWindows) {
@@ -249,7 +171,7 @@ class PrintCTRL extends GetxController {
       final generator = await IosWinPrintMethods.getGenerator();
       bytes += generator.setGlobalCodeTable('CP1252');
       bytes += IosWinPrintMethods.printHeading(generator: generator, heading: 'KOT');
-      bytes += generator.text('--------------------------------', styles: const PosStyles(align: PosAlign.center));
+      bytes += IosWinPrintMethods.printLine(generator: generator);
 
       bytes += IosWinPrintMethods.printRows(
         width: [4, 8],
@@ -304,11 +226,13 @@ class PrintCTRL extends GetxController {
       );
       // bytes += generator.text('--------------------------------', styles: const PosStyles(align: PosAlign.center));
 
-      if (IosWinPrint.getSelectedDevice() == null) {
-        await iOSWinPrintInstance.getDevices();
-      }
-      PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator);
+      //
+
+      // IosWinPrint().selectDevice("pass seletected KOT printer here");
+
+      PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator, pOSPrinterType: POSPrinterType.kotPrinter);
       if (printerResponse.status) {
+        print(printerResponse);
       } else {
         if (!Platform.isWindows) {
           AppSnackBar.myFlutterToast(message: printerResponse.message, bgColor: Colors.red);
@@ -330,10 +254,7 @@ class PrintCTRL extends GetxController {
       bytes += IosWinPrintMethods.printHeading(generator: generator, heading: 'SCAN FOR MENU');
       bytes += generator.qrcode(qrCode, size: QRSize.Size8);
 
-      if (IosWinPrint.getSelectedDevice() == null) {
-        await iOSWinPrintInstance.getDevices();
-      }
-      PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator);
+      PrintResponse printerResponse = await iOSWinPrintInstance.printEscPos(bytes, generator, pOSPrinterType: POSPrinterType.billingPrinter);
       if (printerResponse.status) {
       } else {
         if (!Platform.isWindows) {
@@ -348,9 +269,6 @@ class PrintCTRL extends GetxController {
     }
   }
 
-// printQrCode(String qrCode) async {
-//
-// }
 
 //?to remove error
 //   printKot({

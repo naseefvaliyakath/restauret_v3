@@ -1,9 +1,21 @@
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 
+import 'printer_config.dart';
+
 class IosWinPrintMethods {
   static Future<Generator> getGenerator() async {
     final profile = await CapabilityProfile.load(name: 'XP-N160I');
-    return Generator(PaperSize.mm58, profile);
+
+    if (PrinterConfig.isThreeInchPrinter) {
+      return Generator(PaperSize.mm80, profile);
+    } else {
+      return Generator(PaperSize.mm58, profile);
+    }
+  }
+
+  static List<int> printLine({required Generator generator}) {
+    String line = PrinterConfig.isThreeInchPrinter ? "------------------------------------------------" : '--------------------------------';
+    return generator.text(line, styles: PosStyles(align: PosAlign.center));
   }
 
   static List<int> printHeading(
@@ -15,11 +27,11 @@ class IosWinPrintMethods {
     return generator.text(heading, styles: PosStyles(bold: bold, align: PosAlign.center, width: width, height: height));
   }
 
-  static List<int> printRows({required List<List<String>> columns, required List<int> width, required Generator generator, bool bold = false,int lineCutLength=28}) {
+  static List<int> printRows(
+      {required List<List<String>> columns, required List<int> width, required Generator generator, bool bold = false, int lineCutLength = 28}) {
     List<int> bytes = [];
     List<List<String>> newColumn = [];
     for (List<String> singleRow in columns) {
-
       //cut lines
       int offset = 0; // each time you add a new character, string has "shifted"
       for (int i = lineCutLength; i + offset < singleRow[0].length; i += lineCutLength) {

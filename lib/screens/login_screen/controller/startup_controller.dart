@@ -20,6 +20,8 @@ import '../../../error_handler/error_handler.dart';
 import '../../../local_storage/local_storage_controller.dart';
 import '../../../models/my_response.dart';
 import '../../../printer/controller/library/iosWinPrint.dart';
+import '../../../printer/controller/library/models/bluetoothPrinter_model.dart';
+import '../../../printer/controller/library/printer_config.dart';
 import '../../../repository/startup_repository.dart';
 import '../../../services/service.dart';
 import '../../settings_page_screen/controller/settings_controller.dart';
@@ -33,12 +35,11 @@ class StartupController extends GetxController {
   final RoundedLoadingButtonController btnControllerPasswordPrompt = RoundedLoadingButtonController();
   final RoundedLoadingButtonController btnControllerChangePasswordPrompt = RoundedLoadingButtonController();
 
-
   //?showError or not in toast
   bool showErr = false;
 
   //? secure storage for saving token
-  FlutterSecureStorage storage =  const FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   //?application mode number its assigned from shared preferences
   int _appModeNumber = 1;
@@ -91,7 +92,7 @@ class StartupController extends GetxController {
     await readAllowCreditBookToWaiterFromHive();
     await readAllowPurchaseBookToWaiterFromHive();
     await readShowErrorFromHive();
-    await  readAdvancedTableManagementFromHive();
+    await readAdvancedTableManagementFromHive();
     checkNoticeAndUpdate();
     checkSubscriptionStatusToLogout();
     _initBtPrinter();
@@ -100,22 +101,24 @@ class StartupController extends GetxController {
 
   _initBtPrinter() async {
     try {
+      Get.find<IosWinPrint>().getPrinterFromSecureStorage(POSPrinterType.billingPrinter);
+      Get.find<IosWinPrint>().getPrinterFromSecureStorage(POSPrinterType.kotPrinter);
       //Connect Bt printer
-      IosWinPrint iOSWinPrintInstance = IosWinPrint();
-      await iOSWinPrintInstance.getDevices();
-
-      BluetoothPrinter? bluetoothPrinter =  IosWinPrint.getSelectedDevice();
-      if(bluetoothPrinter!=null){
-            await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
-          }else{
-            if (kDebugMode) {
-              print('No device selected');
-            }
-          }
+      // IosWinPrint iOSWinPrintInstance = IosWinPrint();
+      // await iOSWinPrintInstance.getDevices();
+      //
+      // BluetoothPrinter? bluetoothPrinter = iOSWinPrintInstance.getSelectedDevice();
+      // if (bluetoothPrinter != null) {
+      //   await iOSWinPrintInstance.connectBtPrinter(bluetoothPrinter: bluetoothPrinter);
+      // } else {
+      //   if (kDebugMode) {
+      //     print('No device selected');
+      //   }
+      // }
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: '_initBtPrinter()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: '_initBtPrinter()');
       return;
     }
   }
@@ -133,8 +136,7 @@ class StartupController extends GetxController {
             resetAppModeNumberInHive();
             Get.offAllNamed(RouteHelper.getHome());
           });
-        }
-        else {
+        } else {
           AppSnackBar.errorSnackBar('Expired', 'Your subscription has expired');
         }
       } else {
@@ -145,7 +147,7 @@ class StartupController extends GetxController {
       btnControllerLogin.error();
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'loginToApp()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'loginToApp()');
       return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
@@ -175,7 +177,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'getShop()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'getShop()');
       return EMPTY_SHOP;
     }
   }
@@ -193,7 +195,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readAppModeInHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readAppModeInHive()');
       return 1;
     }
   }
@@ -226,8 +228,6 @@ class StartupController extends GetxController {
       //? store token in secure storage
       await storage.write(key: 'token', value: shop.token ?? 'error');
 
-
-
       //? after saving retrieving details to variable to future use
       Map<dynamic, dynamic>? shopDetails = await _myLocalStorage.readData(HIVE_SHOP_DETAILS);
       if (shopDetails != null) {
@@ -248,7 +248,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'setShopInHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'setShopInHive()');
       return;
     }
   }
@@ -295,7 +295,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readShopDetailsFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readShopDetailsFromHive()');
       return;
     }
   }
@@ -305,31 +305,29 @@ class StartupController extends GetxController {
       final difference = expiryDate.difference(DateTime.now()).inDays;
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-      if(SHOPE_ID != -1){
-            if(difference > 0 && difference < 5){
-              showNoticeUpdateAlert(
-                message: 'Your plan will expired on \n ${formatter.format(expiryDate)}',
-                context: Get.context!,
-                type: 'notice',
-                dismissible: true,
-              );
-            }
-            else if(difference < 0) {
-              showNoticeUpdateAlert(
-                message: 'Your plan is expired \n contact your agent to recharge',
-                context: Get.context!,
-                type: 'notice',
-                dismissible: true,
-              );
-            }
-          }
+      if (SHOPE_ID != -1) {
+        if (difference > 0 && difference < 5) {
+          showNoticeUpdateAlert(
+            message: 'Your plan will expired on \n ${formatter.format(expiryDate)}',
+            context: Get.context!,
+            type: 'notice',
+            dismissible: true,
+          );
+        } else if (difference < 0) {
+          showNoticeUpdateAlert(
+            message: 'Your plan is expired \n contact your agent to recharge',
+            context: Get.context!,
+            type: 'notice',
+            dismissible: true,
+          );
+        }
+      }
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'showPlanExpiryAlert()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'showPlanExpiryAlert()');
       return;
     }
-
   }
 
   //? reset appMode in to cashier or  setting app mode 1
@@ -339,7 +337,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'resetAppModeNumberInHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'resetAppModeNumberInHive()');
       return;
     }
   }
@@ -356,7 +354,6 @@ class StartupController extends GetxController {
     showLogin = true;
     update();
   }
-
 
   Future<bool> checkPassword() async {
     try {
@@ -391,7 +388,7 @@ class StartupController extends GetxController {
       btnControllerPasswordPrompt.error();
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'checkPassword()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'checkPassword()');
       return false;
     } finally {
       passTd.text = '';
@@ -427,7 +424,7 @@ class StartupController extends GetxController {
       btnControllerPasswordPrompt.error();
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'changePassword()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'changePassword()');
       return;
     } finally {
       passTd.text = '';
@@ -449,7 +446,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readShowDeliveryAddressInBillFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readShowDeliveryAddressInBillFromHive()');
       return true;
     }
   }
@@ -464,7 +461,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readAllowPurchaseBookToWaiterFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readAllowPurchaseBookToWaiterFromHive()');
       return false;
     }
   }
@@ -478,7 +475,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readAllowCreditBookToWaiterFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readAllowCreditBookToWaiterFromHive()');
       return false;
     }
   }
@@ -492,7 +489,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readShowErrorFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readShowErrorFromHive()');
       return false;
     }
   }
@@ -506,7 +503,7 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readAdvancedTableManagementFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readAdvancedTableManagementFromHive()');
       return false;
     }
   }
@@ -530,12 +527,12 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'getNotice()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'getNotice()');
       return EMPTY_NOTICE_UPDATE;
     }
   }
 
-  setNoticeInHive(NoticeAndUpdate noticeAndUpdate,String versionCode, DateTime lastShowingTime) async {
+  setNoticeInHive(NoticeAndUpdate noticeAndUpdate, String versionCode, DateTime lastShowingTime) async {
     try {
       Map<String, dynamic> noticeToHive = {
         'noticeUpdateId': noticeAndUpdate.noticeUpdateId,
@@ -547,20 +544,19 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'setNoticeInHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'setNoticeInHive()');
       return;
     }
   }
 
   Future<Map> readNoticeFromHive() async {
     try {
-      Map<dynamic, dynamic> noticeDetails =
-          await _myLocalStorage.readData(HIVE_NOTICE_UPDATE_DETAILS) ?? {'noticeUpdateId': -1, 'nextShowingDate': 365};
+      Map<dynamic, dynamic> noticeDetails = await _myLocalStorage.readData(HIVE_NOTICE_UPDATE_DETAILS) ?? {'noticeUpdateId': -1, 'nextShowingDate': 365};
       return noticeDetails;
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'readNoticeFromHive()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'readNoticeFromHive()');
       return {'noticeUpdateId': -1, 'nextShowingDate': 365};
     }
   }
@@ -575,11 +571,63 @@ class StartupController extends GetxController {
       Map<dynamic, dynamic> noticeFromHive = await readNoticeFromHive();
       //? checking successfully received data from server
       if (newNotice.noticeUpdateId != null && newNotice.noticeUpdateId != -1) {
-            //? checking its notice or update
-            if (newNotice.type == 'notice') {
-              //? checking notice id is grater , then only it showing
-              if (newNotice.noticeUpdateId! > (noticeFromHive['noticeUpdateId'])) {
-                setNoticeInHive(newNotice,'0.0.0', DateTime.now());
+        //? checking its notice or update
+        if (newNotice.type == 'notice') {
+          //? checking notice id is grater , then only it showing
+          if (newNotice.noticeUpdateId! > (noticeFromHive['noticeUpdateId'])) {
+            setNoticeInHive(newNotice, '0.0.0', DateTime.now());
+            showNoticeUpdateAlert(
+              message: newNotice.message ?? 'Something went wrong',
+              context: Get.context!,
+              type: newNotice.type ?? 'notice',
+              dismissible: newNotice.dismissable ?? true,
+            );
+          }
+        }
+        //? checking if its update
+        if (newNotice.type == 'update') {
+          //? checking inside platform device platform is containing
+          if (newNotice.platform!.contains(Platform.operatingSystem)) {
+            String versionCodeGet = Platform.isIOS
+                ? ((newNotice.version?[0]) ?? '0.0.0')
+                : Platform.isAndroid
+                    ? ((newNotice.version?[1]) ?? '0.0.0')
+                    : ((newNotice.version?[2]) ?? '0.0.0');
+
+            if (kDebugMode) {
+              print('versionCodeGet $versionCodeGet');
+            }
+
+            //? checking app version is grater  then current user is not updated new version
+            if (getExtendedVersionNumber(versionCodeGet) > getExtendedVersionNumber(version)) {
+              //? checking pop up already showing before
+              if (noticeFromHive['lastGetUpdateVersion'] == versionCodeGet) {
+                //? daysBeforeShowing is used to prevent continues popup in next day , its showing only after second day in array
+                int daysBeforeShowing = DateTime.now().difference(newNotice.createdAt ?? DateTime.now()).inDays;
+                //? lastShowingTime is used to prevent continues popup in same day
+                DateTime lastShowingTime = noticeFromHive['timeLastShowing'] ?? DateTime.now();
+                int differenceOfTimeLastShowing = DateTime.now().difference(lastShowingTime).inMinutes;
+                if (kDebugMode) {
+                  print('daysBeforeShowing $daysBeforeShowing');
+                  print('differenceOfTimeLastShowing $differenceOfTimeLastShowing');
+                }
+                //? loop out array of days , then showing if that day exceeded
+                for (var element in newNotice.nextShowingDate!) {
+                  if (element == daysBeforeShowing) {
+                    //? next popup showing only after two hour
+                    if (differenceOfTimeLastShowing > (newNotice.timeInterval ?? 120)) {
+                      setNoticeInHive(newNotice, versionCodeGet, DateTime.now());
+                      showNoticeUpdateAlert(
+                        message: newNotice.message ?? 'Something went wrong',
+                        context: Get.context!,
+                        type: newNotice.type ?? 'notice',
+                        dismissible: newNotice.dismissable ?? true,
+                      );
+                    }
+                  }
+                }
+              } else {
+                setNoticeInHive(newNotice, versionCodeGet, DateTime.now());
                 showNoticeUpdateAlert(
                   message: newNotice.message ?? 'Something went wrong',
                   context: Get.context!,
@@ -588,72 +636,13 @@ class StartupController extends GetxController {
                 );
               }
             }
-            //? checking if its update
-            if (newNotice.type == 'update') {
-              //? checking inside platform device platform is containing
-              if (newNotice.platform!.contains(Platform.operatingSystem)) {
-                String versionCodeGet = Platform.isIOS ? ((newNotice.version?[0]) ?? '0.0.0') : Platform.isAndroid
-                    ? ((newNotice.version?[1]) ?? '0.0.0')
-                    : ((newNotice.version?[2]) ?? '0.0.0');
-
-                  if (kDebugMode) {
-                    print('versionCodeGet $versionCodeGet');
-                  }
-
-              //? checking app version is grater  then current user is not updated new version
-              if (getExtendedVersionNumber(versionCodeGet) > getExtendedVersionNumber(version)) {
-                //? checking pop up already showing before
-                if (noticeFromHive['lastGetUpdateVersion'] == versionCodeGet) {
-                  //? daysBeforeShowing is used to prevent continues popup in next day , its showing only after second day in array
-                  int daysBeforeShowing = DateTime
-                      .now()
-                      .difference(newNotice.createdAt ?? DateTime.now())
-                      .inDays;
-                  //? lastShowingTime is used to prevent continues popup in same day
-                  DateTime lastShowingTime = noticeFromHive['timeLastShowing'] ?? DateTime.now();
-                  int differenceOfTimeLastShowing = DateTime
-                      .now()
-                      .difference(lastShowingTime)
-                      .inMinutes;
-                  if (kDebugMode) {
-                    print('daysBeforeShowing $daysBeforeShowing');
-                    print('differenceOfTimeLastShowing $differenceOfTimeLastShowing');
-                  }
-                  //? loop out array of days , then showing if that day exceeded
-                  for (var element in newNotice.nextShowingDate!) {
-                    if (element == daysBeforeShowing) {
-                      //? next popup showing only after two hour
-                      if (differenceOfTimeLastShowing > (newNotice.timeInterval ?? 120)) {
-                        setNoticeInHive(newNotice,versionCodeGet, DateTime.now());
-                        showNoticeUpdateAlert(
-                          message: newNotice.message ?? 'Something went wrong',
-                          context: Get.context!,
-                          type: newNotice.type ?? 'notice',
-                          dismissible: newNotice.dismissable ?? true,
-                        );
-                      }
-                    }
-                  }
-                }
-                else {
-                  setNoticeInHive(newNotice,versionCodeGet, DateTime.now());
-                  showNoticeUpdateAlert(
-                    message: newNotice.message ?? 'Something went wrong',
-                    context: Get.context!,
-                    type: newNotice.type ?? 'notice',
-                    dismissible: newNotice.dismissable ?? true,
-                  );
-                }
-              }
-            }
-
+          }
         }
-
-        }
+      }
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'checkNoticeAndUpdate()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'checkNoticeAndUpdate()');
       return;
     }
   }
@@ -667,12 +656,10 @@ class StartupController extends GetxController {
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'getExtendedVersionNumber()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'getExtendedVersionNumber()');
       return 0;
     }
   }
-
-
 
   //? checking checkSubscriptionStatusToLogout and showing expairy popup
   checkSubscriptionStatusToLogout() async {
@@ -680,7 +667,7 @@ class StartupController extends GetxController {
       Shop shop = await getShop(subcId);
       //? setting and reading shop details in hive to update values if any changes happened
       //? eg : user is recharged plan and need to update expiry date in profile page
-      if(shop.fdShopId != -1){
+      if (shop.fdShopId != -1) {
         DateTime expiryDate_ = shop.expiryDate ?? DateTime.now();
         showPlanExpiryAlert(expiryDate_);
         if (shop.subcIdStatus == 'Deactivate') {
@@ -688,30 +675,27 @@ class StartupController extends GetxController {
           Get.find<SettingsController>().logOutFromApp();
         }
       }
-
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'checkSubscriptionStatusToLogout()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'checkSubscriptionStatusToLogout()');
       return;
     }
-
   }
 
-  initializeSecureStorage(){
+  initializeSecureStorage() {
     try {
-      if(Platform.isAndroid){
-            AndroidOptions getAndroidOptions() => const AndroidOptions(
+      if (Platform.isAndroid) {
+        AndroidOptions getAndroidOptions() => const AndroidOptions(
               encryptedSharedPreferences: true,
             );
-            storage = FlutterSecureStorage(aOptions: getAndroidOptions());
-          }
+        storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+      }
     } catch (e) {
       String myMessage = showErr ? e.toString() : 'Something wrong !!';
       AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'startup_controller',methodName: 'initializeSecureStorage()');
+      errHandler.myResponseHandler(error: e.toString(), pageName: 'startup_controller', methodName: 'initializeSecureStorage()');
       return;
     }
   }
-
 }
