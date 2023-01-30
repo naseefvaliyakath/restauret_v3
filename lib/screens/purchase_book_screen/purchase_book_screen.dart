@@ -110,11 +110,11 @@ class PurchaseBookScreen extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   return TransactionTile(
                                     leading: Icons.remove,
-                                    titleText: ctrl.myPurchaseItem[index]?.description ?? 'no description',
+                                    titleText: ctrl.myPurchaseItem[index].description ?? 'no description',
                                     subTitle:
                                         'Date: ${DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.myPurchaseItem[index].createdAt ?? DateTime.now())}',
                                     color: AppColors.mainColor,
-                                    trailingText: (ctrl.myPurchaseItem[index]?.price ?? 0).toString(),
+                                    trailingText: (ctrl.myPurchaseItem[index].price ?? 0).toString(),
                                     leadingColor: AppColors.mainColor,
                                     leadingOnTap: () {
                                       twoFunctionAlert(

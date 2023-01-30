@@ -10,7 +10,7 @@ class HomeScreenReport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int appModeNumber = Get.find<StartupController>().appModeNumber ?? 2;
+    int appModeNumber = Get.find<StartupController>().appModeNumber;
     return GetBuilder<ReportController>(builder: (ctrl) {
       return SafeArea(
           child:

@@ -47,7 +47,7 @@ class NotificationScreen extends StatelessWidget {
                                   itemBuilder: (context, index) {
                                     return TransactionTile(
                                       leading: Icons.notifications_outlined,
-                                      titleText: ctrl.myNotification[index]?.title ?? 'no title',
+                                      titleText: ctrl.myNotification[index].title ?? 'no title',
                                       subTitle:
                                           'Date: ${DateFormat('dd-MM-yyyy  hh:mm aa').format(ctrl.myNotification[index].createdAt ?? DateTime.now())}',
                                       color: AppColors.mainColor,

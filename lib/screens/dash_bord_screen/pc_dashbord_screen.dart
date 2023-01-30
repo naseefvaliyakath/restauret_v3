@@ -28,8 +28,7 @@ class PcDashboardScreen extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  Get.toNamed(RouteHelper.getTableManageScreen());
-                  //let's trigger the navigation expansion
+
                 },
                 icon: Icon(Icons.menu, size: 24.sp),
               ),

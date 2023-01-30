@@ -4,6 +4,9 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/constants/app_colors/app_colors.dart';
 import '../../alerts/change_password_prompt_alert/change_password_prompt_to_cashier_alert.dart';
+import '../../alerts/printer_scan_alert/print_scan_alert.dart';
+import '../../printer/controller/library/iosWinPrint.dart';
+import '../../printer/controller/library/printer_config.dart';
 import '../../widget/common_widget/common_text/heading_rich_text.dart';
 import '../../widget/settings_page_screen/profile_menu.dart';
 import '../login_screen/controller/startup_controller.dart';
@@ -57,10 +60,17 @@ class PrinterSettingsScreen extends StatelessWidget {
                           ),
                         ),
                         ProfileMenu(
-                          text: "Scan printer",
+                          text: "Select Billing printer",
                           icon: Icons.bluetooth_searching,
-                          press: () {
-
+                          press: () async {
+                            printerScanAlert(context: context,pOSPrinterType: POSPrinterType.billingPrinter);
+                          },
+                        ),
+                        ProfileMenu(
+                          text: "Select Kot printer",
+                          icon: Icons.bluetooth_searching,
+                          press: () async {
+                            printerScanAlert(context: context,pOSPrinterType: POSPrinterType.kotPrinter);
                           },
                         ),
                       ],
