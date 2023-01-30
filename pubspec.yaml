@@ -11,7 +11,7 @@ dependencies:
   animated_bottom_navigation_bar: 1.1.0
   flutter_animated_dialog: 2.0.1
   getwidget: 3.0.1
-  badges: 2.0.3
+  badges: ^3.0.1
   font_awesome_flutter: 10.1.0
   google_fonts: 3.0.1
   dio: 4.0.6
@@ -29,7 +29,7 @@ dependencies:
   socket_io_client: ^2.0.1
   ticket_widget: 0.0.1
   intl: 0.17.0
-#  audioplayers: 3.0.0
+  just_audio: ^0.9.31
   flutter_picker: ^2.0.5
   dropdown_button2: ^1.8.9
   fluttertoast: ^8.1.1

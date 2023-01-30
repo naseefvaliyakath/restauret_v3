@@ -192,8 +192,7 @@ class IosWinPrint extends GetxController {
         return PrintResponse(status: false, message: "Could not connect");
       }
 
-      if (Platform.isIOS) {
-        await Future.delayed(const Duration(milliseconds: 500));
+      if (Platform.isIOS) {await Future.delayed(const Duration(milliseconds: 3000));
       }
 
       if (printerForPrint.typePrinter == PrinterType.bluetooth && Platform.isAndroid) {

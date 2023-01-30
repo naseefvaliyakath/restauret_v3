@@ -29,7 +29,8 @@ class CreateTableScreen extends StatelessWidget {
               child: SizedBox(
                   width: double.maxFinite,
                   height: double.maxFinite,
-                  child: Column(
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
                       // heading
                       Padding(
@@ -66,6 +67,8 @@ class CreateTableScreen extends StatelessWidget {
                             children: [
                               10.verticalSpace,
                               SizedBox(
+                                width: 240.sp,
+                                  height: 350.sp,
                                   child: TableWidget(
                                 showOrder: false,
                                 shapeId: ctrl.tableShape,

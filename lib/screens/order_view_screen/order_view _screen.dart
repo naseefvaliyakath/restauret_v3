@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -77,7 +76,7 @@ class OrderViewScreen extends StatelessWidget {
                     titleTextStyle: TextStyle(fontSize: 26.sp, color: Colors.black, fontWeight: FontWeight.w600),
                     actions: [
                       Badge(
-                        badgeColor: Colors.red,
+                        backgroundColor: Colors.red,
                         child: Container(
                             margin: EdgeInsets.only(right: 10.w),
                             child: IconButton(

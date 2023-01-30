@@ -1,12 +1,10 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:rest_verision_3/printer/controller/print_controller.dart';
 import 'package:rest_verision_3/widget/common_widget/common_text/big_text.dart';
-
 import '../../alerts/show_qr_alert/show_qr_alert.dart';
 import '../../constants/strings/my_strings.dart';
 import '../../routes/route_helper.dart';
@@ -42,7 +40,7 @@ class MenuBookScreen extends StatelessWidget {
                       titleTextStyle: TextStyle(fontSize: 26.sp, color: Colors.black, fontWeight: FontWeight.w600),
                       actions: [
                         Badge(
-                          badgeColor: Colors.red,
+                          backgroundColor: Colors.red,
                           child: Container(
                               margin: EdgeInsets.only(right: 10.w),
                               child: Icon(

@@ -136,9 +136,7 @@ class OrderViewController extends GetxController {
     end: DateTime.now(),
   );
 
-  //AudioComment
-  // final player = AudioPlayer();
-  // final cache = AudioCache();
+
 
   @override
   void onInit() async {
@@ -721,22 +719,7 @@ class OrderViewController extends GetxController {
     update();
   }
 
-  Future<void> ringAlert() async {
-    try {
-      if (kDebugMode) {
-            print('ring sound');
-          }
 
-      //AudioComment
-      // await player.setSource(AssetSource('sounds/ring_two.mp3'));
-      // await player.resume();
-    } catch (e) {
-      String myMessage = showErr ? e.toString() : 'Something wrong !!';
-      AppSnackBar.errorSnackBar('Error', myMessage);
-      errHandler.myResponseHandler(error: e.toString(),pageName: 'order_view_controller',methodName: 'ringAlert()');
-      return;
-    }
-  }
 
 
 

@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,7 +21,7 @@ class NotificationIcon extends StatelessWidget {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.r), border: Border.all(color: Colors.grey)),
         child: Center(
           child: Badge(
-            badgeColor: Colors.red,
+            backgroundColor: Colors.red,
             child: Icon(
               FontAwesomeIcons.bell,
               size: 24.sp,
