@@ -33,6 +33,7 @@ class ViewOrderInTaleContent extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               MidText(text: 'KOT ID : ${kot.Kot_id}'),
               5.verticalSpace,
