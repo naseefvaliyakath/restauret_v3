@@ -25,7 +25,9 @@ class WhiteButtonWithIcon extends StatelessWidget {
               children: <Widget>[
                 FittedBox(child: Icon(icon,color: Colors.grey,size: 18.sp,)),
                5.horizontalSpace,
-               FittedBox(child: Text(text,style:  const TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),))
+               SizedBox(
+                 width: 80.sp,
+                   child: FittedBox(child: Text(text,style:  const TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),)))
               ],
             ),
           ),

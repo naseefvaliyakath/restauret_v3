@@ -51,11 +51,6 @@ class PrinterSettingsScreen extends StatelessWidget {
                             activeColor: AppColors.mainColor,
                             value: ctrl.setShowDeliveryAddressInBillToggle,
                             onToggle: (bool value) {
-                              ctrl.setShowDeliveryAddressInBillInHive(value);
-                              //? to update in general screen controller
-                              ctrl.readShowDeliveryAddressInBillFromHive();
-                              //? to update in StartupController for global use
-                              Get.find<StartupController>().readShowDeliveryAddressInBillFromHive();
                             },
                           ),
                         ),

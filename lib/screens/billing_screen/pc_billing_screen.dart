@@ -127,58 +127,64 @@ class PcBillingScreen extends StatelessWidget {
                           children: [
                             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                               //? Items Ordered text
-                              BigText(
-                                text: 'Available foods ',
-                                size: 30.sp,
+                              Flexible(
+                                child: BigText(
+                                  text: 'Available foods ',
+                                  size: 20.sp,
+                                ),
                               ),
 
                               10.horizontalSpace,
                               //? this will change if homeDelivery it will select address
                               //? if its dining it will select table
-                              ctrl.orderType == TAKEAWAY ? const SizedBox() : WhiteButtonWithIcon(
-                                text: ctrl.orderType == HOME_DELEVERY
-                                    ? (ctrl.selectDeliveryAddrTxt.length > 12 ? ctrl.selectDeliveryAddrTxt.substring(0, 13) : ctrl.selectDeliveryAddrTxt)
-                                    : ctrl.orderType == DINING
-                                    ? ctrl.selectTableTxt
-                                    : ctrl.orderType == ONLINE
-                                    ? (ctrl.selectedOnlineAppNameTxt.length > 12 ? ctrl.selectedOnlineAppNameTxt.substring(0, 13) : ctrl.selectedOnlineAppNameTxt)
-                                    : 'Take away',
-                                icon: Icons.edit,
-                                onTap: () async {
-                                  if (ctrl.orderType == HOME_DELEVERY) {
-                                    deliveryAddressAlert(context: context, ctrl: ctrl);
-                                  }
-                                  if (ctrl.orderType == ONLINE) {
-                                    selectOnlineAppAlert(context: context);
-                                  }
-
-                                  if (ctrl.orderType == DINING) {
-                                    //tableSelectAlert(context: context);
-                                    if (ctrl.billingItems.isNotEmpty) {
-                                      await Get.find<BillingScreenController>().saveBillInHive();
+                              ctrl.orderType == TAKEAWAY ? const SizedBox() : Flexible(
+                                child: WhiteButtonWithIcon(
+                                  text: ctrl.orderType == HOME_DELEVERY
+                                      ? (ctrl.selectDeliveryAddrTxt.length > 12 ? ctrl.selectDeliveryAddrTxt.substring(0, 13) : ctrl.selectDeliveryAddrTxt)
+                                      : ctrl.orderType == DINING
+                                      ? ctrl.selectTableTxt
+                                      : ctrl.orderType == ONLINE
+                                      ? (ctrl.selectedOnlineAppNameTxt.length > 12 ? ctrl.selectedOnlineAppNameTxt.substring(0, 13) : ctrl.selectedOnlineAppNameTxt)
+                                      : 'Take away',
+                                  icon: Icons.edit,
+                                  onTap: () async {
+                                    if (ctrl.orderType == HOME_DELEVERY) {
+                                      deliveryAddressAlert(context: context, ctrl: ctrl);
                                     }
-                                    if(ctrl.isNavigateFromTableManage){
-                                      AppSnackBar.errorSnackBar('Cant change table', 'You cannot change table !!');
-                                    }else{
-                                      if(Get.find<StartupController>().advancedTableManagementToggle){
-                                        Get.offNamed(RouteHelper.getTableManageScreen());
+                                    if (ctrl.orderType == ONLINE) {
+                                      selectOnlineAppAlert(context: context);
+                                    }
+
+                                    if (ctrl.orderType == DINING) {
+                                      //tableSelectAlert(context: context);
+                                      if (ctrl.billingItems.isNotEmpty) {
+                                        await Get.find<BillingScreenController>().saveBillInHive();
+                                      }
+                                      if(ctrl.isNavigateFromTableManage){
+                                        AppSnackBar.errorSnackBar('Cant change table', 'You cannot change table !!');
                                       }else{
-                                        tableSelectAlert(context: context);
+                                        if(Get.find<StartupController>().advancedTableManagementToggle){
+                                          Get.offNamed(RouteHelper.getTableManageScreen());
+                                        }else{
+                                          tableSelectAlert(context: context);
+                                        }
                                       }
                                     }
-                                  }
-                                },
+                                  },
+                                ),
                               ),
 
                               //? clear bill btn
-                              ClearAllBill(onTap: () {
-                                //? if settled button clicked cant clear item
-                                if (ctrl.isClickedSettle.value) {
-                                  AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
-                                } else {
-                                  ctrl.clearAllBillItems();
-                                }
-                              }),
+                              Flexible(
+                                child: ClearAllBill(onTap: () {
+                                  //? if settled button clicked cant clear item
+                                  if (ctrl.isClickedSettle.value) {
+                                    AppSnackBar.errorSnackBar('This bill is already settled', 'Click new order !');
+                                  } else {
+                                    ctrl.clearAllBillItems();
+                                  }
+                                }),
+                              ),
                             ]),
                             Flexible(
                               child: Container(
